@@ -1,0 +1,20 @@
+// GanitaZero has its own schema for storing a transformation and 
+// its corresponding processes. 
+// The reason we use our own schema is to control memory 
+// usage when loading an Adic transformation into memory. 
+// We researched existing xml schemas, but standard parsers 
+// may not efficiently utilize memory. 
+// For example, see warning about libxml++/libxml2 DOM parser: 
+// therefore the DOM parser uses a relatively large amount of memory.
+// ref https://developer.gnome.org/libxml++-tutorial/stable/chapter-parsers.html#idp1703432
+// This text file defines the high-level schema for a transformation. 
+// Transformation will use sub-schemas for one or more representations 
+// to define the transformation. 
+// Version 0.1. 
+
+gz-schema::DO NOT CHANGE THIS LINE OR ANY LINE BELOW THIS LINE.
+gz-schema::line:0:ganitazero
+gz-schema::line:1:transformation
+gz-schema::line:2:name
+gz-schema::line:3:representation(adic,symbolic,tower,map)
+done

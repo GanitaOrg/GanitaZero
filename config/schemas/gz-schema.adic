@@ -1,0 +1,7 @@
+// This file defines the schema for the adic representation. 
+
+gz-schema::line:0:ganitazero
+gz-schema::line:3:representation
+gz-schema::line:4:name
+gz-schema::line:5:type(repeat,recursive,fixed)
+done

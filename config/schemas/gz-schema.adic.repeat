@@ -1,0 +1,13 @@
+// This defines the format for an adic transformation 
+// with type repeat. 
+
+gz-schema::line:0:ganitazero
+gz-schema::line:3:adic
+gz-schema::line:5:repeat
+gz-schema::line:6:num-fixed-levels
+gz-schema::line:7:num-nodes
+gz-schema::line:8:edge-definition
+gz-schema::line:?:repeat-pattern-length
+gz-schema::line:?:repeat-nodes
+gz-schema::line:?:repeat-defintion
+done
