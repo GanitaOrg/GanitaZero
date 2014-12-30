@@ -53,7 +53,7 @@ endif()
 
 # configure_file(config.h.in config.h)
 
-include_directories(../src/cpp)
+include_directories(../src/include)
 link_directories (/usr/local/lib)
 
 add_library(GanitaZero ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp)
@@ -61,12 +61,15 @@ add_library(GanitaZero ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepr
 target_include_directories (GanitaZero PUBLIC ../src/cpp)
 
 add_executable(zerog ../src/drivers/zerog.cc)
-add_test(zerog ../src/drivers/zerog.cc)
+add_test(gztest zerog ../sample/Chacon3.gztran)
 
 target_link_libraries (zerog LINK_PUBLIC GanitaGraph GanitaZero m)
 
 install(TARGETS GanitaZero DESTINATION lib)
 install(TARGETS zerog DESTINATION bin)
+FILE(GLOB files "../src/include/ganita/zero/*.hpp")
+install(FILES ${files} DESTINATION include/ganita/zero)
+install(DIRECTORY ../src/include/ganita/zero/representations DESTINATION include/ganita/zero)
 
 # if(OpenMP_CXX_FLAGS)
 #   set_property(

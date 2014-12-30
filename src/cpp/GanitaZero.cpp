@@ -4,7 +4,7 @@
 // Eventually, we may incorporate factory classes 
 // to load various representations. 
 
-#include "GanitaZero.hpp"
+#include "ganita/zero/GanitaZero.hpp"
 
 // Constructors
 GanitaZero::GanitaZero(void)

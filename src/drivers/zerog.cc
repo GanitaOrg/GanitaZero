@@ -1,4 +1,4 @@
-#include "GanitaZero.hpp"
+#include "ganita/zero/GanitaZero.hpp"
   
 // driver program for GanitaZero. 
 

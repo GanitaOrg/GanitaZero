@@ -1,6 +1,6 @@
 // Methods for GanitaZeroSchema
 
-#include "GanitaZeroSchema.hpp"
+#include "ganita/zero/GanitaZeroSchema.hpp"
 
 GanitaZeroSchema::GanitaZeroSchema(void)
 {

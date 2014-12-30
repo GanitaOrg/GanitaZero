@@ -1,7 +1,7 @@
 // Methods for GanitaZeroVersion.
 // Place to set version numbers. 
 
-#include "GanitaZeroVersion.hpp"
+#include "ganita/zero/GanitaZeroVersion.hpp"
 
 GanitaZeroVersion::GanitaZeroVersion(void)
 {

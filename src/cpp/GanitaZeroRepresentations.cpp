@@ -1,4 +1,4 @@
-#include "GanitaZeroRepresentations.hpp"
+#include "ganita/zero/GanitaZeroRepresentations.hpp"
 
 #include "representations/GanitaZeroAdic.cpp"
 #include "representations/GanitaZeroSymbolic.cpp"
