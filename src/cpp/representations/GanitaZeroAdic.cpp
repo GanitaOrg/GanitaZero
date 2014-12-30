@@ -15,10 +15,11 @@ GanitaZeroAdic::GanitaZeroAdic(void)
   keys.push_back("done");
 }
 
-int GanitaZeroAdic::readAdic(std::ifstream &gzt_file)
+int GanitaZeroAdic::read(std::ifstream &gzt_file)
 {
   if(!gzt_file.is_open()){
     return(-1);
   }
   return(1);
 }
+

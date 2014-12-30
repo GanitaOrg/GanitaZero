@@ -16,7 +16,6 @@
 #include <sstream>
 #include <cstdio>
 
-#include "ganita/graph/GanitaGraph.hpp"
 #include "ganita/zero/GanitaZeroSchema.hpp"
 #include "ganita/zero/GanitaZeroRepresentations.hpp"
 #include "ganita/zero/GanitaZeroVersion.hpp"
@@ -24,7 +23,8 @@
 class GanitaZero
 {
 private:
-  std::vector<GanitaGraph> gAdic;
+  //vector<GanitaGraph> agg;
+  GanitaZeroAdic gAdic;
   std::string name;
   std::string representation;
   std::string type;

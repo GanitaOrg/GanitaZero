@@ -8,7 +8,7 @@ project(GanitaZero CXX C)
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
 set(GanitaZero_VERSION_MINOR "1")
-set(GanitaZero_VERSION_PATCH "2")
+set(GanitaZero_VERSION_PATCH "3")
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -53,17 +53,17 @@ endif()
 
 # configure_file(config.h.in config.h)
 
-include_directories(../src/include)
+include_directories(/usr/local/include ../src/include)
 link_directories (/usr/local/lib)
 
-add_library(GanitaZero ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp)
+add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp)
 
-target_include_directories (GanitaZero PUBLIC ../src/cpp)
+target_include_directories (GanitaZero PUBLIC /usr/local/include ../src/include ../src/cpp)
 
 add_executable(zerog ../src/drivers/zerog.cc)
 add_test(gztest zerog ../sample/Chacon3.gztran)
 
-target_link_libraries (zerog LINK_PUBLIC GanitaGraph GanitaZero m)
+target_link_libraries (zerog GanitaZero GanitaGraph m)
 
 install(TARGETS GanitaZero DESTINATION lib)
 install(TARGETS zerog DESTINATION bin)
