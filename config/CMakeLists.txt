@@ -1,5 +1,5 @@
 ##=========================================================================
-## This file is part of GanitaGraph software. 
+## This is a configuration file for building GanitaZero. 
 ## 
 ##=========================================================================
 
@@ -8,13 +8,40 @@ project(GanitaZero CXX C)
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
 set(GanitaZero_VERSION_MINOR "1")
-set(GanitaZero_VERSION_PATCH "0")
+set(GanitaZero_VERSION_PATCH "1")
 
 cmake_minimum_required(VERSION 2.8)
 
-  set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wconversion -O3 ${OpenMP_CXX_FLAGS} -msse4")
+enable_testing()
 
-  enable_testing()
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CC")
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-std=c++11")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-std=c++11")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-stdlib=libc++")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang++")
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-stdlib=libc++")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "clang++")
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-stdlib=libc++")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set(warnings "/W4 /WX /EHsc")
+else()
+  set(warnings "-Wall -Wextra")
+  set(cmake_cxx_extra "-std=c++11")
+endif()
+
+if (NOT CONFIGURED_ONCE)
+  set(CMAKE_CXX_FLAGS "${warnings} ${cmake_cxx_extra}"
+    CACHE STRING "Flags used by the compiler during build." FORCE)
+  set(CMAKE_C_FLAGS "${warnings} ${cmake_cxx_extra}"
+    CACHE STRING "Flags used by the compiler during build." FORCE)
+endif()
 
   IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
     set(CPACK_SYSTEM_NAME x86_64)
@@ -35,14 +62,11 @@ target_include_directories (GanitaZero PUBLIC ../src/cpp)
 
 add_executable(zerog ../src/drivers/zerog.cc)
 add_test(zerog ../src/drivers/zerog.cc)
-# add_executable(ganitaGraph ../src/drivers/ganitaGraph.cc)
-# add_test(ganitaGraph ../src/drivers/ganitaGraph.cc)
 
-target_link_libraries (zerog LINK_PUBLIC GanitaGraph GanitaZero)
-# target_link_libraries (gg2 LINK_PUBLIC GanitaZero)
+target_link_libraries (zerog LINK_PUBLIC GanitaGraph GanitaZero m)
 
-# install(TARGETS ganitaGraph DESTINATION bin)
-# install(TARGETS GanitaZero DESTINATION lib)
+install(TARGETS GanitaZero DESTINATION lib)
+install(TARGETS zerog DESTINATION bin)
 
 # if(OpenMP_CXX_FLAGS)
 #   set_property(

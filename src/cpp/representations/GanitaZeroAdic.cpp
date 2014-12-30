@@ -17,6 +17,8 @@ GanitaZeroAdic::GanitaZeroAdic(void)
 
 int GanitaZeroAdic::readAdic(std::ifstream &gzt_file)
 {
-  
+  if(!gzt_file.is_open()){
+    return(-1);
+  }
   return(1);
 }
