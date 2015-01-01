@@ -9,5 +9,5 @@ num-nodes 1 2
 edge-definition 0 0
 repeat-pattern-length 1
 repeat-nodes 2
-repeat-definition 0010 1
+repeat-definition 0,0,1,0 1
 done

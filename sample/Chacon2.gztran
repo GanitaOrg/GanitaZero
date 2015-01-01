@@ -4,10 +4,10 @@ Chacon2
 adic
 Chacon2 Adic
 repeat
-num-fixed-levels: 2
-num-nodes: 1 2
-edge-definition: 0 0
-repeat-pattern-length: 1
-repeat-nodes: 2
-repeat-definition: 001 1
+num-fixed-levels 2
+num-nodes 1 2
+edge-definition 0 0
+repeat-pattern-length 1
+repeat-nodes 2
+repeat-definition 0,0,1 1
 done

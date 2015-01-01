@@ -12,5 +12,7 @@ int main(int argc, char *argv[])
   }
 
   gzero.readT(argv[1]);
+  cout<<"Number of stages:        "<<gzero.returnNumStages()<<endl;
+  gzero.dumpStage(1);
 }
 

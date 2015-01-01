@@ -58,13 +58,11 @@ int GanitaZero::readTHeader(ifstream &gzt_file)
 
 int GanitaZero::readAdic(ifstream &gzt_file)
 {
-  string line;
-
-  if(!std::getline(gzt_file,line)){
-    return(-1);
+  if(gAdic.readFixed(gzt_file) >= 0){
+     return(gAdic.readRepeat(gzt_file));
   }
-
-  return(1);
+  
+  return(-1);
 }
 
 int GanitaZero::readT(char *input_tran)
@@ -101,5 +99,20 @@ int GanitaZero::dumpTHeader(void)
   fprintf(stdout, "Transformation type\t %s\n", type.c_str());
 
   return (1);
+}
+
+unsigned long GanitaZero::dumpStageSize(unsigned long ss)
+{
+  return(gAdic.dumpStageSize(ss));
+}
+
+unsigned long GanitaZero::dumpStage(unsigned long ss)
+{
+  return(gAdic.dumpStage(ss));
+}
+
+unsigned long GanitaZero::returnNumStages(void)
+{
+  return(gAdic.returnNumStages());
 }
 

@@ -23,7 +23,6 @@
 class GanitaZero
 {
 private:
-  //vector<GanitaGraph> agg;
   GanitaZeroAdic gAdic;
   std::string name;
   std::string representation;
@@ -36,5 +35,8 @@ public:
   int readT(char *input_tran);
   int dumpTHeader(void);
   int readAdic(ifstream &gzt_file);
+  unsigned long dumpStageSize(unsigned long ss);
+  unsigned long dumpStage(unsigned long ss);
+  unsigned long returnNumStages(void);
 };
 
