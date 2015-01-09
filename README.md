@@ -16,7 +16,7 @@ make
 sudo make install
 
 Executables:
-zerog
+gzero
 
 Library:
 libGanitaZero.a

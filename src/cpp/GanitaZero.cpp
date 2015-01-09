@@ -74,10 +74,14 @@ int GanitaZero::readT(char *input_tran)
     return(-1);
   }
 
-  if(readTHeader(gzt_file) < 0) return(-1);
+  if(readTHeader(gzt_file) < 0){
+    gzt_file.close();
+    return(-1);
+  }
 
   if(representation != "adic"){
     cout<<"Only able to read adic representation."<<endl;
+    gzt_file.close();
     return(-1);
   }
 
@@ -87,6 +91,7 @@ int GanitaZero::readT(char *input_tran)
     dumpTHeader();
   }
 
+  gzt_file.close();
   return(1);
 }
 
@@ -114,5 +119,63 @@ unsigned long GanitaZero::dumpStage(unsigned long ss)
 unsigned long GanitaZero::returnNumStages(void)
 {
   return(gAdic.returnNumStages());
+}
+
+unsigned long GanitaZero::loadCharSeq(ifstream &sym_file)
+{
+  return(gSym.loadCharSeq(sym_file));
+}
+
+int GanitaZero::init(ifstream &sym_file)
+{
+  return(gSym.init(sym_file));
+}
+
+unsigned long GanitaZero::loadCharSeq(char *input_seq)
+{
+  // Read in the input transformation. 
+  unsigned long tmp;
+  std::ifstream sym_file(input_seq,std::ifstream::binary);
+  if (!sym_file.is_open()){
+    std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+    return(0);
+  }
+
+  tmp = loadCharSeq(sym_file);
+  sym_file.close();
+  return(tmp);
+}
+
+int GanitaZero::init(char *input_seq)
+{
+  // Read in the input transformation. 
+  unsigned long tmp;
+  //std::ifstream sym_file(input_seq,std::ifstream::binary);
+  std::ifstream sym_file(input_seq);
+  if (!sym_file.is_open()){
+    std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+    return(0);
+  }
+
+  tmp = init(sym_file);
+  sym_file.close();
+  if(verbosity){
+    gSym.dumpAlphabet();
+  }
+
+  return(tmp);
+}
+
+unsigned long GanitaZero::computeByteHist(void)
+{
+  gSym.computeByteHist();
+  return(gSym.dumpHist());
+}
+
+double GanitaZero::computeCondEnt1FromScratch(void)
+{
+  double ent = gSym.computeCondEnt1FromScratch();
+  gSym.dumpCondHist1();
+  return(ent);
 }
 

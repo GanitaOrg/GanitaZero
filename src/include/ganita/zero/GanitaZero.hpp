@@ -24,6 +24,7 @@ class GanitaZero
 {
 private:
   GanitaZeroAdic gAdic;
+  GanitaZeroSymbolic gSym;
   std::string name;
   std::string representation;
   std::string type;
@@ -38,5 +39,11 @@ public:
   unsigned long dumpStageSize(unsigned long ss);
   unsigned long dumpStage(unsigned long ss);
   unsigned long returnNumStages(void);
+  unsigned long loadCharSeq(ifstream &sym_file);
+  int init(ifstream &sym_file);
+  unsigned long loadCharSeq(char *input_seq);
+  int init(char *input_seq);
+  unsigned long computeByteHist(void);
+  double computeCondEnt1FromScratch(void);
 };
 
