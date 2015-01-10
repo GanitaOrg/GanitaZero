@@ -7,6 +7,24 @@ GanitaZeroSymbolic::GanitaZeroSymbolic(void)
   alphabet_size = 0;
   alphabet_max = 0;
   // Note alphabet array is initialized later. 
+  my_hist = new GanitaZeroHist();
+}
+
+GanitaZeroSymbolic::GanitaZeroSymbolic(std::ifstream &sym_file)
+{
+  name = "symbolic";
+  seq_size = 0;
+  alphabet_size = 0;
+  alphabet_max = 0;
+  // Note alphabet array is initialized later. 
+  gzi = new GanitaBuffer(sym_file);
+  my_hist = new GanitaZeroHist();
+}
+
+int GanitaZeroSymbolic::initBuffer(std::ifstream &sym_file)
+{
+  gzi = new GanitaBuffer(sym_file);
+  return 1;
 }
 
 unsigned long GanitaZeroSymbolic::loadCharSeq(std::ifstream &sym_file)
@@ -46,6 +64,33 @@ int GanitaZeroSymbolic::init(std::ifstream &sym_file)
     }
     if(seq[ii] > alphabet_max){
       alphabet_max = seq[ii];
+    }
+  }
+  alphabet_size = 0;
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    if(alphabet[ii] > 0) alphabet_size++;
+  }
+
+  //cout<<"Alph size: "<<alphabet_size<<endl;
+  
+  return(alphabet_size);
+}
+
+int GanitaZeroSymbolic::init(void)
+{
+  unsigned long ii;
+  // Using GanitaBuffer.
+  // Set alphabet to zero.
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    alphabet[ii] = 0;
+  }
+  // Determine alphabet size
+  for(ii=0; ii<gzi->size(); ii++){
+    if(alphabet[gzi->getByte(ii)] <= 0){
+      alphabet[gzi->getByte(ii)]++;
+    }
+    if(gzi->getByte(ii) > alphabet_max){
+      alphabet_max = gzi->getByte(ii);
     }
   }
   alphabet_size = 0;
@@ -102,24 +147,31 @@ int GanitaZeroSymbolic::dumpAlphabet(void)
 
 int GanitaZeroSymbolic::computeByteHist(void)
 {
-  my_hist.init(256);
-  return(my_hist.computeByteHist(seq, seq_size));
+  my_hist->init(256);
+  return(my_hist->computeByteHist(seq, seq_size));
 }
 
 unsigned long GanitaZeroSymbolic::dumpHist(void)
 {
-  return(my_hist.dumpHist());
+  return(my_hist->dumpHist());
 }
 
 double GanitaZeroSymbolic::computeCondEnt1FromScratch(void)
 {
-  my_hist.initConditional();
-  my_hist.computeCondHist1(seq, seq_size);
-  return(my_hist.computeCondEnt1());
+  my_hist->initConditional();
+  my_hist->computeCondHist1(seq, seq_size);
+  return(my_hist->computeCondEnt1());
+}
+
+double GanitaZeroSymbolic::computeCondEnt2FromScratch(void)
+{
+  my_hist->initConditional();
+  my_hist->computeCondHist1(gzi);
+  return(my_hist->computeCondEnt1());
 }
 
 unsigned long GanitaZeroSymbolic::dumpCondHist1(void)
 {
-  return(my_hist.dumpCondHist1());
+  return(my_hist->dumpCondHist1());
 }
 

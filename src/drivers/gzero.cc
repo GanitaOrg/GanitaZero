@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
   //gzero.dumpStage(1);
   gzero.init(argv[1]);
   //gzero.computeByteHist();
-  cout<<"Conditional entropy: "<<gzero.computeCondEnt1FromScratch()<<endl;
+  //cout<<"Conditional entropy: "<<gzero.computeCondEnt1FromScratch()<<endl;
+  cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch()<<endl;
 }
 

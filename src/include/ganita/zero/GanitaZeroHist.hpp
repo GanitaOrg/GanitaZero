@@ -8,6 +8,8 @@
 #include <cstdio>
 #include <bitset>
 
+#include "ganita/zero/GanitaBuffer.hpp"
+
 #ifndef DEFAULT_HIST_SIZE
 #define DEFAULT_HIST_SIZE 256
 #endif
@@ -29,6 +31,7 @@ public:
   unsigned long initConditional(void);
   int computeByteHist(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(unsigned char *ptr, unsigned long ss);
+  int computeCondHist1(GanitaBuffer *input);
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
   unsigned long dumpCondHist1(void);

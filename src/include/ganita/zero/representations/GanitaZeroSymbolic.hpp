@@ -11,6 +11,7 @@
 #endif
 
 #include "ganita/zero/GanitaZeroHist.hpp"
+#include "ganita/zero/GanitaBuffer.hpp"
 
 class GanitaZeroSymbolic
 {
@@ -21,16 +22,21 @@ protected:
   unsigned long alphabet_size;
   unsigned long alphabet_max;
   unsigned char alphabet[ALPHABET_ALLOC_SIZE];
-  GanitaZeroHist my_hist;
+  GanitaZeroHist *my_hist;
+  GanitaBuffer *gzi;
 public:
   GanitaZeroSymbolic(void);
+  GanitaZeroSymbolic(std::ifstream &sym_file);
+  int initBuffer(std::ifstream &sym_file);
   unsigned long loadCharSeq(std::ifstream &sym_file);
   int init(std::ifstream &sym_file);
+  int init(void);
   int shrinkAlphabet(void);
   int dumpAlphabet(void);
   int computeByteHist(void);
   unsigned long dumpHist(void);
   double computeCondEnt1FromScratch(void);
+  double computeCondEnt2FromScratch(void);
   unsigned long dumpCondHist1(void);
 };
 

@@ -45,5 +45,6 @@ public:
   int init(char *input_seq);
   unsigned long computeByteHist(void);
   double computeCondEnt1FromScratch(void);
+  double computeCondEnt2FromScratch(void);
 };
 

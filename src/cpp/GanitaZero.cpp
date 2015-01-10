@@ -158,7 +158,8 @@ int GanitaZero::init(char *input_seq)
   }
 
   tmp = init(sym_file);
-  sym_file.close();
+  gSym.initBuffer(sym_file);
+  //sym_file.close();
   if(verbosity){
     gSym.dumpAlphabet();
   }
@@ -175,6 +176,13 @@ unsigned long GanitaZero::computeByteHist(void)
 double GanitaZero::computeCondEnt1FromScratch(void)
 {
   double ent = gSym.computeCondEnt1FromScratch();
+  gSym.dumpCondHist1();
+  return(ent);
+}
+
+double GanitaZero::computeCondEnt2FromScratch(void)
+{
+  double ent = gSym.computeCondEnt2FromScratch();
   gSym.dumpCondHist1();
   return(ent);
 }
