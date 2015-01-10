@@ -28,9 +28,11 @@ public:
   GanitaZeroSymbolic(void);
   GanitaZeroSymbolic(std::ifstream &sym_file);
   int initBuffer(std::ifstream &sym_file);
+  int initBuffer(void);
   unsigned long loadCharSeq(std::ifstream &sym_file);
   int init(std::ifstream &sym_file);
   int init(void);
+  int init(char *input_file);
   int shrinkAlphabet(void);
   int dumpAlphabet(void);
   int computeByteHist(void);

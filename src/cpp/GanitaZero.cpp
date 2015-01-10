@@ -151,15 +151,13 @@ int GanitaZero::init(char *input_seq)
   // Read in the input transformation. 
   unsigned long tmp;
   //std::ifstream sym_file(input_seq,std::ifstream::binary);
-  std::ifstream sym_file(input_seq);
-  if (!sym_file.is_open()){
-    std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
-    return(0);
-  }
-
-  tmp = init(sym_file);
-  gSym.initBuffer(sym_file);
-  //sym_file.close();
+  // std::ifstream sym_file(input_seq);
+  // if (!sym_file.is_open()){
+  //   std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+  //   return(0);
+  // }
+  
+  tmp = gSym.init(input_seq);
   if(verbosity){
     gSym.dumpAlphabet();
   }

@@ -27,6 +27,12 @@ int GanitaZeroSymbolic::initBuffer(std::ifstream &sym_file)
   return 1;
 }
 
+int GanitaZeroSymbolic::initBuffer(void)
+{
+  gzi = new GanitaBuffer();
+  return 1;
+}
+
 unsigned long GanitaZeroSymbolic::loadCharSeq(std::ifstream &sym_file)
 {
   if(seq_size > 0){
@@ -52,6 +58,7 @@ int GanitaZeroSymbolic::init(std::ifstream &sym_file)
 {
   unsigned long ii;
   // load data into array seq
+  // deprecated loadCharSeq
   if(loadCharSeq(sym_file) == 0) return(-1);
   // Set alphabet to zero
   for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
@@ -80,6 +87,35 @@ int GanitaZeroSymbolic::init(void)
 {
   unsigned long ii;
   // Using GanitaBuffer.
+  // Set alphabet to zero.
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    alphabet[ii] = 0;
+  }
+  // Determine alphabet size
+  for(ii=0; ii<gzi->size(); ii++){
+    if(alphabet[gzi->getByte(ii)] <= 0){
+      alphabet[gzi->getByte(ii)]++;
+    }
+    if(gzi->getByte(ii) > alphabet_max){
+      alphabet_max = gzi->getByte(ii);
+    }
+  }
+  alphabet_size = 0;
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    if(alphabet[ii] > 0) alphabet_size++;
+  }
+
+  //cout<<"Alph size: "<<alphabet_size<<endl;
+  
+  return(alphabet_size);
+}
+
+int GanitaZeroSymbolic::init(char *input_file)
+{
+  unsigned long ii;
+  // Using GanitaBuffer.
+  gzi = new GanitaBuffer();
+  gzi->open(input_file);
   // Set alphabet to zero.
   for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
     alphabet[ii] = 0;
