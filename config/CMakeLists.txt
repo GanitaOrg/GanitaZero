@@ -7,8 +7,8 @@ project(GanitaZero CXX C)
 
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
-set(GanitaZero_VERSION_MINOR "4")
-set(GanitaZero_VERSION_PATCH "1")
+set(GanitaZero_VERSION_MINOR "5")
+set(GanitaZero_VERSION_PATCH "0")
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -16,10 +16,10 @@ enable_testing()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CC")
   set(warnings "-Wall -Wextra")
-  set(cmake_cxx_extra "-std=c++11")
+  set(cmake_cxx_extra "-std=c++0x")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(warnings "-Wall -Wextra")
-  set(cmake_cxx_extra "-std=c++11")
+  set(cmake_cxx_extra "-std=c++0x")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(warnings "-Wall -Wextra")
   set(cmake_cxx_extra "-stdlib=libc++")

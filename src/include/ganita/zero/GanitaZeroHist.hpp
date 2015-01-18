@@ -14,6 +14,10 @@
 #define DEFAULT_HIST_SIZE 256
 #endif
 
+#ifndef GANITA_MAX_COND_BITS
+#define GANITA_MAX_COND_BITS 32
+#endif
+
 using namespace std;
 
 class GanitaZeroHist
@@ -29,6 +33,7 @@ public:
   GanitaZeroHist(unsigned long size);
   unsigned long init(unsigned long size);
   unsigned long initConditional(void);
+  unsigned long initConditional(int h_len);
   int computeByteHist(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(GanitaBuffer *input);

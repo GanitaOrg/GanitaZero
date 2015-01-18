@@ -40,5 +40,6 @@ public:
   double computeCondEnt1FromScratch(void);
   double computeCondEnt2FromScratch(void);
   unsigned long dumpCondHist1(void);
+  string returnB64Encode(void);
 };
 

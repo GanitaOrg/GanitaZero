@@ -5,3 +5,4 @@
 #include "representations/GanitaZeroTower.cpp"
 #include "representations/GanitaZeroMap.cpp"
 #include "representations/GanitaZeroBinary.cpp"
+#include "representations/GanitaZeroSub.cpp"

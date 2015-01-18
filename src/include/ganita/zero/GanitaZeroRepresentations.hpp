@@ -3,3 +3,4 @@
 #include "ganita/zero/representations/GanitaZeroTower.hpp"
 #include "ganita/zero/representations/GanitaZeroMap.hpp"
 #include "ganita/zero/representations/GanitaZeroBinary.hpp"
+#include "ganita/zero/representations/GanitaZeroSub.hpp"

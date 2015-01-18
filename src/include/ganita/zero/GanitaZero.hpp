@@ -46,5 +46,6 @@ public:
   unsigned long computeByteHist(void);
   double computeCondEnt1FromScratch(void);
   double computeCondEnt2FromScratch(void);
+  string returnB64Encode(void);
 };
 

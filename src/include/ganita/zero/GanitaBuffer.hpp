@@ -15,6 +15,11 @@
 
 using namespace std;
 
+static const string b64_chars = 
+             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+             "abcdefghijklmnopqrstuvwxyz"
+             "0123456789+/";
+
 class GanitaBuffer
 {
 private:
@@ -27,13 +32,17 @@ private:
   unsigned long file_size;
   unsigned long buffer_start;
   int buf_read_flag;
-  std::ifstream *gzt_input_file = new std::ifstream();
+  std::ifstream *gzt_input_file;
 public:
   GanitaBuffer();
   GanitaBuffer(std::ifstream &gzt_file);
   unsigned char getByte(unsigned long loc);
   unsigned long size();
   unsigned long open(char *input_file);
+  inline bool is_base64(unsigned char c);
+  string b64Encode(unsigned char const* in_bytes,unsigned long in_len);
+  string b64Encode(void);
+  string b64Decode(string &enc_str);
 };
 
 #endif

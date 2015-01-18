@@ -17,5 +17,6 @@ int main(int argc, char *argv[])
   gzero.init(argv[1]);
   //gzero.computeByteHist();
   cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch()<<endl;
+  //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
 }
 

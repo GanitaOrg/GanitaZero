@@ -201,7 +201,7 @@ double GanitaZeroSymbolic::computeCondEnt1FromScratch(void)
 
 double GanitaZeroSymbolic::computeCondEnt2FromScratch(void)
 {
-  my_hist->initConditional();
+  my_hist->initConditional(8);
   my_hist->computeCondHist1(gzi);
   return(my_hist->computeCondEnt1());
 }
@@ -209,5 +209,10 @@ double GanitaZeroSymbolic::computeCondEnt2FromScratch(void)
 unsigned long GanitaZeroSymbolic::dumpCondHist1(void)
 {
   return(my_hist->dumpCondHist1());
+}
+
+string GanitaZeroSymbolic::returnB64Encode(void)
+{
+  return(gzi->b64Encode());
 }
 

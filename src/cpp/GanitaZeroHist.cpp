@@ -25,6 +25,9 @@ unsigned long GanitaZeroHist::init(unsigned long ss)
   }
   else hist_length = ss;
   hist = new unsigned long[ss]();
+  if(!hist){
+    cout<<"Unable to allocate memory for histogram."<<endl;
+  }
   condition_num = 0;
   est_num = 0;
 
@@ -45,6 +48,34 @@ unsigned long GanitaZeroHist::initConditional(void)
     hist = new unsigned long[2*hist_length]();
   }
   condition_num = 8;
+  est_num = 1;
+
+  return hist_length;
+}
+
+unsigned long GanitaZeroHist::initConditional(int h_len)
+{
+  if(h_len > GANITA_MAX_COND_BITS){
+    h_len =  GANITA_MAX_COND_BITS;
+  }
+  if(hist_length <= 0){
+    cout<<"previously unallocated\n";
+    hist_length = 0x1 << h_len;
+    hist = new(nothrow) unsigned long[2*hist_length]();
+  }
+  else {
+    cout<<"previously allocated\n";
+    delete hist;
+    hist_length = 0x1 << h_len;
+    hist = new(nothrow) unsigned long[2*hist_length]();
+  }
+  if(!hist){
+    cout<<"Unable to allocate memory for histogram."<<endl;
+    hist_length = 1;
+    h_len = 0;
+    hist = new unsigned long[2*hist_length]();
+  }
+  condition_num = h_len;
   est_num = 1;
 
   return hist_length;
@@ -85,22 +116,27 @@ int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
 // Compute an approximation of the conditional entropy
 int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
 {
-  unsigned int byte;
-  unsigned int bit;
-  unsigned long ii, b1, bottom;
-  condition_num = 8;
-  est_num = 1;
+  unsigned long cond_bits;
+  unsigned long pbit, cbit;
+  unsigned long ii, jj;
+  unsigned long b1, bottom;
 
   cout<<"Number of bytes: "<<input->size()<<endl;
 
-  for(ii=0; ii<8*(input->size()-1); ii++){
-    bottom = ii % 8;
+  for(ii=condition_num; ii<8*input->size()-1; ii++){
+    // Get the probability bit
     b1 = ii / 8;
-    byte = (unsigned int) (((input->getByte(b1) & 0xff) >> bottom) & 0xff);
-    byte |= (unsigned int) (((input->getByte(b1+1) & 0xff) << (8 - bottom)) & 0xff);
-    bit = (unsigned int) (((input->getByte(b1+1) & 0xff) >> bottom) & 0x1);
-    //fprintf(stdout, "Values: %02X, %02X, %01X\n", input->getByte(b1+1),byte,bit);
-    hist[2*byte + bit]++;
+    bottom = ii % 8;
+    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+    cond_bits = 0;
+    for(jj=ii-condition_num; jj<ii; jj++){
+      bottom = jj % 8;
+      b1 = jj / 8;
+      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+      cond_bits |= (cbit << (jj + condition_num - ii));
+    }
+    //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
+    hist[2*cond_bits + pbit]++;
   }
 
   return 1;
@@ -117,6 +153,7 @@ double GanitaZeroHist::computeCondEnt1(void)
     total += hist[ii];
   }
 
+  //fprintf(stdout, "Bit histogram: %ld %ld\n", hist[0],hist[1]);
   for(ii=0; ii<hist_length; ii++){
     if((hist[2*ii] != 0) || (hist[2*ii+1] != 0)){
       pp = ((double) hist[2*ii+1]) / ((double) (hist[2*ii] + hist[2*ii+1]));

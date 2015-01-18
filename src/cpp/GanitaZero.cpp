@@ -181,7 +181,12 @@ double GanitaZero::computeCondEnt1FromScratch(void)
 double GanitaZero::computeCondEnt2FromScratch(void)
 {
   double ent = gSym.computeCondEnt2FromScratch();
-  gSym.dumpCondHist1();
+  //gSym.dumpCondHist1();
   return(ent);
+}
+
+string GanitaZero::returnB64Encode(void)
+{
+  return(gSym.returnB64Encode());
 }
 
