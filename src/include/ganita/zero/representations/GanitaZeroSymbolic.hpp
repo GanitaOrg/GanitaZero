@@ -33,13 +33,16 @@ public:
   int init(std::ifstream &sym_file);
   int init(void);
   int init(char *input_file);
+  int init(char *input_file, char *out_file);
+  unsigned long initOut(char *out_file);
   int shrinkAlphabet(void);
   int dumpAlphabet(void);
   int computeByteHist(void);
   unsigned long dumpHist(void);
   double computeCondEnt1FromScratch(void);
-  double computeCondEnt2FromScratch(void);
+  double computeCondEnt2FromScratch(int h_len);
   unsigned long dumpCondHist1(void);
   string returnB64Encode(void);
+  int close(void);
 };
 

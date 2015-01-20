@@ -165,6 +165,25 @@ int GanitaZero::init(char *input_seq)
   return(tmp);
 }
 
+int GanitaZero::init(char *input_seq, char *out_file)
+{
+  // Read in the input transformation. 
+  unsigned long tmp;
+  //std::ifstream sym_file(input_seq,std::ifstream::binary);
+  // std::ifstream sym_file(input_seq);
+  // if (!sym_file.is_open()){
+  //   std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+  //   return(0);
+  // }
+  
+  tmp = gSym.init(input_seq, out_file);
+  if(verbosity){
+    gSym.dumpAlphabet();
+  }
+
+  return(tmp);
+}
+
 unsigned long GanitaZero::computeByteHist(void)
 {
   gSym.computeByteHist();
@@ -178,9 +197,9 @@ double GanitaZero::computeCondEnt1FromScratch(void)
   return(ent);
 }
 
-double GanitaZero::computeCondEnt2FromScratch(void)
+double GanitaZero::computeCondEnt2FromScratch(int h_len)
 {
-  double ent = gSym.computeCondEnt2FromScratch();
+  double ent = gSym.computeCondEnt2FromScratch(h_len);
   //gSym.dumpCondHist1();
   return(ent);
 }
@@ -188,5 +207,10 @@ double GanitaZero::computeCondEnt2FromScratch(void)
 string GanitaZero::returnB64Encode(void)
 {
   return(gSym.returnB64Encode());
+}
+
+int GanitaZero::close(void)
+{
+  return(gSym.close());
 }
 

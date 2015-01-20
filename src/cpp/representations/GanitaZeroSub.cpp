@@ -27,22 +27,31 @@ unsigned long GanitaZeroSub::loadSub(std::ifstream &sym_file)
 // This is zero entropy with weak mixing and long term dependencies. 
 unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
 {
-  unsigned long *substage = new unsigned long[100]();
-  unsigned long count = 0;
-  unsigned char byte1, byte2;
-  unsigned long offset;
+  unsigned long *substage = new unsigned long[MAX_NUM_SUB_STAGES]();
+  unsigned long ii, count;
 
+  count = 0;
   while(count < len){
-    byte1 = 4;
-    byte1 |= (byte1 << 4);
-    byte2 = (byte1 << 1) | 0x1;
-    offset = 0;
-      substage[0]++;
-    if(substage[0] == 2){
-      // insert 1
+    gzi->writeBit(0x0);
+    count++;
+    ii = 0;
+    while(substage[ii] == 2){
+      substage[ii] = 0;
+      ii++;
+      if(ii >= MAX_NUM_SUB_STAGES){
+	cout<<"Reached max number of stages."<<endl;
+	delete substage;
+	return(count);
+      }
     }
+    if(substage[ii] == 1){
+      gzi->writeBit(0x1);
+      count++;
+    }
+    substage[ii]++;
   }
 
+  delete substage;
   return(count);
 }
 

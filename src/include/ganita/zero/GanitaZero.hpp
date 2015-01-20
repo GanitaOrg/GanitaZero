@@ -43,9 +43,11 @@ public:
   int init(ifstream &sym_file);
   unsigned long loadCharSeq(char *input_seq);
   int init(char *input_seq);
+  int init(char *input_seq, char *out_file);
   unsigned long computeByteHist(void);
   double computeCondEnt1FromScratch(void);
-  double computeCondEnt2FromScratch(void);
+  double computeCondEnt2FromScratch(int h_len);
   string returnB64Encode(void);
+  int close(void);
 };
 

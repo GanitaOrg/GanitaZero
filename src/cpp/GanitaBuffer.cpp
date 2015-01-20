@@ -8,8 +8,13 @@ GanitaBuffer::GanitaBuffer(void)
   byte_loc = 0;
   fixed_buffer_size = GANITA_DEFAULT_BUFFER_SIZE;
   buffer_size = fixed_buffer_size;
+  out_buf_size = GANITA_DEFAULT_OUTPUT_BUFFER_SIZE;
+  //cout<<"Out buf size: "<<out_buf_size<<endl;
   buf_read_flag = 0;
   gzt_input_file = new std::ifstream();
+  outByte = 0;
+  outByteOffset = 0;
+  out_buf_offset = 0;
 }
 
 GanitaBuffer::GanitaBuffer(std::ifstream &gzt_file)
@@ -20,6 +25,10 @@ GanitaBuffer::GanitaBuffer(std::ifstream &gzt_file)
   byte_loc = 0;
   fixed_buffer_size = GANITA_DEFAULT_BUFFER_SIZE;
   buffer_size = fixed_buffer_size;
+  //out_buf_size = GANITA_DEFAULT_OUTPUT_BUFFER_SIZE;
+  outByte = 0;
+  outByteOffset = 0;
+  out_buf_offset = 0;
   if (!gzt_file.is_open()){
     std::cout<<"Unable to open input file: "<<std::endl;
     buf_read_flag = 0;
@@ -87,7 +96,7 @@ unsigned long GanitaBuffer::size()
 unsigned long GanitaBuffer::open(char *input_file)
 {
   // Open buffer for reading.
-  gzt_input_file = new std::ifstream(input_file);
+  gzt_input_file->open(input_file);
   if (!gzt_input_file->is_open()){
     std::cout<<"Unable to open input file: "<<input_file<<std::endl;
     return(0);
@@ -104,6 +113,57 @@ unsigned long GanitaBuffer::open(char *input_file)
   buf_read_flag = 1;
   
   return(1);
+}
+
+unsigned long GanitaBuffer::openOut(char *out_file)
+{
+  // Open output file for writing.
+  gzt_output_file.open(out_file);
+  if (!gzt_output_file.is_open()){
+    std::cout<<"Unable to open output file: "<<out_file<<std::endl;
+    return(0);
+  }
+  //cout<<"Out buf size: "<<out_buf_size<<endl;
+  out_byte_value = new unsigned char[out_buf_size];
+  
+  return(1);
+}
+
+unsigned long GanitaBuffer::writeBit(unsigned char bit)
+{
+  outByte |= ((bit & 0x1) << outByteOffset);
+  outByteOffset++;
+  //cout<<"Offset: "<<outByteOffset<<"| ";
+  if(outByteOffset >= 8){
+    // save byte to output buffer
+    out_byte_value[out_buf_offset] = outByte;
+    out_buf_offset++;
+    outByte = 0;
+    outByteOffset = 0;
+  }
+  if(out_buf_offset >= out_buf_size){
+    // save output buffer to file
+    gzt_output_file.write((char *)out_byte_value,out_buf_size);
+    out_buf_offset = 0;
+  }
+
+  return(out_buf_offset);
+}
+
+unsigned long GanitaBuffer::writeByte(unsigned char mybyte)
+{
+  // save byte to output buffer
+  out_byte_value[out_buf_offset] = mybyte;
+  out_buf_offset++;
+  outByte = 0;
+  outByteOffset = 0;
+  if(out_buf_offset >= out_buf_size){
+    // save output buffer to file
+    gzt_output_file.write((char *)out_byte_value,out_buf_size);
+    out_buf_offset = 0;
+  }
+
+  return(out_buf_offset);
 }
 
 inline bool GanitaBuffer::is_base64(unsigned char c) 
@@ -242,5 +302,25 @@ string GanitaBuffer::b64Decode(string &enc_str)
   }
 
   return ret;
+}
+
+int GanitaBuffer::close(void)
+{
+  int count;
+  count = 0;
+  if (gzt_output_file.is_open()){
+    // write out remaining bytes in output buffer
+    // cout<<"Closing output file."<<endl;
+    gzt_output_file.write((char *)out_byte_value,out_buf_offset);
+    gzt_output_file.close();
+    count++;
+  }
+  if (gzt_input_file->is_open()){
+    // cout<<"Closing input file."<<endl;
+    gzt_input_file->close();
+    count++;
+  }
+  
+  return(count);
 }
 

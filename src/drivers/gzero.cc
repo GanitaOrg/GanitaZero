@@ -5,9 +5,10 @@
 int main(int argc, char *argv[])
 {
   GanitaZero gzero(1);
+  GanitaZeroSub chacon3;
 
-  if(argc < 2){
-    std::cout<<"Usage: input-file"<<std::endl;
+  if(argc < 3){
+    std::cout<<"Usage: input-file output-file"<<std::endl;
     exit(1);
   }
 
@@ -16,7 +17,11 @@ int main(int argc, char *argv[])
   //gzero.dumpStage(1);
   gzero.init(argv[1]);
   //gzero.computeByteHist();
-  cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch()<<endl;
+  cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch(13)<<endl;
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
+  gzero.close();
+  chacon3.initOut(argv[2]);
+  chacon3.generateChacon3(1000000);
+  chacon3.close();
 }
 

@@ -6,6 +6,11 @@
 #include <cstdlib>
 #include <boost/shared_ptr.hpp>
 
+// Maximum number of stages for substitution dynamical system. 
+#ifndef MAX_NUM_SUB_STAGES
+#define MAX_NUM_SUB_STAGES 1000
+#endif
+
 class GanitaZeroSub : public GanitaZeroSymbolic
 {
 private:
