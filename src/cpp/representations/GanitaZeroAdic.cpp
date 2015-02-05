@@ -23,8 +23,8 @@ GanitaZeroAdic::GanitaZeroAdic(void)
 // Add blank stage
 unsigned long GanitaZeroAdic::addStage(void)
 {
-  GanitaGraphStage *ggs = new GanitaGraphStage();
-  stage.push_back(std::make_shared<GanitaGraphStage>(*ggs));
+  GanitaGraph *ggs = new GanitaGraph();
+  stage.push_back(std::make_shared<GanitaGraph>(*ggs));
   delete ggs;
   return(stage.size());
 }
@@ -32,8 +32,8 @@ unsigned long GanitaZeroAdic::addStage(void)
 // Add stage and set id and value
 unsigned long GanitaZeroAdic::addStage(unsigned long ii, unsigned long val)
 {
-  GanitaGraphStage *ggs = new GanitaGraphStage();
-  stage.push_back(std::make_shared<GanitaGraphStage>(*ggs));
+  GanitaGraph *ggs = new GanitaGraph();
+  stage.push_back(std::make_shared<GanitaGraph>(*ggs));
   stage[stage.size()-1]->set(ii,val);
   delete ggs;
   return(stage.size());
@@ -148,7 +148,7 @@ unsigned long GanitaZeroAdic::dumpStage(unsigned long ss)
   return(stage[ss]->returnNumNodes());
 }
 
-GanitaGraphStage *GanitaZeroAdic::returnStage(unsigned long ss)
+GanitaGraph *GanitaZeroAdic::returnStage(unsigned long ss)
 {
   if(stage.size() <= 0){
     // no stages yet

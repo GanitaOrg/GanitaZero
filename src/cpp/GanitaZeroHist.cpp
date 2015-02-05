@@ -113,7 +113,6 @@ int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
   return 1;
 }
 
-// Compute an approximation of the conditional entropy
 int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
 {
   unsigned long cond_bits;
@@ -142,6 +141,7 @@ int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
   return 1;
 }
 
+// Compute an approximation of the conditional entropy
 double GanitaZeroHist::computeCondEnt1(void)
 {
   unsigned long ii, total;

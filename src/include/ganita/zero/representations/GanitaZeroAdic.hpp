@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <boost/shared_ptr.hpp>
-#include "ganita/graph/GanitaGraphStage.hpp"
+#include "ganita/graph/GanitaGraph.hpp"
 
 class GanitaZeroAdic
 {
@@ -14,7 +14,7 @@ private:
   std::vector<std::string> keys;
   std::vector< std::vector<std::string> > values;
   // Ganita Graph for Adic
-  vector< std::shared_ptr<GanitaGraphStage> > stage;
+  vector< std::shared_ptr<GanitaGraph> > stage;
   unsigned long num_fixed_levels;
   unsigned long repeat_pattern_length;
   char stage_delim;
@@ -28,7 +28,7 @@ public:
   int readRepeat(std::ifstream &gzt_file);
   unsigned long dumpStageSize(unsigned long ss);
   unsigned long dumpStage(unsigned long ss);
-  GanitaGraphStage *returnStage(unsigned long ss);
+  GanitaGraph *returnStage(unsigned long ss);
   unsigned long returnNumStages(void);
 };
 
