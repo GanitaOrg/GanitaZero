@@ -11,7 +11,7 @@
 #endif
 
 #include "ganita/zero/GanitaZeroHist.hpp"
-#include "ganita/zero/GanitaBuffer.hpp"
+#include "ganita/graph/GanitaBuffer.hpp"
 
 class GanitaZeroSymbolic
 {
@@ -30,18 +30,21 @@ public:
   int initBuffer(std::ifstream &sym_file);
   int initBuffer(void);
   unsigned long loadCharSeq(std::ifstream &sym_file);
+  uint64_t loadDoubleDiffQuant(void);
   int init(std::ifstream &sym_file);
   int init(void);
   int init(char *input_file);
+  uint64_t initD(char *input_file);
   int init(char *input_file, char *out_file);
   unsigned long initOut(char *out_file);
   int shrinkAlphabet(void);
   int dumpAlphabet(void);
   int computeByteHist(void);
   unsigned long dumpHist(void);
-  double computeCondEnt1FromScratch(void);
+  double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
   unsigned long dumpCondHist1(void);
+  unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
   int close(void);
 };

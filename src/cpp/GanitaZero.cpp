@@ -165,6 +165,30 @@ int GanitaZero::init(char *input_seq)
   return(tmp);
 }
 
+int GanitaZero::initD(char *input_seq)
+{
+  // Read in the input transformation. 
+  unsigned long tmp;
+  //std::ifstream sym_file(input_seq,std::ifstream::binary);
+  // std::ifstream sym_file(input_seq);
+  // if (!sym_file.is_open()){
+  //   std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+  //   return(0);
+  // }
+  
+  tmp = gSym.initD(input_seq);
+  //if(verbosity){
+  //gSym.dumpAlphabet();
+  //}
+
+  return(tmp);
+}
+
+uint64_t GanitaZero::loadDoubleDiffQuant(void)
+{
+  return(gSym.loadDoubleDiffQuant());
+}
+
 int GanitaZero::init(char *input_seq, char *out_file)
 {
   // Read in the input transformation. 
@@ -190,10 +214,10 @@ unsigned long GanitaZero::computeByteHist(void)
   return(gSym.dumpHist());
 }
 
-double GanitaZero::computeCondEnt1FromScratch(void)
+double GanitaZero::computeCondEnt1FromScratch(int h_len)
 {
-  double ent = gSym.computeCondEnt1FromScratch();
-  gSym.dumpCondHist1();
+  double ent = gSym.computeCondEnt1FromScratch(h_len);
+  //gSym.dumpCondHist1();
   return(ent);
 }
 
@@ -212,5 +236,15 @@ string GanitaZero::returnB64Encode(void)
 int GanitaZero::close(void)
 {
   return(gSym.close());
+}
+
+int GanitaZero::dumpCondHist(void)
+{
+  return(gSym.dumpCondHist1());
+}
+
+int GanitaZero::dumpCondHistSep(void)
+{
+  return(gSym.dumpCondHistSep());
 }
 

@@ -5,6 +5,8 @@ GanitaZeroHist::GanitaZeroHist(void)
   hist_length = 0;
   condition_num = 0;
   est_num = 0;
+  max_count = 0;
+  max_index = 0;
 }
 
 GanitaZeroHist::GanitaZeroHist(unsigned long ss)
@@ -16,6 +18,8 @@ GanitaZeroHist::GanitaZeroHist(unsigned long ss)
   hist = new unsigned long[ss]();
   condition_num = 0;
   est_num = 0;
+  max_count = 0;
+  max_index = 0;
 }
 
 unsigned long GanitaZeroHist::init(unsigned long ss)
@@ -59,12 +63,12 @@ unsigned long GanitaZeroHist::initConditional(int h_len)
     h_len =  GANITA_MAX_COND_BITS;
   }
   if(hist_length <= 0){
-    cout<<"previously unallocated\n";
+    //cout<<"previously unallocated\n";
     hist_length = 0x1 << h_len;
     hist = new(nothrow) unsigned long[2*hist_length]();
   }
   else {
-    cout<<"previously allocated\n";
+    //cout<<"previously allocated\n";
     delete hist;
     hist_length = 0x1 << h_len;
     hist = new(nothrow) unsigned long[2*hist_length]();
@@ -92,22 +96,51 @@ int GanitaZeroHist::computeByteHist(unsigned char *ptr, unsigned long ss)
 }
 
 // Compute an approximation of the conditional entropy
+// int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
+// {
+//   unsigned int byte;
+//   unsigned int bit;
+//   unsigned long ii, b1, bottom;
+//   condition_num = 8;
+//   est_num = 1;
+
+//   for(ii=0; ii<8*(ss-1); ii++){
+//     bottom = ii % 8;
+//     b1 = ii / 8;
+//     byte = (unsigned int) (((ptr[b1] & 0xff) >> bottom) & 0xff);
+//     byte |= (unsigned int) (((ptr[b1+1] & 0xff) << (8 - bottom)) & 0xff);
+//     bit = (unsigned int) (((ptr[b1+1] & 0xff) >> bottom) & 0x1);
+//     //fprintf(stdout, "Values: %02X, %02X, %01X\n", ptr[b1+1],byte,bit);
+//     hist[2*byte + bit]++;
+//   }
+
+//   return 1;
+// }
+
+//int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
 int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
 {
-  unsigned int byte;
-  unsigned int bit;
-  unsigned long ii, b1, bottom;
-  condition_num = 8;
-  est_num = 1;
+  unsigned long cond_bits;
+  unsigned long pbit, cbit;
+  unsigned long ii, jj;
+  unsigned long b1, bottom;
 
-  for(ii=0; ii<8*(ss-1); ii++){
-    bottom = ii % 8;
+  cout<<"Number of bytes: "<<ss<<endl;
+
+  for(ii=condition_num; ii<8*(ss-1); ii++){
+    // Get the probability bit
     b1 = ii / 8;
-    byte = (unsigned int) (((ptr[b1] & 0xff) >> bottom) & 0xff);
-    byte |= (unsigned int) (((ptr[b1+1] & 0xff) << (8 - bottom)) & 0xff);
-    bit = (unsigned int) (((ptr[b1+1] & 0xff) >> bottom) & 0x1);
-    //fprintf(stdout, "Values: %02X, %02X, %01X\n", ptr[b1+1],byte,bit);
-    hist[2*byte + bit]++;
+    bottom = ii % 8;
+    pbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & 0x1);
+    cond_bits = 0;
+    for(jj=ii-condition_num; jj<ii; jj++){
+      bottom = jj % 8;
+      b1 = jj / 8;
+      cbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & 0x1);
+      cond_bits |= (cbit << (jj + condition_num - ii));
+    }
+    //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
+    hist[2*cond_bits + pbit]++;
   }
 
   return 1;
@@ -122,7 +155,7 @@ int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
 
   cout<<"Number of bytes: "<<input->size()<<endl;
 
-  for(ii=condition_num; ii<8*input->size()-1; ii++){
+  for(ii=condition_num; ii<8*(input->size()-1); ii++){
     // Get the probability bit
     b1 = ii / 8;
     bottom = ii % 8;
@@ -191,5 +224,56 @@ unsigned long GanitaZeroHist::dumpCondHist1(void)
 
   cout<<"Total "<<total<<endl;
   return ii;
+}
+
+unsigned long GanitaZeroHist::dumpCondHistSep(void)
+{
+  unsigned int ii;
+  unsigned long total = 0;
+
+  for(ii=0; ii<hist_length; ii++){
+    fprintf(stdout, "Index %6X Count %5ld\n", 2*ii, hist[2*ii]);
+    fprintf(stdout, "Index %6X Count %5ld\n", 2*ii+1, hist[2*ii+1]);
+    total += hist[2*ii] + hist[2*ii+1];
+  }
+
+  cout<<"Total "<<total<<endl;
+  return ii;
+}
+
+uint64_t GanitaZeroHist::findMaxCondHist(void)
+{
+  uint64_t ii;
+  uint64_t max;
+  uint64_t max_ii;
+
+  max = 0;
+  max_ii = 0;
+  for(ii=0; ii<2*hist_length; ii++){
+    if(hist[ii] > max){
+      max_ii = ii;
+      max = hist[ii];
+    }
+  }
+  max_count = max;
+  max_index = max_ii;
+  return(max);
+}
+
+uint64_t GanitaZeroHist::findTopIndices(double ratio)
+{
+  uint64_t ii;
+  uint64_t tmp_thresh = (uint64_t)(ratio * ((double)max_count));
+  uint64_t count; 
+
+  count = 0;
+  for(ii=0; ii<2*hist_length; ii++){
+    if(hist[ii] > tmp_thresh){
+      fprintf(stdout, "High Index: %ld\n", ii);
+      count++;
+    }
+  }
+
+  return(count);
 }
 

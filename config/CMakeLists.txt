@@ -7,7 +7,7 @@ project(GanitaZero CXX C)
 
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
-set(GanitaZero_VERSION_MINOR "6")
+set(GanitaZero_VERSION_MINOR "7")
 set(GanitaZero_VERSION_PATCH "0")
 
 cmake_minimum_required(VERSION 2.8)
@@ -61,12 +61,15 @@ add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZ
 target_include_directories (GanitaZero PUBLIC /usr/local/include ../src/include ../src/cpp)
 
 add_executable(gzero ../src/drivers/gzero.cc)
+add_executable(gp ../src/drivers/gPredict.cc)
 add_test(gztest gzero ../sample/Chacon3.gztran)
 
 target_link_libraries (gzero GanitaZero GanitaGraph m)
+target_link_libraries (gp GanitaZero GanitaGraph m)
 
 install(TARGETS GanitaZero DESTINATION lib)
 install(TARGETS gzero DESTINATION bin)
+install(TARGETS gp DESTINATION bin)
 FILE(GLOB files "../src/include/ganita/zero/*.hpp")
 install(FILES ${files} DESTINATION include/ganita/zero)
 install(DIRECTORY ../src/include/ganita/zero/representations DESTINATION include/ganita/zero)

@@ -54,6 +54,34 @@ unsigned long GanitaZeroSymbolic::loadCharSeq(std::ifstream &sym_file)
   return(seq_size);
 }
 
+uint64_t GanitaZeroSymbolic::loadDoubleDiffQuant(void)
+{
+  uint64_t ii;
+  double tmp1, tmp2;
+
+  if(seq_size > 0){
+    // possibly allocated sequence
+    return(0);
+  }
+  if(gzi->doubleSize() <= 1){
+    return(0);
+  }
+  seq_size = (gzi->doubleSize() + 7) / 8;
+  fprintf(stdout, "Sequence size: %ld\n", seq_size);
+  // Note parentheses below ensure initialized to zero! 
+  seq = new unsigned char[seq_size]();
+  gzi->getDouble(0,tmp1);
+  for(ii=0; ii<gzi->doubleSize()-1; ii++){
+    gzi->getDouble(ii+1,tmp2);
+    if(tmp2 > tmp1){
+      seq[ii / 8] |= (0x1 << (7-(ii % 8))) & 0xff;
+    }
+    tmp1 = tmp2;
+  } 
+
+  return(ii);
+}
+
 int GanitaZeroSymbolic::init(std::ifstream &sym_file)
 {
   unsigned long ii;
@@ -141,6 +169,21 @@ int GanitaZeroSymbolic::init(char *input_file)
   //cout<<"Alph size: "<<alphabet_size<<endl;
   
   return(alphabet_size);
+}
+
+uint64_t GanitaZeroSymbolic::initD(char *input_file)
+{
+  unsigned long ii;
+  // Using GanitaBuffer.
+  gzi = new GanitaBuffer();
+  gzi->openDoubleLine(input_file);
+  // Set alphabet to zero.
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    alphabet[ii] = 0;
+  }
+  //gzi->dumpDoubles();
+  
+  return(1);
 }
 
 int GanitaZeroSymbolic::init(char *input_file, char *out_file)
@@ -250,10 +293,12 @@ unsigned long GanitaZeroSymbolic::dumpHist(void)
   return(my_hist->dumpHist());
 }
 
-double GanitaZeroSymbolic::computeCondEnt1FromScratch(void)
+double GanitaZeroSymbolic::computeCondEnt1FromScratch(int h_len)
 {
-  my_hist->initConditional();
+  my_hist->initConditional(h_len);
   my_hist->computeCondHist1(seq, seq_size);
+  fprintf(stdout, "Max count: %ld\n", my_hist->findMaxCondHist());
+  my_hist->findTopIndices(.51);
   return(my_hist->computeCondEnt1());
 }
 
@@ -267,6 +312,11 @@ double GanitaZeroSymbolic::computeCondEnt2FromScratch(int h_len)
 unsigned long GanitaZeroSymbolic::dumpCondHist1(void)
 {
   return(my_hist->dumpCondHist1());
+}
+
+unsigned long GanitaZeroSymbolic::dumpCondHistSep(void)
+{
+  return(my_hist->dumpCondHistSep());
 }
 
 string GanitaZeroSymbolic::returnB64Encode(void)

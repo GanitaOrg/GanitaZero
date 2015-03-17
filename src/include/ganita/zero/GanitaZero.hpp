@@ -43,11 +43,15 @@ public:
   int init(ifstream &sym_file);
   unsigned long loadCharSeq(char *input_seq);
   int init(char *input_seq);
+  int initD(char *input_seq);
+  uint64_t loadDoubleDiffQuant(void);
   int init(char *input_seq, char *out_file);
   unsigned long computeByteHist(void);
-  double computeCondEnt1FromScratch(void);
+  double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
   string returnB64Encode(void);
   int close(void);
+  int dumpCondHist(void);
+  int dumpCondHistSep(void);
 };
 

@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <bitset>
 
-#include "ganita/zero/GanitaBuffer.hpp"
+#include "ganita/graph/GanitaBuffer.hpp"
 
 #ifndef DEFAULT_HIST_SIZE
 #define DEFAULT_HIST_SIZE 256
@@ -27,6 +27,8 @@ private:
   unsigned long hist_length; // histogram length
   int condition_num;         // number of bits to condition on
   int est_num;               // number of bits to estimate probability on
+  uint64_t max_count;
+  uint64_t max_index;
   //double *ent;               // histogram
 public:
   GanitaZeroHist(void);
@@ -40,5 +42,8 @@ public:
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
   unsigned long dumpCondHist1(void);
+  unsigned long dumpCondHistSep(void);
+  uint64_t findMaxCondHist(void);
+  uint64_t findTopIndices(double ratio);
 };
 
