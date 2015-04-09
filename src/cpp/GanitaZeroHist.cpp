@@ -7,6 +7,7 @@ GanitaZeroHist::GanitaZeroHist(void)
   est_num = 0;
   max_count = 0;
   max_index = 0;
+  divisor = 1;
 }
 
 GanitaZeroHist::GanitaZeroHist(unsigned long ss)
@@ -20,6 +21,7 @@ GanitaZeroHist::GanitaZeroHist(unsigned long ss)
   est_num = 0;
   max_count = 0;
   max_index = 0;
+  divisor = 1;
 }
 
 unsigned long GanitaZeroHist::init(unsigned long ss)
@@ -88,6 +90,7 @@ unsigned long GanitaZeroHist::initConditional(int h_len)
 int GanitaZeroHist::computeByteHist(unsigned char *ptr, unsigned long ss)
 {
   unsigned long ii;
+  cout<<"Histogram length: "<<ss<<endl;
   for(ii=0; ii<ss; ii++){
     hist[ptr[ii]]++;
   }
@@ -269,11 +272,54 @@ uint64_t GanitaZeroHist::findTopIndices(double ratio)
   count = 0;
   for(ii=0; ii<2*hist_length; ii++){
     if(hist[ii] > tmp_thresh){
-      fprintf(stdout, "High Index: %ld\n", ii);
+      fprintf(stdout, "High Index: %lld\n", ii);
       count++;
     }
   }
 
   return(count);
+}
+
+double GanitaZeroHist::returnPoisson(double lambda, uint64_t k)
+{
+  return(pow(lambda,k) * exp(-1*lambda) / tgamma((double) k+1));
+}
+
+uint64_t GanitaZeroHist::returnArc4Rand(char *myran, uint64_t len)
+{
+  arc4random_buf((char *)myran, (size_t) len);
+  return(len);
+}
+
+uint64_t GanitaZeroHist::dumpRand(uint64_t len)
+{
+  uint64_t ii;
+  char *mychar = new char[len];
+  returnArc4Rand(mychar, len);
+  fprintf(stdout, "Random %lld bits:\n", 8*len);
+  for(ii=0; ii<len; ii++){
+    //fprintf(stdout, "%02X", mychar[ii] & 0xff);
+    fprintf(stdout, "%c", mychar[ii] & 0xff);
+  }
+  fprintf(stdout, "\n");
+  return(len);
+}
+
+uint64_t GanitaZeroHist::dumpHistHist(uint64_t len)
+{
+  uint64_t *hh = new uint64_t[len]();
+  uint64_t ii;
+  fprintf(stdout, "Poisson histogram length %ld:\n", hist_length);
+  for(ii=0; ii<hist_length; ii++){
+    if(hist[ii] < len){
+      hh[hist[ii]]++;
+    }
+  }
+  //fprintf(stdout, "Poisson histogram:\n");
+  for(ii=0; ii<len; ii++){
+    fprintf(stdout, "Index / Count: %lld / %lld\n", ii, hh[ii]);
+  }
+
+  return(len);
 }
 

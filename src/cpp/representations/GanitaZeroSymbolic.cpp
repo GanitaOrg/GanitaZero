@@ -297,7 +297,7 @@ double GanitaZeroSymbolic::computeCondEnt1FromScratch(int h_len)
 {
   my_hist->initConditional(h_len);
   my_hist->computeCondHist1(seq, seq_size);
-  fprintf(stdout, "Max count: %ld\n", my_hist->findMaxCondHist());
+  fprintf(stdout, "Max count: %lld\n", my_hist->findMaxCondHist());
   my_hist->findTopIndices(.51);
   return(my_hist->computeCondEnt1());
 }
@@ -327,5 +327,10 @@ string GanitaZeroSymbolic::returnB64Encode(void)
 int GanitaZeroSymbolic::close(void)
 {
   return(gzi->close());
+}
+
+uint64_t GanitaZeroSymbolic::dumpHistHist(uint64_t len)
+{
+  return(my_hist->dumpHistHist(len));
 }
 

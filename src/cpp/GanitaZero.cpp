@@ -248,3 +248,8 @@ int GanitaZero::dumpCondHistSep(void)
   return(gSym.dumpCondHistSep());
 }
 
+uint64_t GanitaZero::dumpHistHist(uint64_t len)
+{
+  return(gSym.dumpHistHist(len));
+}
+

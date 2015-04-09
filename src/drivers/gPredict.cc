@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
   double entropy[32][2];
   double max;
   int max_ii;
+  GanitaZeroHist testHist;
+  string testStr(" ");
 
   if(argc < 3){
     std::cout<<"Usage: input-file output-file"<<std::endl;
@@ -41,9 +43,16 @@ int main(int argc, char *argv[])
   }
 
   //fprintf(stdout, "Conditional bits: %d\n", max_ii);
+  
   gzero.computeCondEnt1FromScratch(max_ii);
+  
   //gzero.dumpCondHistSep();
   //gzero.dumpCondHist();
+
+  cout<<"Poisson: "<<testHist.returnPoisson(1,2)<<endl;
+  //testHist.returnArc4Rand(testStr);
+  //fprintf(stdout, "Random bits: %02X\n", testStr.c_str()[0]);
+  testHist.dumpRand(256);
 
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();

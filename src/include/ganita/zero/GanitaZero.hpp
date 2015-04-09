@@ -53,5 +53,6 @@ public:
   int close(void);
   int dumpCondHist(void);
   int dumpCondHistSep(void);
+  uint64_t dumpHistHist(uint64_t len);
 };
 

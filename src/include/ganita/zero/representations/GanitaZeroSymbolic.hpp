@@ -47,5 +47,6 @@ public:
   unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
   int close(void);
+  uint64_t dumpHistHist(uint64_t len);
 };
 

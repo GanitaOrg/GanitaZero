@@ -16,7 +16,9 @@ int main(int argc, char *argv[])
   //cout<<"Number of stages:        "<<gzero.returnNumStages()<<endl;
   //gzero.dumpStage(1);
   gzero.init(argv[1]);
-  //gzero.computeByteHist();
+  gzero.loadCharSeq(argv[1]);
+  gzero.computeByteHist();
+  gzero.dumpHistHist(8);
   cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch(13)<<endl;
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();

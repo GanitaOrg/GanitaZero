@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <bitset>
+#include <cmath>
 
 #include "ganita/graph/GanitaBuffer.hpp"
 
@@ -29,6 +30,7 @@ private:
   int est_num;               // number of bits to estimate probability on
   uint64_t max_count;
   uint64_t max_index;
+  uint64_t divisor;
   //double *ent;               // histogram
 public:
   GanitaZeroHist(void);
@@ -45,5 +47,9 @@ public:
   unsigned long dumpCondHistSep(void);
   uint64_t findMaxCondHist(void);
   uint64_t findTopIndices(double ratio);
+  double returnPoisson(double lambda, uint64_t k);
+  uint64_t returnArc4Rand(char *myran, uint64_t len);
+  uint64_t dumpRand(uint64_t len);
+  uint64_t dumpHistHist(uint64_t len);
 };
 
