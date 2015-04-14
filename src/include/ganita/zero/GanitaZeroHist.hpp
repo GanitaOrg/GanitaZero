@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <bitset>
 #include <cmath>
+#include <bsd/stdlib.h>
 
 #include "ganita/graph/GanitaBuffer.hpp"
 

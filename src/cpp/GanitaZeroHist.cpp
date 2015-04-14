@@ -272,7 +272,7 @@ uint64_t GanitaZeroHist::findTopIndices(double ratio)
   count = 0;
   for(ii=0; ii<2*hist_length; ii++){
     if(hist[ii] > tmp_thresh){
-      fprintf(stdout, "High Index: %lld\n", ii);
+      fprintf(stdout, "High Index: %lld\n", (long long int) ii);
       count++;
     }
   }
@@ -296,7 +296,7 @@ uint64_t GanitaZeroHist::dumpRand(uint64_t len)
   uint64_t ii;
   char *mychar = new char[len];
   returnArc4Rand(mychar, len);
-  fprintf(stdout, "Random %lld bits:\n", 8*len);
+  fprintf(stdout, "Random %lld bits:\n", (long long int) 8*len);
   for(ii=0; ii<len; ii++){
     //fprintf(stdout, "%02X", mychar[ii] & 0xff);
     fprintf(stdout, "%c", mychar[ii] & 0xff);
@@ -317,7 +317,8 @@ uint64_t GanitaZeroHist::dumpHistHist(uint64_t len)
   }
   //fprintf(stdout, "Poisson histogram:\n");
   for(ii=0; ii<len; ii++){
-    fprintf(stdout, "Index / Count: %lld / %lld\n", ii, hh[ii]);
+    fprintf(stdout, "Index / Count: %lld / %lld\n", 
+	    (long long int) ii, (long long int) hh[ii]);
   }
 
   return(len);

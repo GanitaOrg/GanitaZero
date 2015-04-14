@@ -68,8 +68,8 @@ add_executable(gzero ../src/drivers/gzero.cc)
 add_executable(gp ../src/drivers/gPredict.cc)
 add_test(gztest gzero ../sample/Chacon3.gztran)
 
-target_link_libraries (gzero GanitaZero GanitaGraph m)
-target_link_libraries (gp GanitaZero GanitaGraph m)
+target_link_libraries (gzero GanitaZero GanitaGraph m bsd)
+target_link_libraries (gp GanitaZero GanitaGraph m bsd)
 
 install(TARGETS GanitaZero DESTINATION lib)
 install(TARGETS gzero DESTINATION bin)
