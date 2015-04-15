@@ -140,30 +140,30 @@ int GanitaZeroSymbolic::init(void)
 
 int GanitaZeroSymbolic::init(char *input_file)
 {
-  unsigned long ii;
+  //unsigned long ii;
   // Using GanitaBuffer.
   gzi = new GanitaBuffer();
   gzi->open(input_file);
   // Set alphabet to zero.
-  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-    alphabet[ii] = 0;
-  }
+  // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+  //   alphabet[ii] = 0;
+  // }
   // Determine alphabet size
-  for(ii=0; ii<gzi->size(); ii++){
-    if(alphabet[gzi->getByte(ii)] <= 0){
-      alphabet[gzi->getByte(ii)]++;
-    }
-    if(gzi->getByte(ii) > alphabet_max){
-      alphabet_max = gzi->getByte(ii);
-    }
-  }
-  alphabet_size = 0;
-  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-    if(alphabet[ii] > 0){
-      alphabet_size++;
+  // for(ii=0; ii<gzi->size(); ii++){
+  //   if(alphabet[gzi->getByte(ii)] <= 0){
+  //     alphabet[gzi->getByte(ii)]++;
+  //   }
+  //   if(gzi->getByte(ii) > alphabet_max){
+  //     alphabet_max = gzi->getByte(ii);
+  //   }
+  // }
+  // alphabet_size = 0;
+  // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+  //   if(alphabet[ii] > 0){
+  //     alphabet_size++;
       //cout<<std::hex<<ii<<":";
-    }
-  }
+  //   }
+  // }
 
   //cout<<"Scanned "<<std::dec<<gzi->size()<<" bytes.\n";
   //cout<<"Alph size: "<<alphabet_size<<endl;
@@ -305,8 +305,14 @@ double GanitaZeroSymbolic::computeCondEnt1FromScratch(int h_len)
 double GanitaZeroSymbolic::computeCondEnt2FromScratch(int h_len)
 {
   my_hist->initConditional(h_len);
-  my_hist->computeCondHist1(gzi);
+  my_hist->computeCondHist2(gzi);
   return(my_hist->computeCondEnt1());
+}
+
+double GanitaZeroSymbolic::computeCondHist2(int h_len)
+{
+  my_hist->initConditional(h_len);
+  return(my_hist->computeCondHist2(gzi));
 }
 
 unsigned long GanitaZeroSymbolic::dumpCondHist1(void)

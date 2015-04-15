@@ -8,7 +8,10 @@
 #include <cstdio>
 #include <bitset>
 #include <cmath>
+
+#ifndef __APPLE__
 #include <bsd/stdlib.h>
+#endif
 
 #include "ganita/graph/GanitaBuffer.hpp"
 
@@ -42,6 +45,7 @@ public:
   int computeByteHist(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(GanitaBuffer *input);
+  int computeCondHist2(GanitaBuffer *input);
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
   unsigned long dumpCondHist1(void);

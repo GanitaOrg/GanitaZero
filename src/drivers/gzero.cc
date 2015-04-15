@@ -6,24 +6,36 @@ int main(int argc, char *argv[])
 {
   GanitaZero gzero(1);
   GanitaZeroSub chacon3;
+  int hist_len;
+  GanitaZeroVersion version;
 
+  // if(argc < 3){
+  //   std::cout<<"Usage: input-file output-file"<<std::endl;
+  //   exit(1);
+  // }
   if(argc < 3){
-    std::cout<<"Usage: input-file output-file"<<std::endl;
+    std::cout<<"Usage: input-file hist_len"<<std::endl;
+    std::cout<<"Version: "<<version.returnVersion()<<endl;
     exit(1);
   }
+
+  sscanf(argv[2],"%d",&hist_len);
 
   //gzero.readT(argv[1]);
   //cout<<"Number of stages:        "<<gzero.returnNumStages()<<endl;
   //gzero.dumpStage(1);
   gzero.init(argv[1]);
-  gzero.loadCharSeq(argv[1]);
-  gzero.computeByteHist();
-  gzero.dumpHistHist(8);
-  cout<<"Conditional entropy: "<<gzero.computeCondEnt2FromScratch(13)<<endl;
+  //gzero.loadCharSeq(argv[1]);
+  //gzero.computeByteHist();
+  //cout<<"Conditional Histogram: "<<
+  gzero.computeCondHist2(hist_len-1);
+  cout<<hist_len-1<<" ";
+  //<<endl;
+  gzero.dumpHistHist(256);
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();
-  chacon3.initOut(argv[2]);
-  chacon3.generateChacon3(1000000);
-  chacon3.close();
+  //chacon3.initOut(argv[2]);
+  //chacon3.generateChacon3(1000000);
+  //chacon3.close();
 }
 

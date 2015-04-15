@@ -177,6 +177,35 @@ int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
   return 1;
 }
 
+int GanitaZeroHist::computeCondHist2(GanitaBuffer *input)
+{
+  unsigned long cond_bits;
+  unsigned long pbit, cbit;
+  unsigned long ii, jj;
+  unsigned long b1, bottom;
+
+  //cout<<"Number of bytes: "<<input->size()<<endl;
+  cout<<input->size()<<" ";
+
+  for(ii=condition_num; ii<8*(input->size()-1); ii++){
+    // Get the probability bit
+    b1 = ii / 8;
+    bottom = ii % 8;
+    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+    cond_bits = 0;
+    for(jj=ii-condition_num; jj<ii; jj++){
+      bottom = jj % 8;
+      b1 = jj / 8;
+      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+      cond_bits |= (cbit << (jj + condition_num - ii));
+    }
+    //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
+    hist[cond_bits + (pbit << condition_num)]++;
+  }
+
+  return 1;
+}
+
 // Compute an approximation of the conditional entropy
 double GanitaZeroHist::computeCondEnt1(void)
 {
@@ -296,7 +325,7 @@ uint64_t GanitaZeroHist::dumpRand(uint64_t len)
   uint64_t ii;
   char *mychar = new char[len];
   returnArc4Rand(mychar, len);
-  fprintf(stdout, "Random %lld bits:\n", (long long int) 8*len);
+  //fprintf(stdout, "Random %lld bits:\n", (long long int) 8*len);
   for(ii=0; ii<len; ii++){
     //fprintf(stdout, "%02X", mychar[ii] & 0xff);
     fprintf(stdout, "%c", mychar[ii] & 0xff);
@@ -309,17 +338,19 @@ uint64_t GanitaZeroHist::dumpHistHist(uint64_t len)
 {
   uint64_t *hh = new uint64_t[len]();
   uint64_t ii;
-  fprintf(stdout, "Poisson histogram length %ld:\n", hist_length);
-  for(ii=0; ii<hist_length; ii++){
+  //fprintf(stdout, "Poisson histogram length %ld:\n", hist_length<<1);
+  for(ii=0; ii<(hist_length<<1); ii++){
     if(hist[ii] < len){
       hh[hist[ii]]++;
     }
   }
   //fprintf(stdout, "Poisson histogram:\n");
   for(ii=0; ii<len; ii++){
-    fprintf(stdout, "Index / Count: %lld / %lld\n", 
-	    (long long int) ii, (long long int) hh[ii]);
+    //fprintf(stdout, "Index / Count: %lld / %lld\n", 
+    //	    (long long int) ii, (long long int) hh[ii]);
+    fprintf(stdout, "%lld ", (long long int) hh[ii]);
   }
+  fprintf(stdout, "\n");
 
   return(len);
 }

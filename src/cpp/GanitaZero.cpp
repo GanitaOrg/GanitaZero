@@ -228,6 +228,13 @@ double GanitaZero::computeCondEnt2FromScratch(int h_len)
   return(ent);
 }
 
+double GanitaZero::computeCondHist2(int h_len)
+{
+  double val = gSym.computeCondHist2(h_len);
+  //gSym.dumpCondHist1();
+  return(val);
+}
+
 string GanitaZero::returnB64Encode(void)
 {
   return(gSym.returnB64Encode());

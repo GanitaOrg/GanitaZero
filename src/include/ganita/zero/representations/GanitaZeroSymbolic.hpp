@@ -43,6 +43,7 @@ public:
   unsigned long dumpHist(void);
   double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
+  double computeCondHist2(int h_len);
   unsigned long dumpCondHist1(void);
   unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
