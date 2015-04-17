@@ -144,6 +144,7 @@ int GanitaZeroSymbolic::init(char *input_file)
   // Using GanitaBuffer.
   gzi = new GanitaBuffer();
   gzi->open(input_file);
+  gzi->createInOutBuffer();
   // Set alphabet to zero.
   // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
   //   alphabet[ii] = 0;
@@ -161,12 +162,12 @@ int GanitaZeroSymbolic::init(char *input_file)
   // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
   //   if(alphabet[ii] > 0){
   //     alphabet_size++;
-      //cout<<std::hex<<ii<<":";
+  //     cout<<std::hex<<ii<<":";
   //   }
   // }
 
-  //cout<<"Scanned "<<std::dec<<gzi->size()<<" bytes.\n";
-  //cout<<"Alph size: "<<alphabet_size<<endl;
+  // cout<<"Scanned "<<std::dec<<gzi->size()<<" bytes.\n";
+  // cout<<"Alph size: "<<alphabet_size<<endl;
   
   return(alphabet_size);
 }
