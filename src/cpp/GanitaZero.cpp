@@ -228,7 +228,21 @@ double GanitaZero::computeCondEnt2FromScratch(int h_len)
   return(ent);
 }
 
+double GanitaZero::computeCondEntAll(int h_len)
+{
+  double ent = gSym.computeCondEntAll(h_len);
+  //gSym.dumpCondHist1();
+  return(ent);
+}
+
 double GanitaZero::computeCondHist2(int h_len)
+{
+  double val = gSym.computeCondHist2(h_len);
+  //gSym.dumpCondHist1();
+  return(val);
+}
+
+double GanitaZero::computeCondHistAll(int h_len)
 {
   double val = gSym.computeCondHist2(h_len);
   //gSym.dumpCondHist1();
@@ -258,5 +272,10 @@ int GanitaZero::dumpCondHistSep(void)
 uint64_t GanitaZero::dumpHistHist(uint64_t len)
 {
   return(gSym.dumpHistHist(len));
+}
+
+uint64_t GanitaZero::findTopFreq(void)
+{
+  return(gSym.findTopFreq());
 }
 

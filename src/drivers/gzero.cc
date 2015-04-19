@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
   //gzero.loadCharSeq(argv[1]);
   //gzero.computeByteHist();
 
+  gzero.computeCondEntAll(25);
+
   max = 0;
   max_ii = 4;
   entropy[4][0] = gzero.computeCondEnt2FromScratch(4);
@@ -50,14 +52,15 @@ int main(int argc, char *argv[])
     }
   }
 
-  hist_len = max_ii - 5;
+  hist_len = max_ii;
   cout<<"Conditional Histogram: "<<gzero.computeCondHist2(hist_len-1);
   cout<<" "<<hist_len-1<<endl;
-  gzero.dumpHistHist(1000000);
+  //gzero.dumpHistHist(1000000);
+  gzero.findTopFreq();
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();
-  chacon.initOut(argv[2]);
-  chacon.generateChacon3(1000000);
-  chacon.close();
+  //chacon.initOut(argv[2]);
+  //chacon.generateChacon3(1000000);
+  //chacon.close();
 }
 

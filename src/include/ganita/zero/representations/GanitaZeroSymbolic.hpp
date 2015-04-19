@@ -43,11 +43,14 @@ public:
   unsigned long dumpHist(void);
   double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
+  double computeCondEntAll(int h_len);
   double computeCondHist2(int h_len);
+  double computeCondHistAll(int h_len);
   unsigned long dumpCondHist1(void);
   unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
   int close(void);
   uint64_t dumpHistHist(uint64_t len);
+  uint64_t findTopFreq(void);
 };
 

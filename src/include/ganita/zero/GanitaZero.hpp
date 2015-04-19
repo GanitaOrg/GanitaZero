@@ -49,11 +49,14 @@ public:
   unsigned long computeByteHist(void);
   double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
+  double computeCondEntAll(int h_len);
   double computeCondHist2(int h_len);
+  double computeCondHistAll(int h_len);
   string returnB64Encode(void);
   int close(void);
   int dumpCondHist(void);
   int dumpCondHistSep(void);
   uint64_t dumpHistHist(uint64_t len);
+  uint64_t findTopFreq(void);
 };
 

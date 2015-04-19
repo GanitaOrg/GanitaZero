@@ -310,10 +310,23 @@ double GanitaZeroSymbolic::computeCondEnt2FromScratch(int h_len)
   return(my_hist->computeCondEnt1());
 }
 
+double GanitaZeroSymbolic::computeCondEntAll(int h_len)
+{
+  my_hist->initConditional(h_len);
+  my_hist->computeCondHistAll(gzi);
+  return(my_hist->computeCondEntAll());
+}
+
 double GanitaZeroSymbolic::computeCondHist2(int h_len)
 {
   my_hist->initConditional(h_len);
   return(my_hist->computeCondHist2(gzi));
+}
+
+double GanitaZeroSymbolic::computeCondHistAll(int h_len)
+{
+  my_hist->initConditional(h_len);
+  return(my_hist->computeCondHistAll(gzi));
 }
 
 unsigned long GanitaZeroSymbolic::dumpCondHist1(void)
@@ -339,5 +352,10 @@ int GanitaZeroSymbolic::close(void)
 uint64_t GanitaZeroSymbolic::dumpHistHist(uint64_t len)
 {
   return(my_hist->dumpHistHist(len));
+}
+
+uint64_t GanitaZeroSymbolic::findTopFreq(void)
+{
+  return(my_hist->findTopFreq(gzi->size()));
 }
 

@@ -1,5 +1,13 @@
 #include "ganita/zero/GanitaZeroHist.hpp"
 
+#ifndef DEFAULT_NUM_TOP_FREQ
+#define DEFAULT_NUM_TOP_FREQ 100
+#endif
+
+#ifndef DEFAULT_RAT_TOP_FREQ
+#define DEFAULT_RAT_TOP_FREQ 4
+#endif
+
 GanitaZeroHist::GanitaZeroHist(void)
 {
   hist_length = 0;
@@ -198,12 +206,113 @@ int GanitaZeroHist::computeCondHist2(GanitaBuffer *input)
       b1 = jj / 8;
       cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
       cond_bits |= (cbit << (jj + condition_num - ii));
+      //fprintf(stdout, "iValues: %04X, %01X %02X %d\n", cond_bits,pbit,input->getByte(b1),condition_num);
     }
-    //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
+    //fprintf(stdout, "fValues: %04X, %01X %02X\n", cond_bits,pbit,input->getByte(b1));
     hist[cond_bits + (pbit << condition_num)]++;
   }
 
   return 1;
+}
+
+// This computes the conditional histograms for 
+// all patterns of length less than condition_num. 
+int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
+{
+  unsigned long cond_bits;
+  uint64_t ii;
+  int jj;
+  uint64_t count1, count2;
+
+  //cout<<"Number of bytes: "<<input->size()<<endl;
+  //cout<<input->size()<<" ";
+
+  count1 = 0;
+  count2 = 0;
+  cond_bits = 0;
+  for(jj=0; jj<condition_num; jj++){
+    cond_bits = (cond_bits << 1) | (input->getBit(condition_num - 1 - jj));
+    hist[cond_bits + count2]++;
+    count1++;
+    count2 += (0x1 << count1);
+    //fprintf(stdout, "iValues: %04X, %01X %02X %d\n", cond_bits,pbit,input->getByte(b1),condition_num);
+  }
+  for(ii=condition_num; ii<8*(input->size()-1); ii++){
+    count1 = 0;
+    count2 = 0;
+    cond_bits = (cond_bits >> 1) | ((input->getBit(ii)) << (condition_num - 1));
+    for(jj=0; jj<condition_num; jj++){
+      hist[(cond_bits >> (condition_num - 1 - jj)) + count2]++;
+      count1++;
+      count2 += (0x1 << count1);
+    }
+  }
+
+  return 1;
+}
+
+// Compute an approximation of the conditional entropy
+double GanitaZeroHist::computeCondEntAll(void)
+{
+  uint64_t ii, total;
+  double pp, entropy;
+  uint64_t count1, count2;
+  uint64_t s1, s2, s3;
+  int jj;
+
+  entropy = 0;
+  count1 = 0;
+  count2 = 2;
+  for(jj=0; jj<condition_num; jj++){
+    total = 0;
+    entropy = 0;
+    for(ii=count1; ii<count2; ii++){
+      total += hist[ii];
+    }    
+    s2 = count2 - count1;
+    s1 = s2 >> 1;
+    s3 = s1 + count1;
+    for(ii=0; ii<s1; ii++){
+      if((hist[ii+count1] != 0) || (hist[ii+s3] != 0)){
+	pp = ((double) hist[ii+count1]) / ((double) (hist[ii+count1] + hist[ii+s3]));
+	entropy += 
+	  4*pp*(1-pp)*((double) (hist[ii+count1] + hist[ii+s3])) / ((double) total);
+      }
+    }
+    fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
+    stat.push_back(entropy);
+    count1 = count2;
+    count2 += (0x4 << jj);
+  }
+  
+  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen1());
+
+  return(entropy);
+}
+
+int GanitaZeroHist::bestPatLen1(void)
+{
+  uint32_t ii, max_ii;
+  double max;
+  double tmp;
+
+  max = 0;
+  max_ii = 0;
+  for(ii=1; ii<stat.size()-1; ii++){
+    //tmp = stat[ii-1] + stat[ii+1] - 2*stat[ii];
+    if(stat[ii+1] == 0){
+      //choose max_ii = ii
+      max_ii = ii;
+      break;
+    }
+    tmp = (stat[ii-1]/stat[ii]) - (stat[ii]/stat[ii+1]);
+    if(tmp > max){
+      max = tmp;
+      max_ii = ii - 1;
+    }
+  }
+  
+  return(max_ii);
 }
 
 // Compute an approximation of the conditional entropy
@@ -348,10 +457,36 @@ uint64_t GanitaZeroHist::dumpHistHist(uint64_t len)
   for(ii=0; ii<len; ii++){
     //fprintf(stdout, "Index / Count: %lld / %lld\n", 
     //	    (long long int) ii, (long long int) hh[ii]);
-    fprintf(stdout, "%lld ", (long long int) hh[ii]);
+    fprintf(stdout, "%ld ", hh[ii]);
   }
   fprintf(stdout, "\n");
 
   return(len);
+}
+
+// Use ratio to find top patterns. 
+uint64_t GanitaZeroHist::findTopFreq(uint64_t fsize)
+{
+  uint64_t ii;
+  uint64_t hh;
+  uint64_t count;
+  double thresh;
+  uint64_t htotal;
+  
+  htotal = 0;
+  count = 0;
+  hh = (hist_length<<1);
+  thresh = DEFAULT_RAT_TOP_FREQ * ((fsize / hh) + 1);
+
+  for(ii=0; ii<hh; ii++){
+    if(hist[ii] > thresh){
+      fprintf(stdout, "Common pattern: %04X %ld\n", (uint32_t) ii, hist[ii]);
+      count++;
+      htotal += hist[ii];
+    }
+  }
+  fprintf(stdout, "Total: %ld %ld\n", count, htotal);
+
+  return(count);
 }
 

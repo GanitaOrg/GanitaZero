@@ -11,7 +11,7 @@ Compile:
 cd to root directory containing this README.md file. 
 mkdir build
 cd build/
-cmake ../config
+cmake -DCMAKE_BUILD_TYPE=Release ../config
 make 
 sudo make install
 
