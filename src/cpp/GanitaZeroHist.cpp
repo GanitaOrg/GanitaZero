@@ -16,6 +16,7 @@ GanitaZeroHist::GanitaZeroHist(void)
   max_count = 0;
   max_index = 0;
   divisor = 1;
+  longone = 0x1;
 }
 
 GanitaZeroHist::GanitaZeroHist(unsigned long ss)
@@ -30,6 +31,7 @@ GanitaZeroHist::GanitaZeroHist(unsigned long ss)
   max_count = 0;
   max_index = 0;
   divisor = 1;
+  longone = 0x1;
 }
 
 unsigned long GanitaZeroHist::init(unsigned long ss)
@@ -74,13 +76,13 @@ unsigned long GanitaZeroHist::initConditional(int h_len)
   }
   if(hist_length <= 0){
     //cout<<"previously unallocated\n";
-    hist_length = 0x1 << h_len;
+    hist_length = longone << h_len;
     hist = new(nothrow) unsigned long[2*hist_length]();
   }
   else {
     //cout<<"previously allocated\n";
     delete hist;
-    hist_length = 0x1 << h_len;
+    hist_length = longone << h_len;
     hist = new(nothrow) unsigned long[2*hist_length]();
   }
   if(!hist){
@@ -142,12 +144,12 @@ int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
     // Get the probability bit
     b1 = ii / 8;
     bottom = ii % 8;
-    pbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & 0x1);
+    pbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & longone);
     cond_bits = 0;
     for(jj=ii-condition_num; jj<ii; jj++){
       bottom = jj % 8;
       b1 = jj / 8;
-      cbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & 0x1);
+      cbit = (unsigned long) (((ptr[b1] & 0xff) >> bottom) & longone);
       cond_bits |= (cbit << (jj + condition_num - ii));
     }
     //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
@@ -170,12 +172,12 @@ int GanitaZeroHist::computeCondHist1(GanitaBuffer *input)
     // Get the probability bit
     b1 = ii / 8;
     bottom = ii % 8;
-    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & longone);
     cond_bits = 0;
     for(jj=ii-condition_num; jj<ii; jj++){
       bottom = jj % 8;
       b1 = jj / 8;
-      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & longone);
       cond_bits |= (cbit << (jj + condition_num - ii));
     }
     //fprintf(stdout, "Values: %04X, %01X\n", cond_bits,pbit);
@@ -199,12 +201,12 @@ int GanitaZeroHist::computeCondHist2(GanitaBuffer *input)
     // Get the probability bit
     b1 = ii / 8;
     bottom = ii % 8;
-    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+    pbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & longone);
     cond_bits = 0;
     for(jj=ii-condition_num; jj<ii; jj++){
       bottom = jj % 8;
       b1 = jj / 8;
-      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & 0x1);
+      cbit = (unsigned long) (((input->getByte(b1) & 0xff) >> bottom) & longone);
       cond_bits |= (cbit << (jj + condition_num - ii));
       //fprintf(stdout, "iValues: %04X, %01X %02X %d\n", cond_bits,pbit,input->getByte(b1),condition_num);
     }
@@ -234,7 +236,7 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
     cond_bits = (cond_bits << 1) | (input->getBit(condition_num - 1 - jj));
     hist[cond_bits + count2]++;
     count1++;
-    count2 += (0x1 << count1);
+    count2 += (longone << count1);
     //fprintf(stdout, "iValues: %04X, %01X %02X %d\n", cond_bits,pbit,input->getByte(b1),condition_num);
   }
   for(ii=condition_num; ii<8*(input->size()-1); ii++){
@@ -244,7 +246,7 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
     for(jj=0; jj<condition_num; jj++){
       hist[(cond_bits >> (condition_num - 1 - jj)) + count2]++;
       count1++;
-      count2 += (0x1 << count1);
+      count2 += (longone << count1);
     }
   }
 
@@ -282,12 +284,12 @@ double GanitaZeroHist::computeCondEntAll(void)
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
     stat.push_back(entropy);
     count1 = count2;
-    count2 += (0x4 << jj);
+    count2 += (longone << (jj+2));
   }
   
   int bestPatLen = bestPatLen1();
   fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
-  fprintf(stdout, "Best tile: %16X\n", findMaxCondHist(bestPatLen));
+  fprintf(stdout, "Best tile: %16lX\n", findMaxCondHist(bestPatLen));
 
   return(entropy);
 }
@@ -325,13 +327,13 @@ GanitaZeroTile GanitaZeroHist::getBestTile1(void)
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
     stat.push_back(entropy);
     count1 = count2;
-    count2 += (0x4 << jj);
+    count2 += (longone << (jj+2));
   }
   
   bestPatLen = bestPatLen1();
   fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
   tile.set(findMaxCondHist(bestPatLen), bestPatLen);
-  fprintf(stdout, "Best tile: %16X\n", tile.getTile());
+  fprintf(stdout, "Best tile: %16lX\n", tile.getTile());
 
   return(1);
 }
@@ -449,7 +451,8 @@ uint64_t GanitaZeroHist::findMaxCondHist(void)
 
 uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
 {
-  uint64_t ii;
+  int ii;
+  uint64_t jj;
   uint64_t max;
   uint64_t max_ii;
   uint64_t start_ii, end_ii;
@@ -460,16 +463,16 @@ uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
   }
   start_ii = 0;
   for(ii=1; ii<hist_ii; ii++){
-    start_ii += (0x1 << ii);
+    start_ii += (longone << ii);
   }
-  end_ii = start_ii + (0x1 << hist_ii);
+  end_ii = start_ii + (longone << hist_ii);
 
   max = 0;
   max_ii = 0;
-  for(ii=start_ii; ii<end_ii; ii++){
-    if(hist[ii] > max){
-      max_ii = ii - start_ii;
-      max = hist[ii];
+  for(jj=start_ii; jj<end_ii; jj++){
+    if(hist[jj] > max){
+      max_ii = jj - start_ii;
+      max = hist[jj];
     }
   }
   max_count = max;

@@ -37,6 +37,7 @@ private:
   uint64_t max_index;
   uint64_t divisor;
   vector<double> stat;
+  uint64_t longone;
 public:
   GanitaZeroHist(void);
   GanitaZeroHist(unsigned long size);
