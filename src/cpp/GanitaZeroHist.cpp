@@ -285,9 +285,55 @@ double GanitaZeroHist::computeCondEntAll(void)
     count2 += (0x4 << jj);
   }
   
-  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen1());
+  int bestPatLen = bestPatLen1();
+  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
+  fprintf(stdout, "Best tile: %16X\n", findMaxCondHist(bestPatLen));
 
   return(entropy);
+}
+
+// Compute an approximation of the conditional entropy
+GanitaZeroTile GanitaZeroHist::getBestTile1(void)
+{
+  uint64_t ii, total;
+  double pp, entropy;
+  uint64_t count1, count2;
+  uint64_t s1, s2, s3;
+  int jj;
+  GanitaZeroTile tile;
+  int bestPatLen;
+
+  entropy = 0;
+  count1 = 0;
+  count2 = 2;
+  for(jj=0; jj<condition_num; jj++){
+    total = 0;
+    entropy = 0;
+    for(ii=count1; ii<count2; ii++){
+      total += hist[ii];
+    }    
+    s2 = count2 - count1;
+    s1 = s2 >> 1;
+    s3 = s1 + count1;
+    for(ii=0; ii<s1; ii++){
+      if((hist[ii+count1] != 0) || (hist[ii+s3] != 0)){
+	pp = ((double) hist[ii+count1]) / ((double) (hist[ii+count1] + hist[ii+s3]));
+	entropy += 
+	  4*pp*(1-pp)*((double) (hist[ii+count1] + hist[ii+s3])) / ((double) total);
+      }
+    }
+    fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
+    stat.push_back(entropy);
+    count1 = count2;
+    count2 += (0x4 << jj);
+  }
+  
+  bestPatLen = bestPatLen1();
+  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
+  tile.set(findMaxCondHist(bestPatLen), bestPatLen);
+  fprintf(stdout, "Best tile: %16X\n", tile.getTile());
+
+  return(1);
 }
 
 int GanitaZeroHist::bestPatLen1(void)
@@ -399,6 +445,36 @@ uint64_t GanitaZeroHist::findMaxCondHist(void)
   max_count = max;
   max_index = max_ii;
   return(max);
+}
+
+uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
+{
+  uint64_t ii;
+  uint64_t max;
+  uint64_t max_ii;
+  uint64_t start_ii, end_ii;
+
+  if(hist_ii >= condition_num){
+    fprintf(stderr, "Histogram index is out of bounds.\n");
+    hist_ii = hist_ii % condition_num;
+  }
+  start_ii = 0;
+  for(ii=1; ii<hist_ii; ii++){
+    start_ii += (0x1 << ii);
+  }
+  end_ii = start_ii + (0x1 << hist_ii);
+
+  max = 0;
+  max_ii = 0;
+  for(ii=start_ii; ii<end_ii; ii++){
+    if(hist[ii] > max){
+      max_ii = ii - start_ii;
+      max = hist[ii];
+    }
+  }
+  max_count = max;
+  max_index = max_ii;
+  return(max_ii);
 }
 
 uint64_t GanitaZeroHist::findTopIndices(double ratio)

@@ -235,6 +235,12 @@ double GanitaZero::computeCondEntAll(int h_len)
   return(ent);
 }
 
+int GanitaZero::tileSpace(int h_len)
+{
+  gSym.tileSpace(h_len);
+  return(1);
+}
+
 double GanitaZero::computeCondHist2(int h_len)
 {
   double val = gSym.computeCondHist2(h_len);

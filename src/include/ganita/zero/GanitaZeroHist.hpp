@@ -14,6 +14,7 @@
 #endif
 
 #include "ganita/graph/GanitaBuffer.hpp"
+#include "ganita/zero/GanitaZeroTile.hpp"
 
 #ifndef DEFAULT_HIST_SIZE
 #define DEFAULT_HIST_SIZE 256
@@ -48,12 +49,14 @@ public:
   int computeCondHist2(GanitaBuffer *input);
   int computeCondHistAll(GanitaBuffer *input);
   double computeCondEntAll(void);
+  GanitaZeroTile getBestTile1(void);
   int bestPatLen1(void);
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
   unsigned long dumpCondHist1(void);
   unsigned long dumpCondHistSep(void);
   uint64_t findMaxCondHist(void);
+  uint64_t findMaxCondHist(int hist_ii);
   uint64_t findTopIndices(double ratio);
   double returnPoisson(double lambda, uint64_t k);
   uint64_t returnArc4Rand(char *myran, uint64_t len);

@@ -317,6 +317,14 @@ double GanitaZeroSymbolic::computeCondEntAll(int h_len)
   return(my_hist->computeCondEntAll());
 }
 
+int GanitaZeroSymbolic::tileSpace(int h_len)
+{
+  my_hist->initConditional(h_len);
+  my_hist->computeCondHistAll(gzi);
+  my_hist->getBestTile1();
+  return(1);
+}
+
 double GanitaZeroSymbolic::computeCondHist2(int h_len)
 {
   my_hist->initConditional(h_len);
