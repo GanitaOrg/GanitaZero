@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <bitset>
 #include <cmath>
+#include <boost/shared_ptr.hpp>
 
 #ifndef __APPLE__
 #include <bsd/stdlib.h>
@@ -51,6 +52,8 @@ public:
   int computeCondHistAll(GanitaBuffer *input);
   double computeCondEntAll(void);
   GanitaZeroTile getBestTile1(void);
+  int getBestSize(void);
+  int getBestTiles(int bpL, vector< std::shared_ptr<GanitaZeroTile> > tile);
   int bestPatLen1(void);
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
@@ -58,6 +61,7 @@ public:
   unsigned long dumpCondHistSep(void);
   uint64_t findMaxCondHist(void);
   uint64_t findMaxCondHist(int hist_ii);
+  int findTopCondHist(int hist_ii, vector< std::shared_ptr<GanitaZeroTile> > mytiles);
   uint64_t findTopIndices(double ratio);
   double returnPoisson(double lambda, uint64_t k);
   uint64_t returnArc4Rand(char *myran, uint64_t len);

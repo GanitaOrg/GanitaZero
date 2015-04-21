@@ -24,6 +24,7 @@ protected:
   unsigned char alphabet[ALPHABET_ALLOC_SIZE];
   GanitaZeroHist *my_hist;
   GanitaBuffer *gzi;
+  vector< std::shared_ptr<GanitaZeroTile> > mytile;
 public:
   GanitaZeroSymbolic(void);
   GanitaZeroSymbolic(std::ifstream &sym_file);
@@ -45,6 +46,9 @@ public:
   double computeCondEnt2FromScratch(int h_len);
   double computeCondEntAll(int h_len);
   int tileSpace(int h_len);
+  int addTile(void);
+  uint64_t countBitPat1(GanitaZeroTile mytile);
+  uint64_t countBitPat2(std::shared_ptr<GanitaZeroTile>& mytile);
   double computeCondHist2(int h_len);
   double computeCondHistAll(int h_len);
   unsigned long dumpCondHist1(void);

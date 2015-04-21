@@ -256,7 +256,7 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
 // Compute an approximation of the conditional entropy
 double GanitaZeroHist::computeCondEntAll(void)
 {
-  uint64_t ii, total;
+  uint64_t ii, total, combo;
   double pp, entropy;
   uint64_t count1, count2;
   uint64_t s1, s2, s3;
@@ -275,10 +275,11 @@ double GanitaZeroHist::computeCondEntAll(void)
     s1 = s2 >> 1;
     s3 = s1 + count1;
     for(ii=0; ii<s1; ii++){
-      if((hist[ii+count1] != 0) || (hist[ii+s3] != 0)){
-	pp = ((double) hist[ii+count1]) / ((double) (hist[ii+count1] + hist[ii+s3]));
+      combo = hist[ii+count1] + hist[ii+s3];
+      if(combo != 0){
+	pp = ((double) hist[ii+count1]) / ((double) combo);
 	entropy += 
-	  4*pp*(1-pp)*((double) (hist[ii+count1] + hist[ii+s3])) / ((double) total);
+	  4*pp*(1-pp)*((double) combo) / ((double) total);
       }
     }
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
@@ -287,55 +288,44 @@ double GanitaZeroHist::computeCondEntAll(void)
     count2 += (longone << (jj+2));
   }
   
-  int bestPatLen = bestPatLen1();
-  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
-  fprintf(stdout, "Best tile: %16lX\n", findMaxCondHist(bestPatLen));
-
   return(entropy);
 }
 
 // Compute an approximation of the conditional entropy
 GanitaZeroTile GanitaZeroHist::getBestTile1(void)
 {
-  uint64_t ii, total;
-  double pp, entropy;
-  uint64_t count1, count2;
-  uint64_t s1, s2, s3;
-  int jj;
   GanitaZeroTile tile;
   int bestPatLen;
-
-  entropy = 0;
-  count1 = 0;
-  count2 = 2;
-  for(jj=0; jj<condition_num; jj++){
-    total = 0;
-    entropy = 0;
-    for(ii=count1; ii<count2; ii++){
-      total += hist[ii];
-    }    
-    s2 = count2 - count1;
-    s1 = s2 >> 1;
-    s3 = s1 + count1;
-    for(ii=0; ii<s1; ii++){
-      if((hist[ii+count1] != 0) || (hist[ii+s3] != 0)){
-	pp = ((double) hist[ii+count1]) / ((double) (hist[ii+count1] + hist[ii+s3]));
-	entropy += 
-	  4*pp*(1-pp)*((double) (hist[ii+count1] + hist[ii+s3])) / ((double) total);
-      }
-    }
-    fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
-    stat.push_back(entropy);
-    count1 = count2;
-    count2 += (longone << (jj+2));
-  }
   
+  computeCondEntAll();
   bestPatLen = bestPatLen1();
   fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
   tile.set(findMaxCondHist(bestPatLen), bestPatLen);
   fprintf(stdout, "Best tile: %16lX\n", tile.getTile());
 
-  return(1);
+  return(tile);
+}
+
+// Compute an approximation of the conditional entropy
+int GanitaZeroHist::getBestSize(void)
+{
+  int bestPatLen;
+  
+  computeCondEntAll();
+  bestPatLen = bestPatLen1();
+  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
+  return(bestPatLen);
+}
+
+int GanitaZeroHist::getBestTiles
+(int bpL, vector< std::shared_ptr<GanitaZeroTile> > tile)
+{
+  //int bestPatLen;
+  
+  //computeCondEntAll();
+  //bestPatLen = bestPatLen1();
+  //fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
+  return(findTopCondHist(bpL, tile));
 }
 
 int GanitaZeroHist::bestPatLen1(void)
@@ -470,7 +460,7 @@ uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
   max = 0;
   max_ii = 0;
   for(jj=start_ii; jj<end_ii; jj++){
-    if(hist[jj] > max){
+    if(hist[jj] >= max){
       max_ii = jj - start_ii;
       max = hist[jj];
     }
@@ -478,6 +468,57 @@ uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
   max_count = max;
   max_index = max_ii;
   return(max_ii);
+}
+
+int GanitaZeroHist::findTopCondHist(int hist_ii, vector< std::shared_ptr<GanitaZeroTile> > mytiles)
+{ 
+  int ii;
+  uint64_t jj;
+  uint64_t start_ii, end_ii;
+  uint64_t min, min_ii;
+
+  if(mytiles.size() <= 0){
+    fprintf(stderr, "Tile vector not created.\n");
+    return(-1);
+  }
+
+  if(hist_ii >= condition_num){
+    fprintf(stderr, "Histogram index is out of bounds.\n");
+    hist_ii = hist_ii % condition_num;
+  }
+  start_ii = 0;
+  for(ii=1; ii<hist_ii; ii++){
+    start_ii += (longone << ii);
+  }
+  end_ii = start_ii + (longone << hist_ii);
+
+  for(ii=0; ii<(int)mytiles.size(); ii++){
+    mytiles[ii]->setValue(0);
+  }
+
+  min = 0;
+  min_ii = 0;
+  for(jj=start_ii; jj<end_ii; jj++){
+    if(hist[jj] > mytiles[min_ii]->getValue()){
+      mytiles[min_ii]->setValue(hist[jj]);
+      mytiles[min_ii]->set(jj - start_ii, hist_ii);
+      // Find new min.
+      min = mytiles[min_ii]->getValue();
+      for(ii=0; ii<(int)mytiles.size(); ii++){
+	if(mytiles[ii]->getValue() < min){
+	  min = mytiles[ii]->getValue();
+	  min_ii = ii;
+	}
+      }
+    }
+  }
+
+  ii = mytiles.size() - 1;
+  while(mytiles[ii]->getValue() <= 0){
+    ii--;
+  }
+
+  return(ii+1);
 }
 
 uint64_t GanitaZeroHist::findTopIndices(double ratio)

@@ -319,10 +319,85 @@ double GanitaZeroSymbolic::computeCondEntAll(int h_len)
 
 int GanitaZeroSymbolic::tileSpace(int h_len)
 {
+  int ntiles, ii, bestPatLen;
   my_hist->initConditional(h_len);
   my_hist->computeCondHistAll(gzi);
-  my_hist->getBestTile1();
+  bestPatLen = my_hist->getBestSize();
+  //cout<<"Pattern length: "<<bestPatLen<<endl;
+  for(ii=0; ii<bestPatLen; ii++){
+    addTile();
+  }
+  ntiles = my_hist->getBestTiles(bestPatLen, mytile);
+  //cout<<"Number of tiles: "<<ntiles<<endl;
+  for(ii=0; ii<ntiles; ii++){
+    mytile[ii]->dumpTile();
+    fprintf(stdout, " %ld\n", countBitPat2(mytile[ii]));
+  }
   return(1);
+}
+
+int GanitaZeroSymbolic::addTile(void)
+{
+  GanitaZeroTile *newtile = new GanitaZeroTile();
+  mytile.push_back(std::make_shared<GanitaZeroTile>(*newtile));
+  delete newtile;
+  return(mytile.size());
+}
+
+uint64_t GanitaZeroSymbolic::countBitPat1(GanitaZeroTile mytile)
+{
+  uint64_t ii, count;
+  uint64_t tarpat;
+  int len;
+  uint64_t refpat;
+  uint64_t fsize;
+  fsize = gzi->size();
+  len = mytile.returnSize();
+  refpat = mytile.getTile();
+  tarpat = gzi->getBits(0,len);
+  count = 0;
+  ii = len - 1;
+  while(ii<8*fsize-2*len){
+    if(tarpat == refpat){
+      count++;
+      ii += len;
+      tarpat = gzi->getBits(ii, len);
+    }
+    else {
+      ii++;
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << len);
+    }
+  }
+  return(count);
+}
+
+uint64_t GanitaZeroSymbolic::countBitPat2
+(std::shared_ptr<GanitaZeroTile>& mytile)
+{
+  uint64_t ii, count;
+  uint64_t tarpat;
+  int len;
+  uint64_t refpat;
+  uint64_t fsize;
+  fsize = gzi->size();
+  len = mytile->returnSize();
+  refpat = mytile->getTile();
+  tarpat = gzi->getBits(0,len);
+  count = 0;
+  ii = len;
+  //mytile->dumpTile();
+  while(ii<8*fsize-len){
+    if(tarpat == refpat){
+      count++;
+      tarpat = gzi->getBits(ii, len);
+      ii += len;
+    }
+    else {
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+      ii++;
+    }
+  }
+  return(count);
 }
 
 double GanitaZeroSymbolic::computeCondHist2(int h_len)
