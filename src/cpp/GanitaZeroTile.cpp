@@ -56,7 +56,7 @@ uint64_t GanitaZeroTile::getTile(void)
   return(tile);
 }
 
-int GanitaZeroTile::returnSize(void)
+uint32_t GanitaZeroTile::returnSize(void)
 {
   return(size);
 }
@@ -78,12 +78,30 @@ uint64_t GanitaZeroTile::returnValue(void)
 
 int GanitaZeroTile::dumpTile(void)
 {
-  int ii;
+  uint32_t ii;
   fprintf(stdout, "Tile: ");
   for(ii=0; ii<size; ii++){
     fprintf(stdout, "%01lX", (tile>>ii) & 0x1);
   }
   fprintf(stdout, " %d, %ld", size,value);
   return(1);
+}
+
+int GanitaZeroTile::getBit(int loc)
+{
+  return((tile >> loc) & 0x1);
+}
+
+uint64_t GanitaZeroTile::setBit(int loc, int bit)
+{
+  uint64_t tb = ((tile >> loc) & 0x1);
+  if((bit == 0) & (tb == 1)){
+    tile = tile ^ (tb << loc);
+  }
+  else if((bit == 1) & (tb == 0)){
+    tile = tile & (tb << loc);
+  }
+
+  return(tile);
 }
 

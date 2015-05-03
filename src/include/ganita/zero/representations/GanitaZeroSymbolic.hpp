@@ -35,6 +35,7 @@ public:
   int init(std::ifstream &sym_file);
   int init(void);
   int init(char *input_file);
+  int buildAlphabet(void);
   uint64_t initD(char *input_file);
   int init(char *input_file, char *out_file);
   unsigned long initOut(char *out_file);
@@ -49,6 +50,7 @@ public:
   int addTile(void);
   uint64_t countBitPat1(GanitaZeroTile mytile);
   uint64_t countBitPat2(std::shared_ptr<GanitaZeroTile>& mytile);
+  uint64_t updatePatBits(std::shared_ptr<GanitaZeroTile>& mytile);
   double computeCondHist2(int h_len);
   double computeCondHistAll(int h_len);
   unsigned long dumpCondHist1(void);
@@ -57,5 +59,7 @@ public:
   int close(void);
   uint64_t dumpHistHist(uint64_t len);
   uint64_t findTopFreq(void);
+  int majorTileSelector(void);
+  int maxTileSelector(void);
 };
 

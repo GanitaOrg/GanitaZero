@@ -140,35 +140,40 @@ int GanitaZeroSymbolic::init(void)
 
 int GanitaZeroSymbolic::init(char *input_file)
 {
-  //unsigned long ii;
   // Using GanitaBuffer.
   gzi = new GanitaBuffer();
   gzi->open(input_file);
   gzi->createInOutBuffer();
+ 
+  return(1);
+}
+
+int GanitaZeroSymbolic::buildAlphabet(void)
+{
+  unsigned long ii;
   // Set alphabet to zero.
-  // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-  //   alphabet[ii] = 0;
-  // }
-  // Determine alphabet size
-  // for(ii=0; ii<gzi->size(); ii++){
-  //   if(alphabet[gzi->getByte(ii)] <= 0){
-  //     alphabet[gzi->getByte(ii)]++;
-  //   }
-  //   if(gzi->getByte(ii) > alphabet_max){
-  //     alphabet_max = gzi->getByte(ii);
-  //   }
-  // }
-  // alphabet_size = 0;
-  // for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-  //   if(alphabet[ii] > 0){
-  //     alphabet_size++;
-  //     cout<<std::hex<<ii<<":";
-  //   }
-  // }
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    alphabet[ii] = 0;
+  }
+  //Determine alphabet size
+  for(ii=0; ii<gzi->size(); ii++){
+    if(alphabet[gzi->getByte(ii)] <= 0){
+      alphabet[gzi->getByte(ii)]++;
+    }
+    if(gzi->getByte(ii) > alphabet_max){
+      alphabet_max = gzi->getByte(ii);
+    }
+  }
+  alphabet_size = 0;
+  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+    if(alphabet[ii] > 0){
+      alphabet_size++;
+      cout<<std::hex<<ii<<":";
+    }
+  }
 
   // cout<<"Scanned "<<std::dec<<gzi->size()<<" bytes.\n";
   // cout<<"Alph size: "<<alphabet_size<<endl;
-  
   return(alphabet_size);
 }
 
@@ -320,6 +325,7 @@ double GanitaZeroSymbolic::computeCondEntAll(int h_len)
 int GanitaZeroSymbolic::tileSpace(int h_len)
 {
   int ntiles, ii, bestPatLen;
+  int max_tile_ii;
   my_hist->initConditional(h_len);
   my_hist->computeCondHistAll(gzi);
   bestPatLen = my_hist->getBestSize();
@@ -332,6 +338,11 @@ int GanitaZeroSymbolic::tileSpace(int h_len)
   for(ii=0; ii<ntiles; ii++){
     mytile[ii]->dumpTile();
     fprintf(stdout, " %ld\n", countBitPat2(mytile[ii]));
+  }
+  //majorTileSelector();
+  max_tile_ii = maxTileSelector();
+  if(max_tile_ii >= 0){
+    updatePatBits(mytile[max_tile_ii]);
   }
   return(1);
 }
@@ -374,9 +385,11 @@ uint64_t GanitaZeroSymbolic::countBitPat1(GanitaZeroTile mytile)
 uint64_t GanitaZeroSymbolic::countBitPat2
 (std::shared_ptr<GanitaZeroTile>& mytile)
 {
-  uint64_t ii, count;
+  uint64_t bitsToScan;
+  uint64_t ii;
+  uint32_t count;
   uint64_t tarpat;
-  int len;
+  uint32_t len;
   uint64_t refpat;
   uint64_t fsize;
   fsize = gzi->size();
@@ -384,20 +397,61 @@ uint64_t GanitaZeroSymbolic::countBitPat2
   refpat = mytile->getTile();
   tarpat = gzi->getBits(0,len);
   count = 0;
-  ii = len;
+  ii = 0;
+  bitsToScan = (fsize << 3) - (len << 1);
   //mytile->dumpTile();
-  while(ii<8*fsize-len){
+  while(ii<bitsToScan){
     if(tarpat == refpat){
       count++;
-      tarpat = gzi->getBits(ii, len);
       ii += len;
+      tarpat = gzi->getBits(ii, len);
+      //cout<<"|"<<ii<<" ";
     }
     else {
-      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+      //cout<<ii<<"|";
       ii++;
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
     }
   }
+  mytile->setValue(count);
   return(count);
+}
+
+uint64_t GanitaZeroSymbolic::updatePatBits
+(std::shared_ptr<GanitaZeroTile>& mytile)
+{
+  uint64_t bitsToScan;
+  uint64_t ii;
+  uint32_t jj;
+  uint64_t tarpat;
+  uint32_t len;
+  uint64_t refpat;
+  uint64_t fsize;
+  fsize = gzi->size();
+  len = mytile->returnSize();
+  refpat = mytile->getTile();
+  tarpat = gzi->getBits(0,len);
+  ii = 0;
+  bitsToScan = (fsize << 3) - (len << 1);
+  //mytile->dumpTile();
+  while(ii<bitsToScan){
+    if(tarpat == refpat){
+      //count++;
+      for(jj=0; jj<len; jj++){
+	gzi->writeBitInOut(1,ii+jj);
+      }
+      ii += len;
+      tarpat = gzi->getBits(ii, len);
+      //cout<<ii<<" ";
+    }
+    else {
+      //cout<<ii<<"|";
+      ii++;
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+    }
+  }
+  //mytile->setValue(count);
+  return(1);
 }
 
 double GanitaZeroSymbolic::computeCondHist2(int h_len)
@@ -440,5 +494,55 @@ uint64_t GanitaZeroSymbolic::dumpHistHist(uint64_t len)
 uint64_t GanitaZeroSymbolic::findTopFreq(void)
 {
   return(my_hist->findTopFreq(gzi->size()));
+}
+
+int GanitaZeroSymbolic::majorTileSelector(void)
+{
+  uint32_t ii, jj;
+  uint64_t sum1, sum2;
+
+  if(mytile.size() <= 0){
+    return(0);
+  }
+
+  GanitaZeroTile tmpTile(mytile[0]->returnSize());
+  sum1 = 0;
+  for(ii=0; ii<mytile.size(); ii++){
+    sum1 += mytile[ii]->getValue();
+  }
+  for(jj=0; jj<mytile[0]->returnSize(); jj++){
+    sum2 = 0;
+    for(ii=0; ii<mytile.size(); ii++){
+      sum2 += mytile[ii]->getValue() * mytile[ii]->getBit(jj);
+    }
+    cout << sum2 << endl;
+    if((sum2 << 1) > sum1){
+      // Set bit to 1
+      tmpTile.setBit(jj,0x1);
+    }
+  }
+  tmpTile.dumpTile(); cout<<endl;
+  return(1);
+}
+
+int GanitaZeroSymbolic::maxTileSelector(void)
+{
+  uint32_t ii;
+  uint64_t max, max_ii;
+
+  if(mytile.size() <= 0){
+    return(-1);
+  }
+
+  max = 0; max_ii = 0;
+  for(ii=0; ii<mytile.size(); ii++){
+    if(mytile[ii]->getValue() > max){
+      max = mytile[ii]->getValue();
+      max_ii = ii;
+    }
+  }
+  cout<<"Max tile:"<<endl;
+  mytile[max_ii]->dumpTile(); cout<<endl;
+  return(max_ii);
 }
 
