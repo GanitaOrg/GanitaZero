@@ -1,6 +1,6 @@
 #include "ganita/zero/GanitaZero.hpp"
   
-// driver program for GanitaZero. 
+// Driver program for GanitaZero. 
 
 int main(int argc, char *argv[])
 {

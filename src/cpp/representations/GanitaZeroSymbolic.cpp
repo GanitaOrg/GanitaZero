@@ -438,7 +438,7 @@ uint64_t GanitaZeroSymbolic::updatePatBits
     if(tarpat == refpat){
       //count++;
       for(jj=0; jj<len; jj++){
-	gzi->writeBitInOut(1,ii+jj);
+	gzi->writeBufBitInOut(1,ii+jj);
       }
       ii += len;
       tarpat = gzi->getBits(ii, len);
