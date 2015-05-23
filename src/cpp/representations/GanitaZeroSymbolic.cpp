@@ -327,7 +327,8 @@ int GanitaZeroSymbolic::tileSpace(int h_len)
   int ntiles, ii, bestPatLen;
   int max_tile_ii;
   my_hist->initConditional(h_len);
-  my_hist->computeCondHistAll(gzi);
+  //my_hist->computeCondHistAll(gzi);
+  my_hist->computeCondHistNested(gzi);
   bestPatLen = my_hist->getBestSize();
   //cout<<"Pattern length: "<<bestPatLen<<endl;
   for(ii=0; ii<bestPatLen; ii++){

@@ -1,4 +1,16 @@
 // GanitaZeroHist is used to compute and store histograms. 
+// We give a description of the following method:
+// int computeCondHistAll(GanitaBuffer *input);
+// This stores the values for multiple histograms 
+// at the same time in hist. 
+// Each histogram is stored in hist at a different offset. 
+// The offset is count2. 
+// The value range below gives the range of histogram 
+// for each given offset. 
+// count1   0 |      1 |        2 |          3 |            4 ...
+// count2   0 |      2 |        6 |         14 |           30 ...
+// range  0,1 | 00->11 | 000->111 | 0000->1111 | 00000->11111 ...
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -50,6 +62,7 @@ public:
   int computeCondHist1(GanitaBuffer *input);
   int computeCondHist2(GanitaBuffer *input);
   int computeCondHistAll(GanitaBuffer *input);
+  int computeCondHistNested(GanitaBuffer *input);
   double computeCondEntAll(void);
   GanitaZeroTile getBestTile1(void);
   int getBestSize(void);

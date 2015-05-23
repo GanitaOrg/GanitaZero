@@ -219,6 +219,8 @@ int GanitaZeroHist::computeCondHist2(GanitaBuffer *input)
 
 // This computes the conditional histograms for 
 // all patterns of length less than condition_num. 
+// This stores the values for multiple histograms 
+// at the same time in hist. 
 int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
 {
   unsigned long cond_bits;
@@ -248,6 +250,62 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
       count1++;
       count2 += (longone << count1);
     }
+  }
+
+  return 1;
+}
+
+// Not ready yet ... 
+// This computes the conditional histograms for 
+// all patterns of length less than condition_num. 
+int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
+{
+  uint64_t cond_bits[condition_num];
+  uint64_t cond_bits2[condition_num];
+  uint64_t hs[condition_num];
+  uint64_t ii; 
+  int jj, kk;
+  uint64_t mybitlen;
+  uint64_t mybit;
+  
+  mybitlen = 8*input->size()-condition_num-8;
+
+  hs[0] = 0; cond_bits[0] = 0;
+  for(jj=1; jj<condition_num; jj++){
+    hs[jj] = hs[jj-1] + (longone << jj);
+    cond_bits[jj] = 0;
+  }
+  
+  ii = condition_num - 1;;
+  while(ii<mybitlen){
+    if(input->getInOutBit(ii) == 1){
+      for(jj=0; jj<condition_num; jj++){
+	cond_bits[jj] = 0;
+      }
+      while(input->getInOutBit(ii) == 1){
+	ii++;
+	if(ii >= mybitlen){
+	  return(1);
+	}
+      }
+    }
+    mybit = input->getBit(ii);
+    hist[mybit]++; cond_bits2[0] = mybit;
+    jj = 1;
+    while(jj<condition_num){
+      if(input->getInOutBit(ii-jj) == 1){
+	break;
+      }
+      jj++;
+    }
+    for(kk=1; kk<jj; kk++){
+      cond_bits2[kk] = cond_bits[kk-1] | (mybit << kk);
+      hist[cond_bits2[kk] + hs[kk]]++;
+    }
+    for(kk=0; kk<jj; kk++){
+      cond_bits[kk] = cond_bits2[kk];
+    }
+    ii++;
   }
 
   return 1;
