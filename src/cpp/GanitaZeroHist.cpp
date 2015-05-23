@@ -276,7 +276,7 @@ int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
     cond_bits[jj] = 0;
   }
   
-  ii = condition_num - 1;;
+  ii = condition_num - 1;
   while(ii<mybitlen){
     if(input->getInOutBit(ii) == 1){
       for(jj=0; jj<condition_num; jj++){
