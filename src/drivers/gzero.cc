@@ -5,7 +5,7 @@
 int main(int argc, char *argv[])
 {
   GanitaZero gzero(1);
-  GanitaZeroSub chacon;
+  //GanitaZeroSub chacon;
   //int hist_len;
   GanitaZeroVersion version;
   //double max;
@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
 
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();
-  chacon.initOut(argv[2]);
-  chacon.generateChacon2(1000000);
-  chacon.close();
+  //chacon.initOut(argv[2]);
+  //chacon.generateChacon2(1000000);
+  //chacon.close();
 }
 
