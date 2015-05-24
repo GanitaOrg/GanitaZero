@@ -46,10 +46,12 @@ public:
   double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
   double computeCondEntAll(int h_len);
+  int tileSpaceZero(int h_len);
   int tileSpace(int h_len);
   int addTile(void);
   uint64_t countBitPat1(GanitaZeroTile mytile);
   uint64_t countBitPat2(std::shared_ptr<GanitaZeroTile>& mytile);
+  uint64_t countBitPatNested(std::shared_ptr<GanitaZeroTile>& mytile);
   uint64_t updatePatBits(std::shared_ptr<GanitaZeroTile>& mytile);
   double computeCondHist2(int h_len);
   double computeCondHistAll(int h_len);
@@ -61,5 +63,6 @@ public:
   uint64_t findTopFreq(void);
   int majorTileSelector(void);
   int maxTileSelector(void);
+  int countInOutBits(void);
 };
 

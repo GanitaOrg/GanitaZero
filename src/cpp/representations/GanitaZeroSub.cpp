@@ -55,3 +55,37 @@ unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
   return(count);
 }
 
+// Generate the Chacon2 substitution bit sequence. 
+// This is zero entropy with weak mixing and long term dependencies. 
+unsigned long GanitaZeroSub::generateChacon2(unsigned long len)
+{
+  unsigned long *substage = new unsigned long[MAX_NUM_SUB_STAGES]();
+  unsigned long ii, count;
+
+  count = 0;
+  while(count < len){
+    gzi->writeBit(0x0);
+    count++;
+    ii = 0;
+    while(substage[ii] == 1){
+      gzi->writeBit(0x1);
+      count++;
+      substage[ii] = 0;
+      ii++;
+      if(ii >= MAX_NUM_SUB_STAGES){
+	cout<<"Reached max number of stages."<<endl;
+	delete substage;
+	return(count);
+      }
+    }
+    // if(substage[ii] == 1){
+    //   gzi->writeBit(0x1);
+    //   count++;
+    // }
+    substage[ii]++;
+  }
+
+  delete substage;
+  return(count);
+}
+

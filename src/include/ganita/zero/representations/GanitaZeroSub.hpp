@@ -20,5 +20,6 @@ public:
   GanitaZeroSub(void);
   unsigned long loadSub(std::ifstream &sym_file);
   unsigned long generateChacon3(unsigned long len);
+  unsigned long generateChacon2(unsigned long len);
 };
 

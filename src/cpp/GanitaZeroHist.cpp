@@ -255,7 +255,6 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
   return 1;
 }
 
-// Not ready yet ... 
 // This computes the conditional histograms for 
 // all patterns of length less than condition_num. 
 int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
@@ -268,7 +267,7 @@ int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
   uint64_t mybitlen;
   uint64_t mybit;
   
-  mybitlen = 8*input->size()-condition_num-8;
+  mybitlen = ((input->size()) << 3) - (condition_num << 3);
 
   hs[0] = 0; cond_bits[0] = 0;
   for(jj=1; jj<condition_num; jj++){
@@ -285,6 +284,7 @@ int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
       while(input->getInOutBit(ii) == 1){
 	ii++;
 	if(ii >= mybitlen){
+	  //fprintf(stdout, "Freq: %ld %ld\n", hist[0],hist[1]);
 	  return(1);
 	}
       }
@@ -307,6 +307,7 @@ int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
     }
     ii++;
   }
+  //fprintf(stdout, "Freq: %ld %ld\n", hist[0],hist[1]);
 
   return 1;
 }
@@ -323,6 +324,7 @@ double GanitaZeroHist::computeCondEntAll(void)
   entropy = 0;
   count1 = 0;
   count2 = 2;
+  stat.clear();
   for(jj=0; jj<condition_num; jj++){
     total = 0;
     entropy = 0;
@@ -394,14 +396,19 @@ int GanitaZeroHist::bestPatLen1(void)
 
   max = 0;
   max_ii = 0;
+  //for(ii=0; ii<stat.size(); ii++){
+  //fprintf(stdout, "%d %lf\n", ii, stat[ii]);
+  //}
   for(ii=1; ii<stat.size()-1; ii++){
     //tmp = stat[ii-1] + stat[ii+1] - 2*stat[ii];
     if(stat[ii+1] == 0){
       //choose max_ii = ii
       max_ii = ii;
+      //fprintf(stdout, "Reached zero counts @ %d.\n", max_ii);
       break;
     }
-    tmp = (stat[ii-1]/stat[ii]) - (stat[ii]/stat[ii+1]);
+    tmp = (1 + ((double) ii)/1000.0) * 
+      (stat[ii-1]/stat[ii]) - (stat[ii]/stat[ii+1]);
     if(tmp > max){
       max = tmp;
       max_ii = ii - 1;

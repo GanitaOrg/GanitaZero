@@ -237,6 +237,8 @@ double GanitaZero::computeCondEntAll(int h_len)
 
 int GanitaZero::tileSpace(int h_len)
 {
+  gSym.tileSpaceZero(h_len);
+  //gSym.countInOutBits();
   gSym.tileSpace(h_len);
   return(1);
 }
