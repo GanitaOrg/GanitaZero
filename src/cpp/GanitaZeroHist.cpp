@@ -373,7 +373,7 @@ int GanitaZeroHist::getBestSize(void)
   
   computeCondEntAll();
   bestPatLen = bestPatLen1();
-  fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
+  //fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
   return(bestPatLen);
 }
 
@@ -535,7 +535,8 @@ uint64_t GanitaZeroHist::findMaxCondHist(int hist_ii)
   return(max_ii);
 }
 
-int GanitaZeroHist::findTopCondHist(int hist_ii, vector< std::shared_ptr<GanitaZeroTile> > mytiles)
+int GanitaZeroHist::findTopCondHist
+(int hist_ii, vector< std::shared_ptr<GanitaZeroTile> > mytiles)
 { 
   int ii;
   uint64_t jj;
@@ -561,6 +562,7 @@ int GanitaZeroHist::findTopCondHist(int hist_ii, vector< std::shared_ptr<GanitaZ
     mytiles[ii]->setValue(0);
   }
 
+  //fprintf(stdout, "start/end = %ld/%ld\n", start_ii,end_ii);
   min = 0;
   min_ii = 0;
   for(jj=start_ii; jj<end_ii; jj++){
@@ -581,6 +583,7 @@ int GanitaZeroHist::findTopCondHist(int hist_ii, vector< std::shared_ptr<GanitaZ
   ii = mytiles.size() - 1;
   while(mytiles[ii]->getValue() <= 0){
     ii--;
+    if(ii < 0) break;
   }
 
   return(ii+1);

@@ -240,6 +240,7 @@ int GanitaZero::tileSpace(int h_len)
   gSym.tileSpaceZero(h_len);
   //gSym.countInOutBits();
   gSym.tileSpace(h_len);
+  gSym.tileSpace(h_len);
   return(1);
 }
 

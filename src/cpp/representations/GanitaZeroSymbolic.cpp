@@ -356,13 +356,14 @@ int GanitaZeroSymbolic::tileSpace(int h_len)
   //my_hist->computeCondHistAll(gzi);
   my_hist->computeCondHistNested(gzi);
   bestPatLen = my_hist->getBestSize();
-  //cout<<"Pattern length: "<<bestPatLen<<endl;
+  cout<<"Pattern length: "<<bestPatLen<<endl;
   mytile.clear();
   for(ii=0; ii<bestPatLen; ii++){
     addTile();
   }
   ntiles = my_hist->getBestTiles(bestPatLen, mytile);
-  //cout<<"Number of tiles: "<<ntiles<<endl;
+  cout<<"Number of tiles: "<<ntiles<<endl;
+  if(!ntiles) return(0);
   for(ii=0; ii<ntiles; ii++){
     mytile[ii]->dumpTile();
     fprintf(stdout, " %ld\n", countBitPatNested(mytile[ii]));
@@ -500,6 +501,12 @@ uint64_t GanitaZeroSymbolic::updatePatBits
   uint32_t len;
   uint64_t refpat;
   uint64_t fsize;
+  
+  if(!mytile->getValue()){
+    fprintf(stdout, "No bits to be updated.\n");
+    return(0);
+  }
+
   fsize = gzi->size();
   len = mytile->returnSize();
   refpat = mytile->getTile();
