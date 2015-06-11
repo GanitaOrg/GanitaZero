@@ -4,3 +4,4 @@
 #include "ganita/zero/representations/GanitaZeroMap.hpp"
 #include "ganita/zero/representations/GanitaZeroBinary.hpp"
 #include "ganita/zero/representations/GanitaZeroSub.hpp"
+#include "ganita/zero/representations/GanitaZeroHMM.hpp"

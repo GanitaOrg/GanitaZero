@@ -6,7 +6,7 @@
 GanitaZeroVersion::GanitaZeroVersion(void)
 {
   // This is the main required place to set version numbers. 
-  version = "0.16.2";
+  version = "0.17.0";
 }
 
 std::string GanitaZeroVersion::returnVersion(void)

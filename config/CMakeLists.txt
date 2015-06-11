@@ -7,8 +7,8 @@ project(GanitaZero CXX C)
 
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
-set(GanitaZero_VERSION_MINOR "16")
-set(GanitaZero_VERSION_PATCH "2")
+set(GanitaZero_VERSION_MINOR "17")
+set(GanitaZero_VERSION_PATCH "0")
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -69,7 +69,7 @@ endif()
 include_directories(/usr/local/include ../src/include)
 link_directories (/usr/local/lib)
 
-add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp ../src/cpp/GanitaZeroHist.cpp ../src/cpp/GanitaZeroTile.cpp)
+add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp ../src/cpp/GanitaZeroHist.cpp ../src/cpp/GanitaZeroMat.cpp ../src/cpp/GanitaZeroTile.cpp)
 
 target_include_directories (GanitaZero PUBLIC /usr/local/include ../src/include ../src/cpp)
 

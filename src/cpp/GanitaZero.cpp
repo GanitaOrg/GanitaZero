@@ -121,30 +121,30 @@ unsigned long GanitaZero::returnNumStages(void)
   return(gAdic.returnNumStages());
 }
 
-unsigned long GanitaZero::loadCharSeq(ifstream &sym_file)
-{
-  return(gSym.loadCharSeq(sym_file));
-}
+// unsigned long GanitaZero::loadCharSeq(ifstream &sym_file)
+// {
+//   return(gSym.loadCharSeq(sym_file));
+// }
 
-int GanitaZero::init(ifstream &sym_file)
-{
-  return(gSym.init(sym_file));
-}
+// int GanitaZero::init(ifstream &sym_file)
+// {
+//   return(gSym.init(sym_file));
+// }
 
-unsigned long GanitaZero::loadCharSeq(char *input_seq)
-{
-  // Read in the input transformation. 
-  unsigned long tmp;
-  std::ifstream sym_file(input_seq,std::ifstream::binary);
-  if (!sym_file.is_open()){
-    std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
-    return(0);
-  }
+// unsigned long GanitaZero::loadCharSeq(char *input_seq)
+// {
+//   // Read in the input transformation. 
+//   unsigned long tmp;
+//   std::ifstream sym_file(input_seq,std::ifstream::binary);
+//   if (!sym_file.is_open()){
+//     std::cout<<"Unable to open input file: "<<input_seq<<std::endl;
+//     return(0);
+//   }
 
-  tmp = loadCharSeq(sym_file);
-  sym_file.close();
-  return(tmp);
-}
+//   tmp = loadCharSeq(sym_file);
+//   sym_file.close();
+//   return(tmp);
+// }
 
 int GanitaZero::init(char *input_seq)
 {

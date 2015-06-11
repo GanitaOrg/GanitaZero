@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
   //GanitaZeroSub chacon;
   //int hist_len;
   GanitaZeroVersion version;
+  GanitaZeroMat gzm(3,3);
+  GanitaZeroHMM gzhmm;
   //double max;
   //int max_ii, ii;
   //double entropy[32][2];
@@ -35,6 +37,18 @@ int main(int argc, char *argv[])
 
   gzero.tileSpace(25);
 
+  gzm.setEx1();
+  gzm.dumpMat();
+  for(int ii=0; ii<10; ii++){
+    gzm.square();
+  }
+  cout<<"-----------"<<endl;
+  gzm.dumpMat();
+  cout<<"-----------"<<endl;
+  gzhmm.initOut(argv[2]);
+  gzhmm.generateHMM_1(1000000);
+  gzhmm.close();
+  gzm.close();
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   gzero.close();
   //chacon.initOut(argv[2]);

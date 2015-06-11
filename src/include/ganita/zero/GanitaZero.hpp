@@ -19,6 +19,7 @@
 #include "ganita/zero/GanitaZeroSchema.hpp"
 #include "ganita/zero/GanitaZeroRepresentations.hpp"
 #include "ganita/zero/GanitaZeroVersion.hpp"
+#include "ganita/zero/GanitaZeroMat.hpp"
 
 class GanitaZero
 {
@@ -39,9 +40,9 @@ public:
   unsigned long dumpStageSize(unsigned long ss);
   unsigned long dumpStage(unsigned long ss);
   unsigned long returnNumStages(void);
-  unsigned long loadCharSeq(ifstream &sym_file);
-  int init(ifstream &sym_file);
-  unsigned long loadCharSeq(char *input_seq);
+  //unsigned long loadCharSeq(ifstream &sym_file);
+  //int init(ifstream &sym_file);
+  //unsigned long loadCharSeq(char *input_seq);
   int init(char *input_seq);
   int initD(char *input_seq);
   uint64_t loadDoubleDiffQuant(void);

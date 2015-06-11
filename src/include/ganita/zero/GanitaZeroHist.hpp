@@ -11,6 +11,9 @@
 // count2   0 |      2 |        6 |         14 |           30 ...
 // range  0,1 | 00->11 | 000->111 | 0000->1111 | 00000->11111 ...
 
+#ifndef _GANITAZEROHIST_
+#define _GANITAZEROHIST_
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -97,3 +100,5 @@ public:
 //   0x1ffffffffffff, 0x3ffffffffffff, 0x7ffffffffffff, 0xfffffffffffff,
 //   0x1fffffffffffff, 0x3fffffffffffff, 0x7fffffffffffff, 0xffffffffffffff
 // };
+
+#endif

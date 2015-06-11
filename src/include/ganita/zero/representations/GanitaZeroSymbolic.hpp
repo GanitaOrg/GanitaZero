@@ -25,14 +25,15 @@ protected:
   GanitaZeroHist *my_hist;
   GanitaBuffer *gzi;
   vector< std::shared_ptr<GanitaZeroTile> > mytile;
+  int verbose;
 public:
   GanitaZeroSymbolic(void);
-  GanitaZeroSymbolic(std::ifstream &sym_file);
-  int initBuffer(std::ifstream &sym_file);
+  //GanitaZeroSymbolic(std::ifstream &sym_file);
+  //int initBuffer(std::ifstream &sym_file);
   int initBuffer(void);
-  unsigned long loadCharSeq(std::ifstream &sym_file);
+  //unsigned long loadCharSeq(std::ifstream &sym_file);
   uint64_t loadDoubleDiffQuant(void);
-  int init(std::ifstream &sym_file);
+  //int init(std::ifstream &sym_file);
   int init(void);
   int init(char *input_file);
   int buildAlphabet(void);
@@ -58,11 +59,12 @@ public:
   unsigned long dumpCondHist1(void);
   unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
-  int close(void);
+  virtual int close(void);
   uint64_t dumpHistHist(uint64_t len);
   uint64_t findTopFreq(void);
   int majorTileSelector(void);
   int maxTileSelector(void);
   int countInOutBits(void);
+  int setVerbosity(int);
 };
 

@@ -6,3 +6,4 @@
 #include "representations/GanitaZeroMap.cpp"
 #include "representations/GanitaZeroBinary.cpp"
 #include "representations/GanitaZeroSub.cpp"
+#include "representations/GanitaZeroHMM.cpp"

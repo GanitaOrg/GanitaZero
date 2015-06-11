@@ -8,24 +8,26 @@ GanitaZeroSymbolic::GanitaZeroSymbolic(void)
   alphabet_max = 0;
   // Note alphabet array is initialized later. 
   my_hist = new GanitaZeroHist();
+  verbose = 0;
 }
 
-GanitaZeroSymbolic::GanitaZeroSymbolic(std::ifstream &sym_file)
-{
-  name = "symbolic";
-  seq_size = 0;
-  alphabet_size = 0;
-  alphabet_max = 0;
-  // Note alphabet array is initialized later. 
-  gzi = new GanitaBuffer(sym_file);
-  my_hist = new GanitaZeroHist();
-}
+// GanitaZeroSymbolic::GanitaZeroSymbolic(std::ifstream &sym_file)
+// {
+//   name = "symbolic";
+//   seq_size = 0;
+//   alphabet_size = 0;
+//   alphabet_max = 0;
+//   // Note alphabet array is initialized later. 
+//   gzi = new GanitaBuffer(sym_file);
+//   my_hist = new GanitaZeroHist();
+//   verbose = 0;
+// }
 
-int GanitaZeroSymbolic::initBuffer(std::ifstream &sym_file)
-{
-  gzi = new GanitaBuffer(sym_file);
-  return 1;
-}
+// int GanitaZeroSymbolic::initBuffer(std::ifstream &sym_file)
+// {
+//   gzi = new GanitaBuffer(sym_file);
+//   return 1;
+// }
 
 int GanitaZeroSymbolic::initBuffer(void)
 {
@@ -33,26 +35,26 @@ int GanitaZeroSymbolic::initBuffer(void)
   return 1;
 }
 
-unsigned long GanitaZeroSymbolic::loadCharSeq(std::ifstream &sym_file)
-{
-  if(seq_size > 0){
-    // possibly allocated sequence
-    return(0);
-  }
-  sym_file.seekg(0, sym_file.end);
-  seq_size = sym_file.tellg();
-  // Allocate seq of size seq_size
-  seq = new unsigned char[seq_size];
-  // seq = (unsigned char *)malloc((size_t)seq_size*sizeof(char));
-  // if(seq == NULL){
-  //   cout<<"Unable to allocate sequence."<<endl;
-  //   return(0);
-  // }
-  sym_file.seekg(0, sym_file.beg);
-  sym_file.read((char *) seq,seq_size);
-  cout<<"Sequence length: "<<seq_size<<endl;
-  return(seq_size);
-}
+// unsigned long GanitaZeroSymbolic::loadCharSeq(std::ifstream &sym_file)
+// {
+//   if(seq_size > 0){
+//     // possibly allocated sequence
+//     return(0);
+//   }
+//   sym_file.seekg(0, sym_file.end);
+//   seq_size = sym_file.tellg();
+//   // Allocate seq of size seq_size
+//   seq = new unsigned char[seq_size];
+//   // seq = (unsigned char *)malloc((size_t)seq_size*sizeof(char));
+//   // if(seq == NULL){
+//   //   cout<<"Unable to allocate sequence."<<endl;
+//   //   return(0);
+//   // }
+//   sym_file.seekg(0, sym_file.beg);
+//   sym_file.read((char *) seq,seq_size);
+//   cout<<"Sequence length: "<<seq_size<<endl;
+//   return(seq_size);
+// }
 
 uint64_t GanitaZeroSymbolic::loadDoubleDiffQuant(void)
 {
@@ -82,34 +84,34 @@ uint64_t GanitaZeroSymbolic::loadDoubleDiffQuant(void)
   return(ii);
 }
 
-int GanitaZeroSymbolic::init(std::ifstream &sym_file)
-{
-  unsigned long ii;
-  // load data into array seq
-  // deprecated loadCharSeq
-  if(loadCharSeq(sym_file) == 0) return(-1);
-  // Set alphabet to zero
-  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-    alphabet[ii] = 0;
-  }
-  // Determine alphabet size
-  for(ii=0; ii<seq_size; ii++){
-    if(alphabet[seq[ii]] <= 0){
-      alphabet[seq[ii]]++;
-    }
-    if(seq[ii] > alphabet_max){
-      alphabet_max = seq[ii];
-    }
-  }
-  alphabet_size = 0;
-  for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
-    if(alphabet[ii] > 0) alphabet_size++;
-  }
+// int GanitaZeroSymbolic::init(std::ifstream &sym_file)
+// {
+//   unsigned long ii;
+//   // load data into array seq
+//   // deprecated loadCharSeq
+//   if(loadCharSeq(sym_file) == 0) return(-1);
+//   // Set alphabet to zero
+//   for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+//     alphabet[ii] = 0;
+//   }
+//   // Determine alphabet size
+//   for(ii=0; ii<seq_size; ii++){
+//     if(alphabet[seq[ii]] <= 0){
+//       alphabet[seq[ii]]++;
+//     }
+//     if(seq[ii] > alphabet_max){
+//       alphabet_max = seq[ii];
+//     }
+//   }
+//   alphabet_size = 0;
+//   for(ii=0; ii<ALPHABET_ALLOC_SIZE; ii++){
+//     if(alphabet[ii] > 0) alphabet_size++;
+//   }
 
-  //cout<<"Alph size: "<<alphabet_size<<endl;
+//   //cout<<"Alph size: "<<alphabet_size<<endl;
   
-  return(alphabet_size);
-}
+//   return(alphabet_size);
+// }
 
 int GanitaZeroSymbolic::init(void)
 {
@@ -640,5 +642,11 @@ int GanitaZeroSymbolic::countInOutBits(void)
 	  count, 8*(gzi->inOutSize()));
 
   return(1);
+}
+
+int GanitaZeroSymbolic::setVerbosity(int vv)
+{
+  verbose = vv;
+  return(verbose);
 }
 
