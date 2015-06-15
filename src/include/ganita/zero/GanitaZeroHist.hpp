@@ -67,6 +67,7 @@ public:
   int computeCondHistAll(GanitaBuffer *input);
   int computeCondHistNested(GanitaBuffer *input);
   double computeCondEntAll(void);
+  double computeCondEntAll2(void);
   GanitaZeroTile getBestTile1(void);
   int getBestSize(void);
   int getBestTiles(int bpL, vector< std::shared_ptr<GanitaZeroTile> > tile);
