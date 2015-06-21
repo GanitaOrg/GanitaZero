@@ -393,7 +393,7 @@ double GanitaZeroHist::computeCondEntAll2(void)
     }
     entropy *= 4;
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
-    fprintf(stdout, "Conditional bits: %08X, Score: %lf\n", max_c, max);
+    fprintf(stdout, "Conditional bits: %08lX, Score: %lf\n", max_c, max);
     stat.push_back(entropy);
     count1 = count2;
     count2 += (longone << (jj+2));
@@ -441,14 +441,16 @@ int GanitaZeroHist::getBestTiles
 
 int GanitaZeroHist::bestPatLen1(void)
 {
-  uint32_t ii, max_ii, min_ii;
-  double max, min;
+  uint32_t ii, max_ii;
+  //uint32_t min_ii;
+  double max;
+  //double min;
   double tmp;
 
   max = 0;
   max_ii = 0;
-  min = 10000;
-  min_ii = 0;
+  //min = 10000;
+  //min_ii = 0;
   //for(ii=0; ii<stat.size(); ii++){
   //fprintf(stdout, "%d %lf\n", ii, stat[ii]);
   //}
