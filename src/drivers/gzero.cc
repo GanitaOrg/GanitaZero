@@ -29,13 +29,14 @@ int main(int argc, char *argv[])
   //gzero.readT(argv[1]);
   //cout<<"Number of stages:        "<<gzero.returnNumStages()<<endl;
   //gzero.dumpStage(1);
-  gzero.init(argv[1]);
+  //gzero.init(argv[1]);
   //gzero.loadCharSeq(argv[1]);
   //gzero.computeByteHist();
 
   //gzero.computeCondEntAll(25);
 
-  gzero.tileSpace(25);
+  //gzero.tileSpace(25);
+  gzero.build1(argv[1], 25, 3);
 
   gzm.setEx1();
   gzm.dumpMat();
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
   gzhmm.close();
   gzm.close();
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
-  gzero.close();
+  //gzero.close();
   //chacon.initOut(argv[2]);
   //chacon.generateChacon2(1000000);
   //chacon.close();

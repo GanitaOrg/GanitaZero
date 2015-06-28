@@ -1,3 +1,6 @@
+#ifndef _GANITAZEROTILE_
+#define _GANITAZEROTILE_
+
 #include <cstdio>
 #include <cstdint>
 
@@ -26,3 +29,4 @@ public:
   uint64_t setBit(int loc, int bit);
 };
 
+#endif

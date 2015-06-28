@@ -239,8 +239,27 @@ int GanitaZero::tileSpace(int h_len)
 {
   gSym.tileSpaceZero(h_len);
   //gSym.countInOutBits();
-  gSym.tileSpace(h_len);
-  gSym.tileSpace(h_len);
+  //gSym.tileSpace(h_len);
+  //gSym.tileSpace(h_len);
+  return(1);
+}
+
+int GanitaZero::build1(char *input_seq, int h_len, int iterations)
+{
+  GanitaZeroTile *m_tile;
+  GanitaGraphFile ggFile;
+  init(input_seq);
+  m_tile = gSym.getTileSpaceZero(h_len);
+  close();
+  gAdic.buildBase();
+  gAdic.extendStage(m_tile);
+  for(int ii=1; ii<iterations; ii++){
+    init((char *)"/tmp/ganita/gzero.shrink1");
+    m_tile = gSym.getTileSpaceZero(h_len);
+    gAdic.extendStage(m_tile);
+    close();
+  }
+  ggFile.writeVisTables(gAdic.returnStage(0));
   return(1);
 }
 

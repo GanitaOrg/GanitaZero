@@ -4,7 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <boost/shared_ptr.hpp>
-#include "ganita/graph/GanitaGraph.hpp"
+#include "ganita/graph/GanitaGraphFile.hpp"
+#include "ganita/zero/GanitaZeroTile.hpp"
 
 class GanitaZeroAdic
 {
@@ -15,20 +16,22 @@ private:
   std::vector< std::vector<std::string> > values;
   // Ganita Graph for Adic
   vector< std::shared_ptr<GanitaGraph> > stage;
-  unsigned long num_fixed_levels;
-  unsigned long repeat_pattern_length;
+  uint64_t num_fixed_levels;
+  uint64_t repeat_pattern_length;
   char stage_delim;
   char node_delim;
   char edge_delim;
 public:
   GanitaZeroAdic(void);
-  unsigned long addStage(void);
-  unsigned long addStage(unsigned long ii, unsigned long val);
+  uint64_t addStage(void);
+  uint64_t addStage(uint64_t ii, uint64_t val);
   int readFixed(std::ifstream &gzt_file);
   int readRepeat(std::ifstream &gzt_file);
-  unsigned long dumpStageSize(unsigned long ss);
-  unsigned long dumpStage(unsigned long ss);
-  GanitaGraph *returnStage(unsigned long ss);
-  unsigned long returnNumStages(void);
+  uint64_t dumpStageSize(uint64_t ss);
+  uint64_t dumpStage(uint64_t ss);
+  GanitaGraph *returnStage(uint64_t ss);
+  uint64_t returnNumStages(void);
+  int buildBase(void);
+  int extendStage(GanitaZeroTile *mytile);
 };
 

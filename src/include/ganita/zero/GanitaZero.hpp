@@ -52,6 +52,7 @@ public:
   double computeCondEnt2FromScratch(int h_len);
   double computeCondEntAll(int h_len);
   int tileSpace(int h_len);
+  int build1(char *input_seq, int h_len, int iterations);
   double computeCondHist2(int h_len);
   double computeCondHistAll(int h_len);
   string returnB64Encode(void);

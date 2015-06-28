@@ -328,6 +328,11 @@ int GanitaZeroSymbolic::tileSpaceZero(int h_len)
 {
   int ntiles, ii, bestPatLen;
   int max_tile_ii;
+  uint64_t num;
+  GanitaBuffer *newgzi;
+  newgzi = new GanitaBuffer();
+  newgzi->open(gzi->returnFileName());
+
   my_hist->initConditional(h_len);
   //my_hist->computeCondHistAll(gzi);
   my_hist->computeCondHistAll(gzi);
@@ -345,15 +350,57 @@ int GanitaZeroSymbolic::tileSpaceZero(int h_len)
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
   if(max_tile_ii >= 0){
-    updatePatBits(mytile[max_tile_ii]);
+    num = updatePatBits(mytile[max_tile_ii]);
+    newgzi->createInOutBuffer((char *)"gzero.shrink1", (num+7)/8);
+    cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
   }
+  newgzi->close();
   return(1);
+}
+
+GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
+{
+  int ntiles, ii, bestPatLen;
+  int max_tile_ii;
+  uint64_t num;
+  GanitaBuffer *newgzi;
+  newgzi = new GanitaBuffer();
+  newgzi->open(gzi->returnFileName());
+
+  my_hist->initConditional(h_len);
+  //my_hist->computeCondHistAll(gzi);
+  my_hist->computeCondHistAll(gzi);
+  bestPatLen = my_hist->getBestSize();
+  //cout<<"Pattern length: "<<bestPatLen<<endl;
+  for(ii=0; ii<bestPatLen; ii++){
+    addTile();
+  }
+  ntiles = my_hist->getBestTiles(bestPatLen, mytile);
+  //cout<<"Number of tiles: "<<ntiles<<endl;
+  for(ii=0; ii<ntiles; ii++){
+    mytile[ii]->dumpTile();
+    fprintf(stdout, " %ld\n", countBitPat2(mytile[ii]));
+  }
+  //majorTileSelector();
+  max_tile_ii = maxTileSelector();
+  if(max_tile_ii >= 0){
+    num = updatePatBits(mytile[max_tile_ii]);
+    newgzi->createInOutBuffer((char *)"gzero.shrink1", (num+7)/8);
+    cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
+  }
+  newgzi->close();
+  return( mytile[max_tile_ii].get() );
 }
 
 int GanitaZeroSymbolic::tileSpace(int h_len)
 {
   int ntiles, ii, bestPatLen;
   int max_tile_ii;
+  uint64_t num;
+  GanitaBuffer *newgzi;
+  newgzi = new GanitaBuffer();
+  newgzi->open(gzi->returnFileName());
+
   my_hist->initConditional(h_len);
   //my_hist->computeCondHistAll(gzi);
   my_hist->computeCondHistNested(gzi);
@@ -373,8 +420,11 @@ int GanitaZeroSymbolic::tileSpace(int h_len)
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
   if(max_tile_ii >= 0){
-    updatePatBits(mytile[max_tile_ii]);
+    num = updatePatBits(mytile[max_tile_ii]);
+    newgzi->createInOutBuffer((char *)"gzero.shrink2", (num+7)/8);
+    cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
   }
+  newgzi->close();
   return(1);
 }
 
@@ -503,12 +553,14 @@ uint64_t GanitaZeroSymbolic::updatePatBits
   uint32_t len;
   uint64_t refpat;
   uint64_t fsize;
+  uint64_t count;
   
   if(!mytile->getValue()){
     fprintf(stdout, "No bits to be updated.\n");
     return(0);
   }
 
+  count = 0;
   fsize = gzi->size();
   len = mytile->returnSize();
   refpat = mytile->getTile();
@@ -522,19 +574,62 @@ uint64_t GanitaZeroSymbolic::updatePatBits
       for(jj=0; jj<len; jj++){
 	gzi->writeBufBitInOut(1,ii+jj);
       }
-      ii += len;
+      ii += len; count++;
       tarpat = gzi->getBits(ii, len);
       //cout<<ii<<" ";
     }
     else {
       //cout<<ii<<"|";
-      ii++;
+      ii++; count++;
       tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
     }
   }
   gzi->flushInOut();
   //mytile->setValue(count);
-  return(1);
+  return(count);
+}
+
+uint64_t GanitaZeroSymbolic::shrinkPatBits
+(GanitaBuffer *newgzi, std::shared_ptr<GanitaZeroTile>& mytile)
+{
+  uint64_t bitsToScan;
+  uint64_t ii;
+  uint64_t jj;
+  uint64_t tarpat;
+  uint32_t len;
+  uint64_t refpat;
+  uint64_t fsize;
+  
+  if(!mytile->getValue()){
+    fprintf(stdout, "No bits to be updated.\n");
+    return(0);
+  }
+
+  fsize = gzi->size();
+  len = mytile->returnSize();
+  refpat = mytile->getTile();
+  tarpat = gzi->getBits(0,len);
+  ii = 0; jj = 0;
+  bitsToScan = (fsize << 3) - (len << 1);
+  //mytile->dumpTile();
+  while(ii<bitsToScan){
+    if(tarpat == refpat){
+      //count++;
+      newgzi->writeBufBitInOut(0,jj);
+      ii += len; jj++;
+      tarpat = gzi->getBits(ii, len);
+      //cout<<ii<<" ";
+    }
+    else {
+      //cout<<ii<<"|";
+      newgzi->writeBufBitInOut(1,jj);
+      ii++; jj++;
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+    }
+  }
+  newgzi->flushInOut();
+  //mytile->setValue(count);
+  return(jj);
 }
 
 double GanitaZeroSymbolic::computeCondHist2(int h_len)

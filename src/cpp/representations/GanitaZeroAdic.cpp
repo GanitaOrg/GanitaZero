@@ -21,7 +21,7 @@ GanitaZeroAdic::GanitaZeroAdic(void)
 }
 
 // Add blank stage
-unsigned long GanitaZeroAdic::addStage(void)
+uint64_t GanitaZeroAdic::addStage(void)
 {
   GanitaGraph *ggs = new GanitaGraph();
   stage.push_back(std::make_shared<GanitaGraph>(*ggs));
@@ -30,7 +30,7 @@ unsigned long GanitaZeroAdic::addStage(void)
 }
 
 // Add stage and set id and value
-unsigned long GanitaZeroAdic::addStage(unsigned long ii, unsigned long val)
+uint64_t GanitaZeroAdic::addStage(uint64_t ii, uint64_t val)
 {
   GanitaGraph *ggs = new GanitaGraph();
   stage.push_back(std::make_shared<GanitaGraph>(*ggs));
@@ -42,7 +42,7 @@ unsigned long GanitaZeroAdic::addStage(unsigned long ii, unsigned long val)
 int GanitaZeroAdic::readFixed(std::ifstream &gzt_file)
 {
   string line, token;
-  unsigned long ii, jj;
+  uint64_t ii, jj;
   if(!gzt_file.is_open()){
     return(-1);
   }
@@ -81,7 +81,7 @@ int GanitaZeroAdic::readFixed(std::ifstream &gzt_file)
 int GanitaZeroAdic::readRepeat(std::ifstream &gzt_file)
 {
   string line, token;
-  unsigned long ii, jj;
+  uint64_t ii, jj;
   if(!gzt_file.is_open()){
     return(-1);
   }
@@ -118,7 +118,7 @@ int GanitaZeroAdic::readRepeat(std::ifstream &gzt_file)
   return(1);
 }
 
-unsigned long GanitaZeroAdic::dumpStageSize(unsigned long ss)
+uint64_t GanitaZeroAdic::dumpStageSize(uint64_t ss)
 {
   if(stage.size() == 0){
     // no stages added yet
@@ -130,9 +130,9 @@ unsigned long GanitaZeroAdic::dumpStageSize(unsigned long ss)
   return(stage[ss]->returnNumNodes());
 }
 
-unsigned long GanitaZeroAdic::dumpStage(unsigned long ss)
+uint64_t GanitaZeroAdic::dumpStage(uint64_t ss)
 {
-  unsigned long ii;
+  uint64_t ii;
   if(stage.size() == 0){
     // no stages added yet
     cout<<"No stages added yet."<<endl;
@@ -148,7 +148,7 @@ unsigned long GanitaZeroAdic::dumpStage(unsigned long ss)
   return(stage[ss]->returnNumNodes());
 }
 
-GanitaGraph *GanitaZeroAdic::returnStage(unsigned long ss)
+GanitaGraph *GanitaZeroAdic::returnStage(uint64_t ss)
 {
   if(stage.size() <= 0){
     // no stages yet
@@ -158,8 +158,61 @@ GanitaGraph *GanitaZeroAdic::returnStage(unsigned long ss)
   return(stage[ss % stage.size()].get());
 }
 
-unsigned long GanitaZeroAdic::returnNumStages(void)
+uint64_t GanitaZeroAdic::returnNumStages(void)
 {
-  return((unsigned long)stage.size());
+  return((uint64_t)stage.size());
+}
+
+int GanitaZeroAdic::buildBase(void)
+{
+  string label;
+  if(stage.size() > 0){
+    cout<<"Already added graph."<<endl;
+    return(-1);
+  }
+  addStage();
+  cout<<"Number of stages: "<<stage.size()<<endl;
+  label.assign("root");
+  cout<<label<<endl;
+  stage[0]->addNode1(0, label);
+  label.assign("obs 0");
+  stage[0]->addNode1(0, label);
+  label.assign("obs 1");
+  stage[0]->addNode1(1, label);
+  GanitaNode *gn;
+  gn = stage[0]->returnNode(0);
+  gn->addEdge(2);
+  gn->addEdge(3);
+
+  return(3);
+}
+
+int GanitaZeroAdic::extendStage(GanitaZeroTile *mytile)
+{
+  uint64_t num = stage[0]->returnNumNodes();
+  if(num < 3){
+    cout<<"Did not add base nodes."<<endl;
+    return(-1);
+  }
+
+  stage[0]->addNode1(num, "hidden");
+  stage[0]->addNode1(num + 1, "hidden");
+  cout<<"Number of nodes: "<<stage[0]->returnNumNodes()<<endl;
+
+  uint64_t pat = mytile->getTile();
+  int len = mytile->returnSize();
+  GanitaNode *gn1, *gn2;
+  gn1 = stage[0]->returnNode(num-2);
+  gn2 = stage[0]->returnNode(num-1);
+  cout<<"Adding edges to nodes: "<<num-2<<", "<<num-1<<endl;
+  for(int ii=0; ii<len; ii++){
+    if(((pat >> ii) & 0x1) == 0){
+      gn1->addEdge(num+1);
+    }
+    else gn2->addEdge(num+1);
+  }
+  gn2->addEdge(num+2);
+
+  return(1);
 }
 
