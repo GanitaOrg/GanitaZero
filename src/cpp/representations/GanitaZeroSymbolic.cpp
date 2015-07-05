@@ -368,9 +368,8 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
   newgzi->open(gzi->returnFileName());
 
   my_hist->initConditional(h_len);
-  //my_hist->computeCondHistAll(gzi);
   my_hist->computeCondHistAll(gzi);
-  bestPatLen = my_hist->getBestSize();
+  bestPatLen = my_hist->getBestSize() + 1;
   //cout<<"Pattern length: "<<bestPatLen<<endl;
   for(ii=0; ii<bestPatLen; ii++){
     addTile();
