@@ -85,6 +85,7 @@ public:
   uint64_t dumpRand(uint64_t len);
   uint64_t dumpHistHist(uint64_t len);
   uint64_t findTopFreq(uint64_t fsize);
+  int computeAutoCorr(int64_t len, GanitaBuffer *input);
 };
 
 // Unneeded

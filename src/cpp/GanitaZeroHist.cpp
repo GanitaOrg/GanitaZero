@@ -739,3 +739,31 @@ uint64_t GanitaZeroHist::findTopFreq(uint64_t fsize)
   return(count);
 }
 
+int GanitaZeroHist::computeAutoCorr(int64_t len, GanitaBuffer *input)
+{
+  GanitaBuffer *acfile;
+  acfile = new GanitaBuffer();
+  uint64_t ii, num;
+  int64_t dp, jj;
+
+  num = 8*(input->size()) - len;
+  acfile->createInOutBuffer((char *)"gzero.autocorr", 16*num);
+  acfile->write64InOut(0, 0);
+  acfile->write64InOut(len, 8);
+
+  for(ii=1; ii<num; ii++){
+    dp = 0;
+    for(jj=0; jj<len; jj++){
+      if(input->getBit(ii+jj) == input->getBit(jj)){
+	dp++;
+      }
+      else dp--;
+    }
+    acfile->write64InOut(ii, 16*ii);
+    acfile->write64InOut(dp, 16*ii+8);
+  }
+
+  acfile->close();
+  return(1);
+}
+

@@ -69,5 +69,6 @@ public:
   int maxTileSelector(void);
   int countInOutBits(void);
   int setVerbosity(int);
+  int computeAutoCorr(int64_t len);
 };
 

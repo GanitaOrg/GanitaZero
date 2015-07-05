@@ -29,14 +29,14 @@ unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
 {
   unsigned long *substage = new unsigned long[MAX_NUM_SUB_STAGES]();
   unsigned long ii, count;
-  char *myrands = new char[len];
+  char *myrands = new char[len+1];
   char myrandbit;
-  my_hist->returnArc4Rand(myrands, len);
+  my_hist->returnArc4Rand(myrands, len+1);
 
   count = 0;
   while(count < len){
     myrandbit = 0;
-    if((myrands[ii] & 0xf) == 0){
+    if((myrands[count] & 0xf) == 0){
       myrandbit = (myrands[count] >> 7) & 0x1;
     }
     if(myrandbit == 0){ 
@@ -56,7 +56,7 @@ unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
     }
     if(substage[ii] == 1){
       myrandbit = 0;
-      if((myrands[ii] & 0xf) == 0){
+      if((myrands[count] & 0xf) == 0){
         myrandbit = (myrands[count] >> 7) & 0x1;
       }
       if(myrandbit == 0){ 
@@ -78,14 +78,14 @@ unsigned long GanitaZeroSub::generateChacon2(unsigned long len)
 {
   unsigned long *substage = new unsigned long[MAX_NUM_SUB_STAGES]();
   unsigned long ii, count;
-  char *myrands = new char[len];
+  char *myrands = new char[len+1];
   char myrandbit;
-  my_hist->returnArc4Rand(myrands, len);
+  my_hist->returnArc4Rand(myrands, len+1);
 
   count = 0;
   while(count < len){
     myrandbit = 0;
-    if((myrands[ii] & 0xff) == 0){
+    if((myrands[count] & 0xff) == 0){
       myrandbit = (myrands[count] >> 7) & 0x1;
     }
     if(myrandbit == 0){ 
@@ -97,7 +97,7 @@ unsigned long GanitaZeroSub::generateChacon2(unsigned long len)
     ii = 0;
     while(substage[ii] == 1){
       myrandbit = 0;
-      if((myrands[ii] & 0xff) == 0){
+      if((myrands[count] & 0xff) == 0){
         myrandbit = (myrands[count] >> 7) & 0x1;
       }
       if(myrandbit == 0){ 

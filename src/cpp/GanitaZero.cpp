@@ -249,6 +249,7 @@ int GanitaZero::build1(char *input_seq, int h_len, int iterations)
   GanitaZeroTile *m_tile;
   GanitaGraphFile ggFile;
   init(input_seq);
+  gSym.computeAutoCorr(1000);
   m_tile = gSym.getTileSpaceZero(h_len);
   close();
   gAdic.buildBase();

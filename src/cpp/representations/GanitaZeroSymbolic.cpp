@@ -744,3 +744,8 @@ int GanitaZeroSymbolic::setVerbosity(int vv)
   return(verbose);
 }
 
+int GanitaZeroSymbolic::computeAutoCorr(int64_t len)
+{
+  return(my_hist->computeAutoCorr(len, gzi));
+}
+
