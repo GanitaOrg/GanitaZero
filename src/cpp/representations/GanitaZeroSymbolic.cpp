@@ -1,4 +1,5 @@
 // Methods for GanitaZeroSymbolic class. 
+#include "ganita/zero/representations/GanitaZeroSymbolic.hpp"
 
 GanitaZeroSymbolic::GanitaZeroSymbolic(void)
 {
@@ -364,12 +365,13 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
   int max_tile_ii;
   uint64_t num;
   GanitaBuffer *newgzi;
+  uint64_t bnum;
   newgzi = new GanitaBuffer();
   newgzi->open(gzi->returnFileName());
 
   my_hist->initConditional(h_len);
   my_hist->computeCondHistAll(gzi);
-  bestPatLen = my_hist->getBestSize() + 1;
+  bestPatLen = my_hist->getBestSize();
   //cout<<"Pattern length: "<<bestPatLen<<endl;
   for(ii=0; ii<bestPatLen; ii++){
     addTile();
@@ -383,6 +385,10 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
   if(max_tile_ii >= 0){
+    countBitPatBlock(mytile[max_tile_ii]);
+    bnum = goodBlock(mytile[max_tile_ii]);
+    cout<<"Good block: "<<bnum<<endl;
+    slideChanges(bnum);
     num = updatePatBits(mytile[max_tile_ii]);
     newgzi->createInOutBuffer((char *)"gzero.shrink1", (num+7)/8);
     cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
@@ -433,6 +439,23 @@ int GanitaZeroSymbolic::addTile(void)
   mytile.push_back(std::make_shared<GanitaZeroTile>(*newtile));
   delete newtile;
   return(mytile.size());
+}
+
+int GanitaZeroSymbolic::addBlock(void)
+{
+  GanitaZeroBlock *newblock = new GanitaZeroBlock();
+  blocks.push_back(std::make_shared<GanitaZeroBlock>(*newblock));
+  delete newblock;
+  return(blocks.size());
+}
+
+uint64_t GanitaZeroSymbolic::addBlocks(uint64_t nblocks)
+{
+  uint64_t ii;
+  for(ii=0; ii<nblocks; ii++){
+    addBlock();
+  }
+  return(blocks.size());
 }
 
 uint64_t GanitaZeroSymbolic::countBitPat1(GanitaZeroTile mytile)
@@ -497,6 +520,101 @@ uint64_t GanitaZeroSymbolic::countBitPat2
   }
   mytile->setValue(count);
   return(count);
+}
+
+uint64_t GanitaZeroSymbolic::countBitPatBlock
+(std::shared_ptr<GanitaZeroTile>& mytile)
+{
+  uint64_t bitsToScan;
+  uint64_t ii, jj;
+  uint32_t count;
+  uint64_t tarpat;
+  uint32_t len;
+  uint64_t refpat;
+  uint64_t fsize;
+  uint64_t nblocks;
+  uint64_t blocksize;
+  nblocks = 100;
+  blocks.clear();
+  nblocks = addBlocks(nblocks);
+  cout<<"Created "<<nblocks<<" blocks."<<endl;
+  fsize = gzi->size();
+  len = mytile->returnSize();
+  refpat = mytile->getTile();
+  tarpat = gzi->getBits(0,len);
+  count = 0;
+  bitsToScan = (fsize << 3) - (len << 1);
+  blocksize = bitsToScan / (nblocks + 1);
+  cout<<"Block size: "<<blocksize<<"."<<endl;
+  for(ii=0; ii<nblocks; ii++){
+    blocks[ii]->setStart(ii*blocksize);
+    blocks[ii]->setEnd((ii+1)*blocksize);
+  }
+  cout<<"Set end of blocks."<<endl;
+  ii = 0; jj = 0;
+  //mytile->dumpTile();
+  while(ii<bitsToScan){
+    if(tarpat == refpat){
+      count++;
+      ii += len;
+      tarpat = gzi->getBits(ii, len);
+      //cout<<"|"<<ii<<" ";
+    }
+    else {
+      //cout<<ii<<"|";
+      ii++;
+      tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+    }
+    if(ii >= blocks[jj]->returnEnd()){
+      blocks[jj]->setCount(count);
+      jj++;
+      count = 0;
+    }
+    if(jj >= nblocks) break;
+  }
+  return(count);
+}
+
+uint64_t GanitaZeroSymbolic::goodBlock
+(std::shared_ptr<GanitaZeroTile>& mytile)
+{
+  if(!blocks.size()){
+    return(0);
+  }
+  uint64_t ii, jj;
+  uint64_t nn, ws;
+  uint64_t max, max_ii;
+  //nn = blocks.size();
+  //qsort(blocks[0], blocks.size(), sizeof(GanitaZeroBlock *), compar);
+  std::sort(blocks.begin(), blocks.end(), gzu::gzCompareBlocks);
+  for(ii=0; ii<blocks.size(); ii++){
+    cout<<blocks[ii]->returnCount()<<":";
+  }
+  cout<<endl;
+  nn = mytile->getValue() / (blocks.size() + 1) - 1;
+  ii = 0;
+  cout<<"Target count: "<<nn<<endl;
+  while(blocks[ii]->returnCount() < nn){
+    ii++;
+  }
+  jj = 0; ws = nn / 10;
+  if(ws < 2) ws = 2;
+  max = 0; max_ii = 0;
+  while(ii + jj < blocks.size()){
+    while(blocks[ii+jj]->returnCount() < nn + ws){
+      jj++;
+      if(ii + jj >= blocks.size()) break;
+    }
+    if(jj > max){
+      max = jj;
+      max_ii = ii;
+    }
+    nn += ws;
+    ii += jj;
+    jj = 0;
+  }
+
+  return(max_ii);
 }
 
 uint64_t GanitaZeroSymbolic::countBitPatNested
@@ -747,5 +865,78 @@ int GanitaZeroSymbolic::setVerbosity(int vv)
 int GanitaZeroSymbolic::computeAutoCorr(int64_t len)
 {
   return(my_hist->computeAutoCorr(len, gzi));
+}
+
+int GanitaZeroSymbolic::computeDFT(void)
+{
+  return(my_hist->computeDFT(gzi));
+}
+
+int GanitaZeroSymbolic::slideChanges(uint64_t bn)
+{
+  uint64_t ii, ss, ee;
+  int64_t dp;
+  uint64_t jj, count, bitsToScan;
+  uint64_t blocksize;
+  uint64_t max, kk;
+  count = 0;
+  ss = blocks[bn % blocks.size()]->returnStart();
+  ee = blocks[bn % blocks.size()]->returnEnd();
+  blocksize = ee - ss;
+  bool *ch, *dd;
+  ch = (bool *) malloc(sizeof(bool)*(blocksize-1));
+  dd = (bool *) malloc(sizeof(bool)*blocksize);
+  if((dd == NULL) || (ch == NULL)){
+    cout<<"Ran out of memory in slideChanges."<<endl;
+    return(-1);
+  }
+  // 1 false, (-1)^1 = -1 becomes false
+  // 0 true, (-1)^0 = 1 becomes true
+  for(ii=ss; ii<ee-1; ii++){
+    if(gzi->getBit(ii) != gzi->getBit(ii+1)){
+      ch[ii-ss] = 1;
+      count++;
+    }
+    else ch[ii-ss] = 0;
+  }
+  dp = ee - ss;
+  for(ii=0; ii<blocksize-1; ii++){
+    dd[ii] = ch[ii];
+  }
+  dd[blocksize-1] = (gzi->getBit(ee) != gzi->getBit(ee-1));
+  dp -= 2*count + dd[blocksize-1];
+  bitsToScan = 8*gzi->size();
+  cout<<"bitsToScan|start|end="<<bitsToScan<<"|"<<ss<<"|"<<ee<<endl;
+  for(ii=0; ii<8*(gzi->size()-1); ii++) gzi->getBit(ii);
+  max = 0; kk = 1;
+  ii = 2;
+  //while(ee + ii < bitsToScan){
+  for(ii=2; ee + ii < bitsToScan; ii++){
+    gzi->getBit(ii);
+  }
+  for(ii=2; ee + ii < bitsToScan; ii++){
+    for(jj=0; jj<blocksize-kk; jj++){
+      if(ch[jj]){
+	dd[jj+kk] ^= 1;
+      }
+    }
+    for(jj=blocksize-kk; jj<blocksize-1; jj++){
+      // if(ch[jj]){
+      // 	dd[jj + kk - blocksize] ^= 1;
+      // }
+    }
+    //dd[kk - 1] = (gzi->getBit(ee-1) != gzi->getBit(ee + ii - 1));
+    // dd[kk - 1] = 1;
+    // //gzi->getByte(0);
+    // //ii++;
+    kk++;
+    if(kk >= blocksize) kk = 1;
+    //gzi->getByte(ii/8);
+    //for(jj=0; jj<10000; jj++){
+    //dd[jj] ^= 1;
+    //}
+  }
+
+  return(1);
 }
 

@@ -1,3 +1,6 @@
+#ifndef _GANITAZEROSYMBOLIC_
+#define _GANITAZEROSYMBOLIC_
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -12,6 +15,8 @@
 
 #include "ganita/zero/GanitaZeroHist.hpp"
 #include "ganita/graph/GanitaBuffer.hpp"
+#include "ganita/zero/GanitaZeroBlock.hpp"
+#include "ganita/zero/GanitaZeroUtil.hpp"
 
 class GanitaZeroSymbolic
 {
@@ -25,6 +30,7 @@ protected:
   GanitaZeroHist *my_hist;
   GanitaBuffer *gzi;
   vector< std::shared_ptr<GanitaZeroTile> > mytile;
+  vector< std::shared_ptr<GanitaZeroBlock> > blocks;
   int verbose;
 public:
   GanitaZeroSymbolic(void);
@@ -51,8 +57,17 @@ public:
   int tileSpaceZero(int h_len);
   int tileSpace(int h_len);
   int addTile(void);
+  int addBlock(void);
+  uint64_t addBlocks(uint64_t nblocks);
   uint64_t countBitPat1(GanitaZeroTile mytile);
   uint64_t countBitPat2(std::shared_ptr<GanitaZeroTile>& mytile);
+  uint64_t countBitPatBlock(std::shared_ptr<GanitaZeroTile>& mytile);
+  uint64_t goodBlock(std::shared_ptr<GanitaZeroTile>& mytile);
+  static bool compar
+  (std::shared_ptr<GanitaZeroBlock> b1, std::shared_ptr<GanitaZeroBlock> b2);
+  //int compar(GanitaZeroBlock *b1, GanitaZeroBlock *b2);
+  //(std::shared_ptr<GanitaZeroBlock>& b1, std::shared_ptr<GanitaZeroBlock>& b2);
+  //(void *b1, void *b2);
   uint64_t countBitPatNested(std::shared_ptr<GanitaZeroTile>& mytile);
   uint64_t updatePatBits(std::shared_ptr<GanitaZeroTile>& mytile);
   uint64_t shrinkPatBits
@@ -70,5 +85,8 @@ public:
   int countInOutBits(void);
   int setVerbosity(int);
   int computeAutoCorr(int64_t len);
+  int computeDFT(void);
+  int slideChanges(uint64_t bn);
 };
 
+#endif

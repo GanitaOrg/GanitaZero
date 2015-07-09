@@ -767,3 +767,27 @@ int GanitaZeroHist::computeAutoCorr(int64_t len, GanitaBuffer *input)
   return(1);
 }
 
+int GanitaZeroHist::computeDFT(GanitaBuffer *input) 
+{
+  GanitaBuffer *acfile;
+  acfile = new GanitaBuffer();
+  int64_t k, n, t;
+  double sumreal, sumimag;
+  n = 8*(input->size());
+  acfile->createInOutBuffer((char *)"gzero.dft", n);
+  for (k = 0; k < n; k++) {  /* For each output element */
+    sumreal = 0;
+    sumimag = 0;
+    for (t = 0; t < n; t++) {  /* For each input element */
+      double angle = 2 * M_PI * t * k / n;
+      sumreal +=  input->getBit(t) * cos(angle);
+      sumimag += -input->getBit(t) * sin(angle);
+    }
+    cout<<sumreal<<","<<sumimag<<endl;
+    //outreal[k] = sumreal;
+    //outimag[k] = sumimag;
+  }
+  acfile->close();
+  return(1);
+}
+
