@@ -87,6 +87,7 @@ public:
   uint64_t findTopFreq(uint64_t fsize);
   int computeAutoCorr(int64_t len, GanitaBuffer *input);
   int computeDFT(GanitaBuffer *input);
+  int close(void);
 };
 
 // Unneeded

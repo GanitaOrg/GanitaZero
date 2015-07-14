@@ -791,3 +791,12 @@ int GanitaZeroHist::computeDFT(GanitaBuffer *input)
   return(1);
 }
 
+int GanitaZeroHist::close(void)
+{
+  if(!hist){
+    return(-1);
+  }
+  delete hist;
+  return(1);
+}
+

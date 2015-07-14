@@ -369,7 +369,9 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
   newgzi = new GanitaBuffer();
   newgzi->open(gzi->returnFileName());
 
+  cout<<"Iterate 1"<<endl;
   my_hist->initConditional(h_len);
+  cout<<"Iterate 2"<<endl;
   my_hist->computeCondHistAll(gzi);
   bestPatLen = my_hist->getBestSize();
   //cout<<"Pattern length: "<<bestPatLen<<endl;
@@ -781,6 +783,15 @@ int GanitaZeroSymbolic::close(void)
   return(gzi->close());
 }
 
+int GanitaZeroSymbolic::delHist(void)
+{
+  if(!my_hist){
+    return(-1);
+  }
+  delete my_hist;
+  return(1);
+}
+
 uint64_t GanitaZeroSymbolic::dumpHistHist(uint64_t len)
 {
   return(my_hist->dumpHistHist(len));
@@ -874,14 +885,18 @@ int GanitaZeroSymbolic::computeDFT(void)
 
 int GanitaZeroSymbolic::slideChanges(uint64_t bn)
 {
+  GanitaGraphList mylist;
   uint64_t ii, ss, ee;
   int64_t dp;
   uint64_t jj, count, bitsToScan;
   uint64_t blocksize;
-  uint64_t max, kk;
+  uint64_t kk;
   count = 0;
   ss = blocks[bn % blocks.size()]->returnStart();
   ee = blocks[bn % blocks.size()]->returnEnd();
+  if(ee > ss + 364){
+    ee = ss + 364;
+  }
   blocksize = ee - ss;
   bool *ch, *dd;
   ch = (bool *) malloc(sizeof(bool)*(blocksize-1));
@@ -907,36 +922,68 @@ int GanitaZeroSymbolic::slideChanges(uint64_t bn)
   dp -= 2*count + dd[blocksize-1];
   bitsToScan = 8*gzi->size();
   cout<<"bitsToScan|start|end="<<bitsToScan<<"|"<<ss<<"|"<<ee<<endl;
-  for(ii=0; ii<8*(gzi->size()-1); ii++) gzi->getBit(ii);
-  max = 0; kk = 1;
-  ii = 2;
+  kk = 1;
   //while(ee + ii < bitsToScan){
-  for(ii=2; ee + ii < bitsToScan; ii++){
-    gzi->getBit(ii);
-  }
   for(ii=2; ee + ii < bitsToScan; ii++){
     for(jj=0; jj<blocksize-kk; jj++){
       if(ch[jj]){
-	dd[jj+kk] ^= 1;
+    	dd[jj+kk] ^= 1;
       }
     }
     for(jj=blocksize-kk; jj<blocksize-1; jj++){
-      // if(ch[jj]){
-      // 	dd[jj + kk - blocksize] ^= 1;
-      // }
+      if(ch[jj]){
+      	dd[jj + kk - blocksize] ^= 1;
+      }
     }
-    //dd[kk - 1] = (gzi->getBit(ee-1) != gzi->getBit(ee + ii - 1));
-    // dd[kk - 1] = 1;
-    // //gzi->getByte(0);
-    // //ii++;
+    dd[kk - 1] = (gzi->getBit(ee-1) != gzi->getBit(ee + ii - 1));
     kk++;
     if(kk >= blocksize) kk = 1;
-    //gzi->getByte(ii/8);
-    //for(jj=0; jj<10000; jj++){
-    //dd[jj] ^= 1;
-    //}
+    count = 0;
+    for(jj=0; jj<blocksize; jj++){
+      if(!dd[jj]) count++;
+    }
+    //cout<<"Index: "<<ii<<" AutoCorr: "<<count<<endl;
+    mylist.buildMaxList(count, ii, 100);
+    //mylist.dumpList2();
+  }
+  mylist.dumpList2();
+
+  free(ch); free(dd);
+  return(1);
+}
+
+int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn)
+{
+  uint64_t ii, ss, ee;
+  uint64_t jj, count, bitsToScan;
+  uint64_t blocksize;
+  //uint64_t kk;
+  ss = blocks[bn % blocks.size()]->returnStart();
+  ee = blocks[bn % blocks.size()]->returnEnd();
+  blocksize = ee - ss;
+  //bool *ch;
+  //ch = (bool *) malloc(sizeof(bool)*blocksize);
+  // if(ch == NULL){
+  //   cout<<"Ran out of memory in slideChanges."<<endl;
+  //   return(-1);
+  // }
+  // for(ii=ss; ii<ee; ii++){
+  //   ch[ii-ss] = gzi->getBit(ii);
+  // }
+  //dp = ee - ss;
+  bitsToScan = 8*gzi->size() - blocksize;
+  cout<<"bitsToScan|start|end="<<bitsToScan<<"|"<<ss<<"|"<<ee<<endl;
+  //kk = 1;
+  for(ii=0; ii<bitsToScan; ii++){
+    count = 0;
+    for(jj=0; jj<blocksize/100; jj++){
+      if(gzi->getBit(jj) == gzi->getBit(ii+jj)){
+	count++;
+      }
+    }
   }
 
+  //free(ch);
   return(1);
 }
 

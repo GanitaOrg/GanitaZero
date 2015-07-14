@@ -15,6 +15,7 @@
 
 #include "ganita/zero/GanitaZeroHist.hpp"
 #include "ganita/graph/GanitaBuffer.hpp"
+#include "ganita/graph/GanitaGraphList.hpp"
 #include "ganita/zero/GanitaZeroBlock.hpp"
 #include "ganita/zero/GanitaZeroUtil.hpp"
 
@@ -78,6 +79,7 @@ public:
   unsigned long dumpCondHistSep(void);
   string returnB64Encode(void);
   virtual int close(void);
+  int delHist(void);
   uint64_t dumpHistHist(uint64_t len);
   uint64_t findTopFreq(void);
   int majorTileSelector(void);
@@ -87,6 +89,7 @@ public:
   int computeAutoCorr(int64_t len);
   int computeDFT(void);
   int slideChanges(uint64_t bn);
+  int computeAutoCorr2(uint64_t bn);
 };
 
 #endif
