@@ -68,10 +68,12 @@ public:
   int computeCondHistNested(GanitaBuffer *input);
   double computeCondEntAll(void);
   double computeCondEntAll2(void);
+  double computeCondEntAll3(void);
   GanitaZeroTile getBestTile1(void);
   int getBestSize(void);
   int getBestTiles(int bpL, vector< std::shared_ptr<GanitaZeroTile> > tile);
   int bestPatLen1(void);
+  int bestPatLen2(void);
   double computeCondEnt1(void);
   unsigned long dumpHist(void);
   unsigned long dumpCondHist1(void);
@@ -90,7 +92,7 @@ public:
   int close(void);
 };
 
-// Unneeded
+// unneeded
 // uint64_t gh_mask[56] = {
 //   0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff,
 //   0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff,

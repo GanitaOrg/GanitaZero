@@ -359,19 +359,18 @@ int GanitaZeroSymbolic::tileSpaceZero(int h_len)
   return(1);
 }
 
-GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
+GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len, int mode)
 {
   int ntiles, ii, bestPatLen;
   int max_tile_ii;
   uint64_t num;
   GanitaBuffer *newgzi;
   uint64_t bnum;
+  GanitaGraphList *mylist = new GanitaGraphList();
   newgzi = new GanitaBuffer();
   newgzi->open(gzi->returnFileName());
 
-  cout<<"Iterate 1"<<endl;
   my_hist->initConditional(h_len);
-  cout<<"Iterate 2"<<endl;
   my_hist->computeCondHistAll(gzi);
   bestPatLen = my_hist->getBestSize();
   //cout<<"Pattern length: "<<bestPatLen<<endl;
@@ -388,12 +387,23 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len)
   max_tile_ii = maxTileSelector();
   if(max_tile_ii >= 0){
     countBitPatBlock(mytile[max_tile_ii]);
-    bnum = goodBlock(mytile[max_tile_ii]);
-    cout<<"Good block: "<<bnum<<endl;
-    slideChanges(bnum);
-    num = updatePatBits(mytile[max_tile_ii]);
+    if(!mode){
+      bnum = goodBlock(mytile[max_tile_ii]);
+      cout<<"Good block: "<<bnum<<endl;
+      //slideChanges(bnum, mylist);
+      computeAutoCorr2(bnum, mylist);
+    }
+    else num = updatePatBits(mytile[max_tile_ii]);
+    if(!mode){
+      num = blocks[0]->returnEnd() - blocks[0]->returnStart();
+    }
     newgzi->createInOutBuffer((char *)"gzero.shrink1", (num+7)/8);
-    cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
+    if(mode){
+      cout<<shrinkPatBits(newgzi, mytile[max_tile_ii])<<endl;
+    }
+    else {
+      cout<<shrinkPatBits(newgzi, mytile[max_tile_ii], mylist)<<endl;
+    }
   }
   newgzi->close();
   return( mytile[max_tile_ii].get() );
@@ -504,25 +514,29 @@ uint64_t GanitaZeroSymbolic::countBitPat2
   refpat = mytile->getTile();
   tarpat = gzi->getBits(0,len);
   count = 0;
-  ii = 0;
+  ii = len;
   bitsToScan = (fsize << 3) - (len << 1);
   //mytile->dumpTile();
   while(ii<bitsToScan){
     if(tarpat == refpat){
       count++;
-      ii += len;
       tarpat = gzi->getBits(ii, len);
-      //cout<<"|"<<ii<<" ";
+      //cout<<"|"<<ii<<"/"<<tarpat<<" ";
+      ii += len;
     }
     else {
       //cout<<ii<<"|";
-      ii++;
       tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+      ii++;
     }
   }
   mytile->setValue(count);
   return(count);
 }
+
+// bool GanitaZeroSymbolic::patCheck(uint64_t pat1, uint64_t pat2, uint32_t nn)
+// {
+  
 
 uint64_t GanitaZeroSymbolic::countBitPatBlock
 (std::shared_ptr<GanitaZeroTile>& mytile)
@@ -536,7 +550,7 @@ uint64_t GanitaZeroSymbolic::countBitPatBlock
   uint64_t fsize;
   uint64_t nblocks;
   uint64_t blocksize;
-  nblocks = 100;
+  nblocks = 300;
   blocks.clear();
   nblocks = addBlocks(nblocks);
   cout<<"Created "<<nblocks<<" blocks."<<endl;
@@ -553,19 +567,19 @@ uint64_t GanitaZeroSymbolic::countBitPatBlock
     blocks[ii]->setEnd((ii+1)*blocksize);
   }
   cout<<"Set end of blocks."<<endl;
-  ii = 0; jj = 0;
+  ii = len; jj = 0;
   //mytile->dumpTile();
   while(ii<bitsToScan){
     if(tarpat == refpat){
       count++;
-      ii += len;
       tarpat = gzi->getBits(ii, len);
-      //cout<<"|"<<ii<<" ";
+      //cout<<"|"<<ii<<"/"<<tarpat<<" ";
+      ii += len;
     }
     else {
       //cout<<ii<<"|";
-      ii++;
       tarpat = (tarpat >> 1) | (gzi->getBit(ii) << (len - 1));
+      ii++;
     }
     if(ii >= blocks[jj]->returnEnd()){
       blocks[jj]->setCount(count);
@@ -751,6 +765,65 @@ uint64_t GanitaZeroSymbolic::shrinkPatBits
   return(jj);
 }
 
+uint64_t GanitaZeroSymbolic::shrinkPatBits
+(GanitaBuffer *newgzi, std::shared_ptr<GanitaZeroTile>& mytile, 
+ GanitaGraphList *mylist)
+{
+  //uint64_t bitsToScan;
+  uint64_t ii, jj, nn;
+  //uint64_t tarpat;
+  //uint32_t len;
+  //uint64_t refpat;
+  //uint64_t fsize;
+  uint64_t blocksize;
+  uint64_t ss, ee;
+  uint64_t listsize, count;
+  GanitaEdge ed;
+
+  if(!mytile->getValue()){
+    fprintf(stdout, "No bits to be updated.\n");
+    return(0);
+  }
+  ss = blocks[0]->returnStart();
+  ee = blocks[0]->returnEnd();
+  blocksize = ee - ss;
+
+  // fsize = gzi->size();
+  // len = mytile->returnSize();
+  // refpat = mytile->getTile();
+  // tarpat = gzi->getBits(0,len);
+  //bitsToScan = (fsize << 3) - (len << 1);
+  //mytile->dumpTile();
+  listsize = 8;
+  for(ii=0; ii<blocksize; ii++){
+    count = 0; 
+    jj=0;
+    nn = mylist->returnId();
+    //cout<<"Node value: "<<ii+mylist->returnNode(nn)->returnValue()<<endl;
+    while(jj<listsize){
+      count += gzi->getBit(ii + mylist->returnNode(nn)->returnValue());
+      mylist->returnNode(nn)->returnEdge(0, ed);
+      nn = ed.returnId();
+      jj++;
+    }
+    //cout<<count<<":";
+    if((count<<1) < listsize){
+      //count++;
+      newgzi->writeBufBitInOut(0,ii);
+      cout<<"0";
+    }
+    else {
+      //cout<<ii<<"|";
+      newgzi->writeBufBitInOut(1,ii);
+      cout<<"1";
+    }
+  }
+  cout<<endl;
+  newgzi->flushInOut();
+  //mytile->setValue(count);
+  return(jj);
+}
+
 double GanitaZeroSymbolic::computeCondHist2(int h_len)
 {
   my_hist->initConditional(h_len);
@@ -883,20 +956,24 @@ int GanitaZeroSymbolic::computeDFT(void)
   return(my_hist->computeDFT(gzi));
 }
 
-int GanitaZeroSymbolic::slideChanges(uint64_t bn)
+int GanitaZeroSymbolic::slideChanges(uint64_t bn, GanitaGraphList *mylist)
 {
-  GanitaGraphList mylist;
+  //GanitaGraphList mylist;
   uint64_t ii, ss, ee;
   int64_t dp;
   uint64_t jj, count, bitsToScan;
   uint64_t blocksize;
   uint64_t kk;
   count = 0;
+  // Temporarily set bn to 0.
+  //bn = 0;
   ss = blocks[bn % blocks.size()]->returnStart();
   ee = blocks[bn % blocks.size()]->returnEnd();
-  if(ee > ss + 364){
-    ee = ss + 364;
-  }
+  // if(ee > ss + 364){
+  //   ee = ss + 364;
+  // }
+  //ss = 0;
+  // ee = ss + 1093;
   blocksize = ee - ss;
   bool *ch, *dd;
   ch = (bool *) malloc(sizeof(bool)*(blocksize-1));
@@ -937,22 +1014,22 @@ int GanitaZeroSymbolic::slideChanges(uint64_t bn)
     }
     dd[kk - 1] = (gzi->getBit(ee-1) != gzi->getBit(ee + ii - 1));
     kk++;
-    if(kk >= blocksize) kk = 1;
+    if(kk > blocksize) kk = 1;
     count = 0;
     for(jj=0; jj<blocksize; jj++){
       if(!dd[jj]) count++;
     }
     //cout<<"Index: "<<ii<<" AutoCorr: "<<count<<endl;
-    mylist.buildMaxList(count, ii, 100);
+    mylist->buildMaxList(count, ii, 200);
     //mylist.dumpList2();
   }
-  mylist.dumpList2();
+  mylist->dumpList2();
 
   free(ch); free(dd);
   return(1);
 }
 
-int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn)
+int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist)
 {
   uint64_t ii, ss, ee;
   uint64_t jj, count, bitsToScan;
@@ -976,11 +1053,12 @@ int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn)
   //kk = 1;
   for(ii=0; ii<bitsToScan; ii++){
     count = 0;
-    for(jj=0; jj<blocksize/100; jj++){
+    for(jj=0; jj<blocksize; jj++){
       if(gzi->getBit(jj) == gzi->getBit(ii+jj)){
 	count++;
       }
     }
+    mylist->buildMaxList(count, ii, 200);
   }
 
   //free(ch);

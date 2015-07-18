@@ -402,6 +402,58 @@ double GanitaZeroHist::computeCondEntAll2(void)
   return(entropy);
 }
 
+// Track 2 different statistics.
+double GanitaZeroHist::computeCondEntAll3(void)
+{
+  uint64_t ii, total, combo;
+  double pp, qq, entropy;
+  uint64_t count1, count2;
+  uint64_t s1, s2, s3;
+  int jj;
+  double max, tmp;
+  uint64_t max_c;
+
+  entropy = 0;
+  count1 = 0;
+  count2 = 2;
+  stat.clear();
+  for(jj=0; jj<condition_num; jj++){
+    total = 0;
+    entropy = 0;
+    for(ii=count1; ii<count2; ii++){
+      total += hist[ii];
+    }    
+    s2 = count2 - count1;
+    s1 = s2 >> 1;
+    s3 = s1 + count1;
+    max = 0;
+    max_c = 0;
+    for(ii=0; ii<s1; ii++){
+      combo = hist[ii+count1] + hist[ii+s3];
+      if(combo != 0){
+	qq = ((double) hist[ii+count1]) / ((double) total);
+	pp = ((double) hist[ii+count1]) / ((double) combo);
+	entropy += 
+	  qq * (1 - (double) hist[ii+count1] / ((double) combo));
+        tmp = ((double) (combo >> 4)) / (pp * (1 - pp) + .025);
+        if(tmp > max){
+          max = tmp;
+          max_c = ii;
+        }
+      }
+    }
+    entropy *= 4;
+    fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
+    fprintf(stdout, "Conditional bits: %08lX, Score: %lf\n", max_c, max);
+    stat.push_back(entropy);
+    stat.push_back(max);
+    count1 = count2;
+    count2 += (longone << (jj+2));
+  }
+  
+  return(entropy);
+}
+
 // Compute an approximation of the conditional entropy
 GanitaZeroTile GanitaZeroHist::getBestTile1(void)
 {
@@ -422,8 +474,8 @@ int GanitaZeroHist::getBestSize(void)
 {
   int bestPatLen;
   
-  computeCondEntAll2();
-  bestPatLen = bestPatLen1();
+  computeCondEntAll3();
+  bestPatLen = bestPatLen2();
   //fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
   return(bestPatLen);
 }
@@ -474,6 +526,52 @@ int GanitaZeroHist::bestPatLen1(void)
     max_ii++;
   }
   if(max_ii < 2) max_ii = 2;
+  //cout<<"Pattern Length: "<<max_ii<<endl;
+  
+  return(max_ii);
+}
+
+// Two statistics stored in stat.
+int GanitaZeroHist::bestPatLen2(void)
+{
+  uint32_t ii, max_ii;
+  //uint32_t min_ii;
+  double max;
+  //double min;
+  double tmp;
+
+  max = 0;
+  max_ii = 0;
+  //min = 10000;
+  //min_ii = 0;
+  //for(ii=0; ii<stat.size(); ii++){
+  //fprintf(stdout, "%d %lf\n", ii, stat[ii]);
+  //}
+  for(ii=1; ii<(stat.size()>>1)-1; ii++){
+    //tmp = stat[ii-1] + stat[ii+1] - 2*stat[ii];
+    if(stat[2*(ii+1)] == 0){
+      //choose max_ii = ii
+      max_ii = ii;
+      //fprintf(stdout, "Reached zero counts @ %d.\n", max_ii);
+      return(max_ii);
+    }
+    //tmp = (1 + ((double) ii)/100.0) * 
+    //  (stat[ii-1]/stat[ii]) - (stat[ii]/stat[ii+1]);
+    tmp = (ii + 10) * (stat[2*(ii-1)] - stat[2*ii]);
+    if(tmp > max){
+      max = tmp;
+      max_ii = ii - 1;
+    }
+  }
+  if(max_ii < 4){
+    max_ii++;
+  }
+  if(max_ii < 2) max_ii = 2;
+  if(max_ii + 2 < (stat.size()>>1)){
+    if(stat[2*(max_ii + 1)+1] > 1.2 * stat[2*(max_ii + 2)+1]){
+      max_ii++;
+    }
+  }
   //cout<<"Pattern Length: "<<max_ii<<endl;
   
   return(max_ii);

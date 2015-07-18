@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   //gzero.computeCondEntAll(25);
 
   //gzero.tileSpace(25);
-  gzero.build1(argv[1], 25, 3);
+  gzero.build1(argv[1], 25, 4);
 
   //gzm.setEx1();
   //gzm.dumpMat();

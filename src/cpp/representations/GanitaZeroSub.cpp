@@ -36,7 +36,7 @@ unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
   count = 0;
   while(count < len){
     myrandbit = 0;
-    if((myrands[count] & 0xf) == 0){
+    if((myrands[count] & 0x7) == 0){
       myrandbit = (myrands[count] >> 7) & 0x1;
     }
     if(myrandbit == 0){ 
@@ -56,7 +56,7 @@ unsigned long GanitaZeroSub::generateChacon3(unsigned long len)
     }
     if(substage[ii] == 1){
       myrandbit = 0;
-      if((myrands[count] & 0xf) == 0){
+      if((myrands[count] & 0x7) == 0){
         myrandbit = (myrands[count] >> 7) & 0x1;
       }
       if(myrandbit == 0){ 

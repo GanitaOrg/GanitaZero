@@ -250,17 +250,17 @@ int GanitaZero::build1(char *input_seq, int h_len, int iterations)
   GanitaGraphFile ggFile;
   init(input_seq);
   //gSym.computeAutoCorr(500);
-  m_tile = gSym.getTileSpaceZero(h_len);
+  m_tile = gSym.getTileSpaceZero(h_len, 0);
   close();
   gAdic.buildBase();
   gAdic.extendStage(m_tile);
   for(int ii=1; ii<iterations; ii++){
     init((char *)"/tmp/ganita/gzero.shrink1");
-    m_tile = gSym.getTileSpaceZero(h_len);
+    m_tile = gSym.getTileSpaceZero(h_len, 1);
     gAdic.extendStage(m_tile);
     close();
   }
-  ggFile.writeVisTables(gAdic.returnStage(0));
+  ggFile.writeVisTablesForAdic(gAdic.returnStage(0));
   return(1);
 }
 

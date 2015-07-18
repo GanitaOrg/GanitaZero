@@ -54,7 +54,7 @@ public:
   double computeCondEnt1FromScratch(int h_len);
   double computeCondEnt2FromScratch(int h_len);
   double computeCondEntAll(int h_len);
-  GanitaZeroTile *getTileSpaceZero(int h_len);
+  GanitaZeroTile *getTileSpaceZero(int h_len, int mode);
   int tileSpaceZero(int h_len);
   int tileSpace(int h_len);
   int addTile(void);
@@ -73,6 +73,9 @@ public:
   uint64_t updatePatBits(std::shared_ptr<GanitaZeroTile>& mytile);
   uint64_t shrinkPatBits
   (GanitaBuffer *newgzi, std::shared_ptr<GanitaZeroTile>& mytile);
+  uint64_t shrinkPatBits
+  (GanitaBuffer *newgzi, std::shared_ptr<GanitaZeroTile>& mytile, 
+   GanitaGraphList *mylist);
   double computeCondHist2(int h_len);
   double computeCondHistAll(int h_len);
   unsigned long dumpCondHist1(void);
@@ -88,8 +91,8 @@ public:
   int setVerbosity(int);
   int computeAutoCorr(int64_t len);
   int computeDFT(void);
-  int slideChanges(uint64_t bn);
-  int computeAutoCorr2(uint64_t bn);
+  int slideChanges(uint64_t bn, GanitaGraphList *mylist);
+  int computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist);
 };
 
 #endif
