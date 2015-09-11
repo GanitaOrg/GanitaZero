@@ -25,7 +25,7 @@ GanitaZeroHist::GanitaZeroHist(unsigned long ss)
     hist_length = DEFAULT_HIST_SIZE;
   }
   else hist_length = ss;
-  hist = new unsigned long[ss]();
+  hist = new uint64_t[ss]();
   condition_num = 0;
   est_num = 0;
   max_count = 0;
@@ -40,7 +40,7 @@ unsigned long GanitaZeroHist::init(unsigned long ss)
     hist_length = DEFAULT_HIST_SIZE;
   }
   else hist_length = ss;
-  hist = new unsigned long[ss]();
+  hist = new uint64_t[ss]();
   if(!hist){
     cout<<"Unable to allocate memory for histogram."<<endl;
   }
@@ -55,13 +55,13 @@ unsigned long GanitaZeroHist::initConditional(void)
   if(hist_length <= 0){
     cout<<"previously unallocated\n";
     hist_length = 256;
-    hist = new unsigned long[2*hist_length]();
+    hist = new uint64_t[2*hist_length]();
   }
   else {
     cout<<"previously allocated\n";
     delete hist;
     hist_length = 256;
-    hist = new unsigned long[2*hist_length]();
+    hist = new uint64_t[2*hist_length]();
   }
   condition_num = 8;
   est_num = 1;
@@ -77,19 +77,19 @@ unsigned long GanitaZeroHist::initConditional(int h_len)
   if(hist_length <= 0){
     //cout<<"previously unallocated\n";
     hist_length = longone << h_len;
-    hist = new(nothrow) unsigned long[2*hist_length]();
+    hist = new(nothrow) uint64_t[2*hist_length]();
   }
   else {
     //cout<<"previously allocated\n";
     delete hist;
     hist_length = longone << h_len;
-    hist = new(nothrow) unsigned long[2*hist_length]();
+    hist = new(nothrow) uint64_t[2*hist_length]();
   }
   if(!hist){
     cout<<"Unable to allocate memory for histogram."<<endl;
     hist_length = 1;
     h_len = 0;
-    hist = new unsigned long[2*hist_length]();
+    hist = new uint64_t[2*hist_length]();
   }
   condition_num = h_len;
   est_num = 1;
