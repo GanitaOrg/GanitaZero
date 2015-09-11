@@ -108,6 +108,17 @@ int GanitaZeroHist::computeByteHist(unsigned char *ptr, unsigned long ss)
   return 1;
 }
 
+int GanitaZeroHist::computeByteHist(GanitaBuffer *input)
+{
+  unsigned long ii;
+  cout<<"Histogram length: "<<input->size()<<endl;
+  for(ii=0; ii<input->size(); ii++){
+    hist[input->getByte(ii)]++;
+  }
+
+  return 1;
+}
+
 // Compute an approximation of the conditional entropy
 // int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
 // {
@@ -895,6 +906,36 @@ int GanitaZeroHist::close(void)
     return(-1);
   }
   delete hist;
+  return(1);
+}
+
+// Compute empirical representation of Radon-Nikodym derivative 
+// between two measures or histograms. 
+int GanitaZeroHist::radonNikodym(uint64_t *targetHist, uint64_t *der)
+{
+  uint64_t ii, jj;
+  uint64_t sum1, sum2;
+
+  der = (uint64_t *) malloc(sizeof(uint64_t)*hist_length);
+  if(der == NULL){
+    fprintf(stderr, "Ran out of memory.\n");
+    return(-1);
+  }
+
+  ii=0; jj=0;
+  sum1 = targetHist[ii]; sum2 = hist[jj];
+  while((ii < hist_length) && (jj < hist_length)){
+    while(sum1 < sum2){
+      ii++;
+      sum1 += targetHist[ii];
+      der[ii] = jj;
+    }
+    while(sum2 <= sum1){
+      jj++;
+      sum2 += hist[jj];
+    }
+  }
+
   return(1);
 }
 

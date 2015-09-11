@@ -45,8 +45,8 @@ using namespace std;
 class GanitaZeroHist
 {
 private:
-  unsigned long *hist;       // histogram
-  unsigned long hist_length; // histogram length
+  uint64_t *hist;       // histogram
+  uint64_t hist_length; // histogram length
   int condition_num;         // number of bits to condition on
   int est_num;               // number of bits to estimate probability on
   uint64_t max_count;
@@ -61,6 +61,7 @@ public:
   unsigned long initConditional(void);
   unsigned long initConditional(int h_len);
   int computeByteHist(unsigned char *ptr, unsigned long ss);
+  int computeByteHist(GanitaBuffer *input);
   int computeCondHist1(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(GanitaBuffer *input);
   int computeCondHist2(GanitaBuffer *input);
@@ -90,6 +91,7 @@ public:
   int computeAutoCorr(int64_t len, GanitaBuffer *input);
   int computeDFT(GanitaBuffer *input);
   int close(void);
+  int radonNikodym(uint64_t *targetHist, uint64_t *der);
 };
 
 // unneeded

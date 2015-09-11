@@ -1038,16 +1038,6 @@ int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist)
   ss = blocks[bn % blocks.size()]->returnStart();
   ee = blocks[bn % blocks.size()]->returnEnd();
   blocksize = ee - ss;
-  //bool *ch;
-  //ch = (bool *) malloc(sizeof(bool)*blocksize);
-  // if(ch == NULL){
-  //   cout<<"Ran out of memory in slideChanges."<<endl;
-  //   return(-1);
-  // }
-  // for(ii=ss; ii<ee; ii++){
-  //   ch[ii-ss] = gzi->getBit(ii);
-  // }
-  //dp = ee - ss;
   bitsToScan = 8*gzi->size() - blocksize;
   cout<<"bitsToScan|start|end="<<bitsToScan<<"|"<<ss<<"|"<<ee<<endl;
   //kk = 1;
