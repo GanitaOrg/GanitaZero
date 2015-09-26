@@ -49,7 +49,7 @@ int GanitaZeroAdic::readFixed(std::ifstream &gzt_file)
   if(!std::getline(gzt_file,line)){
     return(-1);
   }
-  sscanf(line.c_str(),"num-fixed-levels %ld", &num_fixed_levels);
+  sscanf(line.c_str(),"num-fixed-levels %lld", (unsigned long long *) &num_fixed_levels);
   //cout<<"num-fixed-levels: "<<num_fixed_levels<<endl;
   // read in num-nodes line
   if(!std::getline(gzt_file,line)){
@@ -89,7 +89,7 @@ int GanitaZeroAdic::readRepeat(std::ifstream &gzt_file)
     return(-1);
   }
   // Read in length of repeating pattern
-  sscanf(line.c_str(),"repeat-pattern-length %ld", &repeat_pattern_length);
+  sscanf(line.c_str(),"repeat-pattern-length %lld", (unsigned long long *) &repeat_pattern_length);
   //cout<<"repeat-pattern-length: "<<repeat_pattern_length<<endl;
   for(ii=0; ii<repeat_pattern_length; ii++){
     // read in repeat-nodes line

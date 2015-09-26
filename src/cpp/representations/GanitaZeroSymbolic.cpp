@@ -346,7 +346,7 @@ int GanitaZeroSymbolic::tileSpaceZero(int h_len)
   //cout<<"Number of tiles: "<<ntiles<<endl;
   for(ii=0; ii<ntiles; ii++){
     mytile[ii]->dumpTile();
-    fprintf(stdout, " %ld\n", countBitPat2(mytile[ii]));
+    fprintf(stdout, " %lld\n", (unsigned long long) countBitPat2(mytile[ii]));
   }
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
@@ -381,7 +381,7 @@ GanitaZeroTile *GanitaZeroSymbolic::getTileSpaceZero(int h_len, int mode)
   //cout<<"Number of tiles: "<<ntiles<<endl;
   for(ii=0; ii<ntiles; ii++){
     mytile[ii]->dumpTile();
-    fprintf(stdout, " %ld\n", countBitPat2(mytile[ii]));
+    fprintf(stdout, " %lld\n", (unsigned long long) countBitPat2(mytile[ii]));
   }
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
@@ -432,7 +432,7 @@ int GanitaZeroSymbolic::tileSpace(int h_len)
   if(!ntiles) return(0);
   for(ii=0; ii<ntiles; ii++){
     mytile[ii]->dumpTile();
-    fprintf(stdout, " %ld\n", countBitPatNested(mytile[ii]));
+    fprintf(stdout, " %lld\n", (unsigned long long) countBitPatNested(mytile[ii]));
   }
   //majorTileSelector();
   max_tile_ii = maxTileSelector();
@@ -934,8 +934,8 @@ int GanitaZeroSymbolic::countInOutBits(void)
   for(ii=0; ii<8*(gzi->inOutSize()); ii++){
     count += gzi->getInOutBit(ii);
   }
-  fprintf(stdout, "InOut File Count: %ld / %ld\n", 
-	  count, 8*(gzi->inOutSize()));
+  fprintf(stdout, "InOut File Count: %lld / %lld\n", 
+	  (unsigned long long) count, (unsigned long long) 8*(gzi->inOutSize()));
 
   return(1);
 }

@@ -418,7 +418,7 @@ double GanitaZeroHist::computeCondEntAll2(void)
     }
     entropy *= 4;
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
-    fprintf(stdout, "Conditional bits: %08lX, Score: %lf\n", max_c, max);
+    fprintf(stdout, "Conditional bits: %08llX, Score: %lf\n", (unsigned long long) max_c, max);
     stat.push_back(entropy);
     count1 = count2;
     count2 += (longone << (jj+2));
@@ -469,7 +469,7 @@ double GanitaZeroHist::computeCondEntAll3(void)
     }
     entropy *= 4;
     fprintf(stdout, "Conditional bits: %d, Entropy: %lf\n", jj, entropy);
-    fprintf(stdout, "Conditional bits: %08lX, Score: %lf\n", max_c, max);
+    fprintf(stdout, "Conditional bits: %08llX, Score: %lf\n", (unsigned long long) max_c, max);
     stat.push_back(entropy);
     stat.push_back(max);
     count1 = count2;
@@ -489,7 +489,7 @@ GanitaZeroTile GanitaZeroHist::getBestTile1(void)
   bestPatLen = bestPatLen1();
   fprintf(stdout, "Choose pattern length: %d.\n", bestPatLen);
   tile.set(findMaxCondHist(bestPatLen), bestPatLen);
-  fprintf(stdout, "Best tile: %16lX\n", tile.getTile());
+  fprintf(stdout, "Best tile: %16llX\n", (unsigned long long) tile.getTile());
 
   return(tile);
 }

@@ -81,9 +81,9 @@ int GanitaZeroTile::dumpTile(void)
   uint32_t ii;
   fprintf(stdout, "Tile: ");
   for(ii=0; ii<size; ii++){
-    fprintf(stdout, "%01lX", (tile>>ii) & 0x1);
+    fprintf(stdout, "%01llX", (unsigned long long)((tile>>ii) & 0x1));
   }
-  fprintf(stdout, " %d, %ld", size,value);
+  fprintf(stdout, " %d, %lld", size, (unsigned long long) value);
   return(1);
 }
 
