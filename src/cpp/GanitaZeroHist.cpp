@@ -628,11 +628,11 @@ double GanitaZeroHist::computeCondEnt1(void)
 
 unsigned long GanitaZeroHist::dumpHist(void)
 {
-  unsigned long ii;
+  uint64_t ii;
   //unsigned long total;
   //total = 0;
   for(ii=0; ii<hist_length; ii++){
-    fprintf(stdout, "Index / Count %3ld / %ld\n", ii, hist[ii]);
+    fprintf(stdout, "Index / Count %3lld / %lld\n", (unsigned long long) ii, (unsigned long long) hist[ii]);
     //total += hist[ii];
   }
 
@@ -642,11 +642,11 @@ unsigned long GanitaZeroHist::dumpHist(void)
 
 unsigned long GanitaZeroHist::dumpCondHist1(void)
 {
-  unsigned long ii;
-  unsigned long total = 0;
+  uint64_t ii;
+  uint64_t total = 0;
 
   for(ii=0; ii<hist_length; ii++){
-    fprintf(stdout, "Index / Count %3ld / %ld, %ld\n", ii, hist[2*ii], hist[2*ii+1]);
+    fprintf(stdout, "Index / Count %3lld / %lld, %lld\n", (unsigned long long) ii, (unsigned long long) hist[2*ii], (unsigned long long) hist[2*ii+1]);
     total += hist[2*ii] + hist[2*ii+1];
   }
 
@@ -656,12 +656,12 @@ unsigned long GanitaZeroHist::dumpCondHist1(void)
 
 unsigned long GanitaZeroHist::dumpCondHistSep(void)
 {
-  unsigned int ii;
-  unsigned long total = 0;
+  uint64_t ii;
+  uint64_t total = 0;
 
   for(ii=0; ii<hist_length; ii++){
-    fprintf(stdout, "Index %6X Count %5ld\n", 2*ii, hist[2*ii]);
-    fprintf(stdout, "Index %6X Count %5ld\n", 2*ii+1, hist[2*ii+1]);
+    fprintf(stdout, "Index %6llX Count %5lld\n", (unsigned long long) 2*ii, (unsigned long long) hist[2*ii]);
+    fprintf(stdout, "Index %6llX Count %5lld\n", (unsigned long long) 2*ii+1, (unsigned long long) hist[2*ii+1]);
     total += hist[2*ii] + hist[2*ii+1];
   }
 
@@ -829,7 +829,7 @@ uint64_t GanitaZeroHist::dumpHistHist(uint64_t len)
   for(ii=0; ii<len; ii++){
     //fprintf(stdout, "Index / Count: %lld / %lld\n", 
     //	    (long long int) ii, (long long int) hh[ii]);
-    fprintf(stdout, "%ld ", hh[ii]);
+    fprintf(stdout, "%lld ", (unsigned long long) hh[ii]);
   }
   fprintf(stdout, "\n");
 
@@ -852,7 +852,7 @@ uint64_t GanitaZeroHist::findTopFreq(uint64_t fsize)
 
   for(ii=0; ii<hh; ii++){
     if(hist[ii] > thresh){
-      fprintf(stdout, "Common pattern: %04X %ld\n", (uint32_t) ii, hist[ii]);
+      fprintf(stdout, "Common pattern: %04X %lld\n", (uint32_t) ii, (unsigned long long) hist[ii]);
       count++;
       htotal += hist[ii];
     }
