@@ -62,6 +62,7 @@ public:
   unsigned long initConditional(int h_len);
   int computeByteHist(unsigned char *ptr, unsigned long ss);
   int computeByteHist(GanitaBuffer *input);
+  int computeByteHist(GanitaBuffer *input, uint64_t len);
   int computeCondHist1(unsigned char *ptr, unsigned long ss);
   int computeCondHist1(GanitaBuffer *input);
   int computeCondHist2(GanitaBuffer *input);
@@ -92,6 +93,9 @@ public:
   int computeDFT(GanitaBuffer *input);
   int close(void);
   int radonNikodym(uint64_t *targetHist, uint64_t *der);
+  int add(uint64_t val);
+  int subtract(uint64_t val);
+  uint64_t returnValue(uint64_t xx);
 };
 
 // unneeded

@@ -1055,3 +1055,90 @@ int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist)
   return(1);
 }
 
+int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
+{
+  uint64_t fsize, ii, wr;
+  double *domD;
+  fsize = gzi->size();
+  if(ws > fsize) ws = fsize;
+  domD = (double *) malloc(256 * sizeof(double));
+  if(domD == NULL){
+    fprintf(stderr, "Ran out memory.\n");
+    return(-1);
+  }
+  wr = ws / 2;
+  my_hist->computeByteHist(gzi, ws);
+  for(ii=0; ii<256; ii++){
+    domD[ii] = ii; 
+  }
+  for(ii=0; ii<wr; ii++){
+    gzi->writeDouble( (double) (gzi->getByte(ii)) ); 
+  }
+
+  return(1);
+}
+
+int GanitaZeroSymbolic::updateStationarySeq(double *domMap, uint64_t addV, uint64_t subV)
+{
+  uint64_t ii, jj;
+  double vv1, vv2;
+  if(subV == addV){
+    // domMap is unchanged. 
+    return(0);
+  }
+  if((subV > 255) || (addV > 255)){
+    // Values are out of range. 
+    return(-1);
+  }
+  my_hist->add(addV);
+  my_hist->subtract(subV);
+  if(subV < addV){
+    ii = subV;
+    while(ii < addV){
+      // domMap is increasing.
+      jj = ii + 1;
+      while(my_hist->returnValue(jj) == 0){
+        jj++;
+      }
+      // Update domMap. 
+      // Weight is determined as mean of current x-value and next x-value. 
+      vv1 = ((double) (my_hist->returnValue(jj) + my_hist->returnValue(ii))) / 2;
+      if(vv1 <= 0){
+        fprintf(stderr, "Value should not be 0.\n");
+        return(-2);
+      }
+      vv2 = 1 / vv1;
+      // Move this distance from ii to jj.
+      domMap[ii] += vv2 * (domMap[jj] - domMap[ii]);
+      ii = jj;
+    }
+  }
+  else{
+    // Incomplete. 
+    ii = subV;
+    while(ii > addV){
+      // domMap is increasing.
+      jj = ii - 1;
+      while(my_hist->returnValue(jj) == 0){
+        jj--;
+        //if(jj > addV){
+          // Reached end of interval. 
+          //break;
+        //}
+      }
+      // Update domMap. 
+      vv1 = ((double) (my_hist->returnValue(jj) + my_hist->returnValue(ii))) / 2;
+      if(vv1 <= 0){
+        fprintf(stderr, "Value should not be 0.\n");
+        return(-2);
+      }
+      vv2 = 1 / vv1;
+      // Move this distance from ii to jj.
+      domMap[ii] += vv2 * (domMap[jj] - domMap[ii]);
+      ii = jj;
+    }
+  }
+
+  return(1);
+}
+

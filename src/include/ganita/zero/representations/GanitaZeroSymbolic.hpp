@@ -93,6 +93,8 @@ public:
   int computeDFT(void);
   int slideChanges(uint64_t bn, GanitaGraphList *mylist);
   int computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist);
+  int buildStationarySeq(uint64_t ws);
+  int updateStationarySeq(double *domMap, uint64_t addV, uint64_t subV);
 };
 
 #endif

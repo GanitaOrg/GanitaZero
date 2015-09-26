@@ -119,7 +119,21 @@ int GanitaZeroHist::computeByteHist(GanitaBuffer *input)
   return 1;
 }
 
-// Compute an approximation of the conditional entropy
+int GanitaZeroHist::computeByteHist(GanitaBuffer *input, uint64_t len)
+{
+  unsigned long ii;
+  if(len > input->size()){
+    len = input->size();
+  }
+  cout<<"Histogram length: "<<len<<endl;
+  for(ii=0; ii<len; ii++){
+    hist[input->getByte(ii)]++;
+  }
+
+  return 1;
+}
+
+/// Compute an approximation of the conditional entropy
 // int GanitaZeroHist::computeCondHist1(unsigned char *ptr, unsigned long ss)
 // {
 //   unsigned int byte;
@@ -937,5 +951,38 @@ int GanitaZeroHist::radonNikodym(uint64_t *targetHist, uint64_t *der)
   }
 
   return(1);
+}
+
+int GanitaZeroHist::add(uint64_t val)
+{
+  if(val >= hist_length){
+    fprintf(stderr, "Value %lld out of range %lld.", val, hist_length);
+    return(-1);
+  }
+  hist[val]++;
+  return(1);
+}
+ 
+int GanitaZeroHist::subtract(uint64_t val)
+{
+  if(val >= hist_length){
+    fprintf(stderr, "Value %lld out of range %lld.", val, hist_length);
+    return(-1);
+  }
+  if(hist[val] == 0){
+    fprintf(stderr, "Histogram already at zero.");
+    return(0);
+  }
+  hist[val]--;
+  return(1);
+}
+
+uint64_t GanitaZeroHist::returnValue(uint64_t xx)
+{
+  if(xx >= hist_length){
+    fprintf(stderr, "Value %lld out of range %lld.", xx, hist_length);
+    return(0);
+  }
+  return(hist[xx]);
 }
 
