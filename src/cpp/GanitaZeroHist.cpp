@@ -956,7 +956,7 @@ int GanitaZeroHist::radonNikodym(uint64_t *targetHist, uint64_t *der)
 int GanitaZeroHist::add(uint64_t val)
 {
   if(val >= hist_length){
-    fprintf(stderr, "Value %lld out of range %lld.", (long long int) val, (long long int) hist_length);
+    fprintf(stderr, "Value %lld out of range %lld.", (unsigned long long) val, (unsigned long long) hist_length);
     return(-1);
   }
   hist[val]++;
@@ -966,7 +966,7 @@ int GanitaZeroHist::add(uint64_t val)
 int GanitaZeroHist::subtract(uint64_t val)
 {
   if(val >= hist_length){
-    fprintf(stderr, "Value %lld out of range %lld.", (long long int) val, (long long int) hist_length);
+    fprintf(stderr, "Value %lld out of range %lld.", (unsigned long long) val, (unsigned long long) hist_length);
     return(-1);
   }
   if(hist[val] == 0){
@@ -980,7 +980,7 @@ int GanitaZeroHist::subtract(uint64_t val)
 uint64_t GanitaZeroHist::returnValue(uint64_t xx)
 {
   if(xx >= hist_length){
-    fprintf(stderr, "Value %lld out of range %lld.", (long long int) xx, (long long int) hist_length);
+    fprintf(stderr, "Value %lld out of range %lld.", (unsigned long long) xx, (unsigned long long) hist_length);
     return(0);
   }
   return(hist[xx]);
