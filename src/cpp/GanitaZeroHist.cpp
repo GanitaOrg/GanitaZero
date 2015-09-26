@@ -857,7 +857,7 @@ uint64_t GanitaZeroHist::findTopFreq(uint64_t fsize)
       htotal += hist[ii];
     }
   }
-  fprintf(stdout, "Total: %ld %ld\n", count, htotal);
+  fprintf(stdout, "Total: %lld %lld\n", (unsigned long long) count, (unsigned long long) htotal);
 
   return(count);
 }
