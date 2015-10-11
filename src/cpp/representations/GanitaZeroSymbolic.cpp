@@ -1092,6 +1092,48 @@ int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
   return(1);
 }
 
+// This method will be used to build a stationary sequence from 
+// a given input stochastic sequence. 
+int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
+{
+  uint64_t fsize, ii, wr;
+  double *domD;
+  uint64_t *cd;
+  fsize = gzi->size();
+  if(ws > fsize) ws = fsize;
+  domD = (double *) malloc(256 * sizeof(double));
+  if(domD == NULL){
+    fprintf(stderr, "Ran out memory.\n");
+    return(-1);
+  }
+  wr = ws / 2;
+  my_hist->init(256);
+  my_hist->computeByteHist(gzi, ws);
+  cd = (uint64_t *) malloc(256 * sizeof(uint64_t));
+  my_hist->computeCD(cd);
+  my_hist->dumpHist();
+  for(ii=0; ii<256; ii++){
+    domD[ii] = ii; 
+  }
+  for(ii=0; ii<wr; ii++){
+    //fprintf(stdout, "%02X:", gzi->getByte(ii));
+    gzi->writeDouble( (double) (gzi->getByte(ii)) ); 
+    //gzi->writeByte( gzi->getByte(ii) ); 
+  }
+  for(ii=wr; ii<10*ws; ii++){
+    my_hist->add(gzi->getByte(ii+wr));
+    my_hist->subtract(gzi->getByte(ii-wr));
+  }
+  cout<<endl;
+  computeDomMap(domD, cd);
+  for(ii=0; ii<256; ii++){
+    cout<<"("<<ii<<","<<domD[ii]<<") ";
+  }
+  cout<<endl;
+
+  return(1);
+}
+
 // This method updates a mapping between histogram domain values in order to 
 // keep the sequence stationary when applying the domain mapping. 
 // This will be used to output a stationary sequence that represents 
@@ -1264,6 +1306,34 @@ int GanitaZeroSymbolic::updateStationarySeq2(double *domMap, uint64_t addV, uint
 	kk++;
       }
       ii = jj;
+    }
+  }
+
+  return(1);
+}
+
+// This method produces a domain mapping so that transforms 
+// the current histogram (or measure) so that it is stationary. 
+int GanitaZeroSymbolic::computeDomMap(double *domMap, uint64_t *ss)
+{
+  // domMap is the domain mapping. 
+  int64_t ii, jj;
+  jj = 0;
+  uint64_t sum;
+  sum = 0;
+  for(ii=0; ii<256; ii++){
+    sum += my_hist->returnValue(ii);
+    while(ss[jj] < sum){
+      jj++;
+    }
+    if(!jj){
+      domMap[ii] = 0;
+    }
+    else if(ss[jj] == ss[jj-1]){
+      domMap[ii] = jj - 1;
+    }
+    else{
+      domMap[ii] = jj - ((double)(ss[jj] - sum)) / ((double)(ss[jj] - ss[jj-1]));
     }
   }
 

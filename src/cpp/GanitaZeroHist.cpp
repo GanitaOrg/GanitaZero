@@ -986,3 +986,13 @@ uint64_t GanitaZeroHist::returnValue(uint64_t xx)
   return(hist[xx]);
 }
 
+int GanitaZeroHist::computeCD(uint64_t *cd)
+{
+  uint64_t ii;
+  cd[0] = hist[0];
+  for(ii=1; ii<256; ii++){
+    cd[ii] = cd[ii-1] + hist[ii];
+  }
+  return(1);
+}
+

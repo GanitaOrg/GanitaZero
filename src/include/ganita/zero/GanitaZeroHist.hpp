@@ -96,6 +96,7 @@ public:
   int add(uint64_t val);
   int subtract(uint64_t val);
   uint64_t returnValue(uint64_t xx);
+  int computeCD(uint64_t *cd);
 };
 
 // unneeded
