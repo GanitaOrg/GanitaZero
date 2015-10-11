@@ -308,3 +308,11 @@ uint64_t GanitaZero::findTopFreq(void)
   return(gSym.findTopFreq());
 }
 
+int GanitaZero::s1(char *input_seq, char *out_seq)
+{
+  init(input_seq, out_seq);
+  gSym.buildStationarySeq(20000);
+  close();
+  return(1);
+}
+

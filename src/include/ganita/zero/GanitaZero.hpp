@@ -61,5 +61,6 @@ public:
   int dumpCondHistSep(void);
   uint64_t dumpHistHist(uint64_t len);
   uint64_t findTopFreq(void);
+  int s1(char *input_seq, char *out_seq);
 };
 

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   //gzero.close();
   chacon.initOut(argv[2]);
-  chacon.generateChacon3(1000000);
+  chacon.generateChacon3(100000000);
   chacon.close();
 }
 

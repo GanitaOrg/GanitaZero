@@ -1055,6 +1055,8 @@ int GanitaZeroSymbolic::computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist)
   return(1);
 }
 
+// This method will be used to build a stationary sequence from 
+// a given input stochastic sequence. 
 int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
 {
   uint64_t fsize, ii, wr;
@@ -1067,19 +1069,36 @@ int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
     return(-1);
   }
   wr = ws / 2;
+  my_hist->init(256);
   my_hist->computeByteHist(gzi, ws);
   for(ii=0; ii<256; ii++){
     domD[ii] = ii; 
   }
   for(ii=0; ii<wr; ii++){
+    fprintf(stdout, "%02X:", gzi->getByte(ii));
     gzi->writeDouble( (double) (gzi->getByte(ii)) ); 
+    //gzi->writeByte( gzi->getByte(ii) ); 
   }
+  for(ii=wr; ii<10*ws; ii++){
+    updateStationarySeq2(domD, gzi->getByte(ii+wr), gzi->getByte(ii-wr));
+    cout<<"("<<ii<<","<<(int)gzi->getByte(ii+wr)<<","<<(int)gzi->getByte(ii-wr)<<","<<(int)gzi->getByte(ii)<<","<<domD[gzi->getByte(ii)]<<") ";
+  }
+  cout<<endl;
+  for(ii=0; ii<256; ii++){
+    cout<<"("<<ii<<","<<domD[ii]<<") ";
+  }
+  cout<<endl;
 
   return(1);
 }
 
+// This method updates a mapping between histogram domain values in order to 
+// keep the sequence stationary when applying the domain mapping. 
+// This will be used to output a stationary sequence that represents 
+// a given input stochastic sequence. 
 int GanitaZeroSymbolic::updateStationarySeq(double *domMap, uint64_t addV, uint64_t subV)
 {
+  // domMap is the domain mapping. 
   uint64_t ii, jj;
   double vv1, vv2;
   if(subV == addV){
@@ -1110,11 +1129,26 @@ int GanitaZeroSymbolic::updateStationarySeq(double *domMap, uint64_t addV, uint6
       vv2 = 1 / vv1;
       // Move this distance from ii to jj.
       domMap[ii] += vv2 * (domMap[jj] - domMap[ii]);
+      //domMap[ii] += vv2;
+      // kk = ii + 1;
+      // while(kk < jj){
+      // 	domMap[kk] += vv2 * (domMap[jj] - domMap[kk]);
+      // 	//domMap[kk] += vv2;
+      // 	kk++;
+      // }
       ii = jj;
     }
+    vv1 = (double) my_hist->returnValue(addV);
+    if(vv1 <= 0){
+      fprintf(stderr, "Value should not be 0.\n");
+      return(-2);
+    }
+    //vv2 = 1 / vv1;
+    //domMap[addV] += (addV - domMap[addV]) / vv1;
+    domMap[addV] += 8 / vv1;
   }
   else{
-    // Incomplete. 
+    // new value is less than old value. 
     ii = subV;
     while(ii > addV){
       // domMap is increasing.
@@ -1135,6 +1169,100 @@ int GanitaZeroSymbolic::updateStationarySeq(double *domMap, uint64_t addV, uint6
       vv2 = 1 / vv1;
       // Move this distance from ii to jj.
       domMap[ii] += vv2 * (domMap[jj] - domMap[ii]);
+      //domMap[ii] += vv2;
+      // kk = ii - 1;
+      // while(kk > jj){
+      // 	domMap[kk] += vv2 * (domMap[jj] - domMap[kk]);
+      // 	//domMap[kk] += vv2;
+      // 	kk--;
+      // }
+      ii = jj;
+    }
+    vv1 = (double) my_hist->returnValue(addV);
+    if(vv1 <= 0){
+      fprintf(stderr, "Value should not be 0.\n");
+      return(-2);
+    }
+    //vv2 = 1 / vv1;
+    //domMap[addV] -= (domMap[addV] - addV) / vv1;
+    domMap[addV] -= 7 / vv1;
+  }
+
+  return(1);
+}
+
+// This method updates a mapping between histogram domain values in order to 
+// keep the sequence stationary when applying the domain mapping. 
+// This will be used to output a stationary sequence that represents 
+// a given input stochastic sequence. 
+int GanitaZeroSymbolic::updateStationarySeq2(double *domMap, uint64_t addV, uint64_t subV)
+{
+  // domMap is the domain mapping. 
+  uint64_t ii, jj, kk;
+  double vv1;
+  if(subV == addV){
+    // domMap is unchanged. 
+    return(0);
+  }
+  if((subV > 255) || (addV > 255)){
+    // Values are out of range. 
+    return(-1);
+  }
+  my_hist->add(addV);
+  my_hist->subtract(subV);
+  if(subV < addV){
+    ii = subV;
+    //vv1 = (double) my_hist->returnValue(ii);
+    //if(vv1 > 0){ domMap[ii] += domMap[ii] / vv1; }
+    while(ii < addV){
+      jj = ii + 1;
+      while(my_hist->returnValue(jj) == 0){
+        jj++;
+      }
+      // Update domMap. 
+      vv1 = (double) my_hist->returnValue(jj);
+      //if(jj < addV){ vv1++; }
+      if(vv1 <= 0){
+        fprintf(stderr, "Value should not be 0.\n");
+        return(-2);
+      }
+      // Move this distance from ii to jj.
+      domMap[jj] += (domMap[jj] - domMap[ii]) / vv1;
+      kk = ii + 1;
+      while(kk < jj){
+	domMap[kk] += (domMap[kk] - domMap[ii]) / vv1;
+	//domMap[kk] += vv2;
+	kk++;
+      }
+      ii = jj;
+    }
+  }
+  else{
+    // new value is less than old value. 
+    ii = addV;
+    //vv1 = (double) my_hist->returnValue(ii) + 1;
+    //if(vv1 > 0){ domMap[ii] -= domMap[ii] / vv1; }
+    while(ii < subV){
+      // domMap is increasing.
+      jj = ii + 1;
+      while(my_hist->returnValue(jj) == 0){
+        jj++;
+      }
+      // Update domMap. 
+      vv1 = (double) my_hist->returnValue(jj);
+      //if(jj == subV){ vv1++; }
+      if(vv1 <= 0){
+        fprintf(stderr, "Value should not be 0.\n");
+        return(-2);
+      }
+      // Move this distance from ii to jj.
+      domMap[jj] += (domMap[ii] - domMap[jj]) / vv1;
+      kk = ii + 1;
+      while(kk < jj){
+	domMap[kk] += (domMap[ii] - domMap[kk]) / vv1;
+	//domMap[kk] += vv2;
+	kk++;
+      }
       ii = jj;
     }
   }
