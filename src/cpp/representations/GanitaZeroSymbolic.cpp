@@ -1097,8 +1097,17 @@ int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
 int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
 {
   uint64_t fsize, ii, wr;
+  uint64_t wr2, nw, jj;
   double *domD;
   uint64_t *cd;
+  int tmp;
+  GanitaBuffer *newgzi;
+  newgzi = new GanitaBuffer();
+  tmp = newgzi->openOut((char *)"/tmp/ganita/gzero.stationary");
+  if(tmp <= 0){
+    cout<<"Unable to open output file: "<<"gzero.stationary"<<"."<<endl;
+    return(-1);
+  }
   fsize = gzi->size();
   if(ws > fsize) ws = fsize;
   domD = (double *) malloc(256 * sizeof(double));
@@ -1106,7 +1115,9 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
     fprintf(stderr, "Ran out memory.\n");
     return(-1);
   }
-  wr = ws / 2;
+  wr = ws>>1;
+  wr2 = wr>>1;
+  nw = fsize / wr;
   my_hist->init(256);
   my_hist->computeByteHist(gzi, ws);
   cd = (uint64_t *) malloc(256 * sizeof(uint64_t));
@@ -1115,21 +1126,34 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
   for(ii=0; ii<256; ii++){
     domD[ii] = ii; 
   }
-  for(ii=0; ii<wr; ii++){
+  newgzi->createInOutBuffer((char *)"gzero.stationary", nw*wr);
+  cout<<"Number of blocks: "<<nw<<".\n";
+  for(ii=0; ii<wr + wr/2; ii++){
     //fprintf(stdout, "%02X:", gzi->getByte(ii));
-    gzi->writeDouble( (double) (gzi->getByte(ii)) ); 
-    //gzi->writeByte( gzi->getByte(ii) ); 
+    newgzi->writeDouble( (double) (gzi->getByte(ii)) ); 
   }
-  for(ii=wr; ii<10*ws; ii++){
-    my_hist->add(gzi->getByte(ii+wr));
-    my_hist->subtract(gzi->getByte(ii-wr));
+  for(ii=1; ii<nw-1; ii++){
+    cout<<"Processing block: "<<ii<<".\n"; fflush(stdout);
+    for(jj=0; jj<wr; jj++){
+      my_hist->add(gzi->getByte((ii+1)*wr+jj));
+    }
+    for(jj=0; jj<wr; jj++){
+      my_hist->subtract(gzi->getByte((ii-1)*wr+jj));
+    }
+    computeDomMap(domD, cd);
+    for(jj=0; jj<wr; jj++){
+       newgzi->writeDouble(domD[gzi->getByte(ii*wr + wr2 + jj)]);
+       cout<<"("<<(int)gzi->getByte(ii*wr + wr2 + jj)<<",";
+       cout<<domD[gzi->getByte(ii*wr + wr2 + jj)]<<")\n";
+    }
   }
-  cout<<endl;
-  computeDomMap(domD, cd);
+  cout<<"Done 1"<<endl;
+  my_hist->dumpHist();
   for(ii=0; ii<256; ii++){
     cout<<"("<<ii<<","<<domD[ii]<<") ";
   }
   cout<<endl;
+  newgzi->close();
 
   return(1);
 }

@@ -966,7 +966,7 @@ int GanitaZeroHist::add(uint64_t val)
 int GanitaZeroHist::subtract(uint64_t val)
 {
   if(val >= hist_length){
-    fprintf(stderr, "Value %lld out of range %lld.", (unsigned long long) val, (unsigned long long) hist_length);
+    fprintf(stderr, "Value %lld out of range %lld.", (unsigned long long) val, (unsigned long long) hist_length); fflush(stderr);
     return(-1);
   }
   if(hist[val] == 0){
