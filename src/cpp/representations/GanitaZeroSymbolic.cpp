@@ -1126,11 +1126,13 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
   for(ii=0; ii<256; ii++){
     domD[ii] = ii; 
   }
-  newgzi->createInOutBuffer((char *)"gzero.stationary", nw*wr);
+  //newgzi->createInOutBuffer((char *)"gzero.stationary", nw*wr);
   cout<<"Number of blocks: "<<nw<<".\n";
   for(ii=0; ii<wr + wr/2; ii++){
     //fprintf(stdout, "%02X:", gzi->getByte(ii));
-    newgzi->writeDouble( (double) (gzi->getByte(ii)) ); 
+    newgzi->writeDoubleText( (double) (gzi->getByte(ii)) ); 
+    cout<<"("<<(int)gzi->getByte(ii)<<",";
+    cout<<domD[gzi->getByte(ii)]<<")\n";
   }
   for(ii=1; ii<nw-1; ii++){
     cout<<"Processing block: "<<ii<<".\n"; fflush(stdout);
@@ -1142,7 +1144,7 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
     }
     computeDomMap(domD, cd);
     for(jj=0; jj<wr; jj++){
-       newgzi->writeDouble(domD[gzi->getByte(ii*wr + wr2 + jj)]);
+       newgzi->writeDoubleText(domD[gzi->getByte(ii*wr + wr2 + jj)]);
        cout<<"("<<(int)gzi->getByte(ii*wr + wr2 + jj)<<",";
        cout<<domD[gzi->getByte(ii*wr + wr2 + jj)]<<")\n";
     }
@@ -1360,6 +1362,25 @@ int GanitaZeroSymbolic::computeDomMap(double *domMap, uint64_t *ss)
       domMap[ii] = jj - ((double)(ss[jj] - sum)) / ((double)(ss[jj] - ss[jj-1]));
     }
   }
+
+  return(1);
+}
+
+int GanitaZeroSymbolic::binSeq1(void)
+{
+  int tmp;
+  uint64_t fsize;
+  cout<<"Start binarizing séquence …\n";
+  GanitaBuffer *newgzi;
+  newgzi = new GanitaBuffer();
+  tmp = newgzi->open((char *)"/tmp/ganita/gzero.stationary");
+  if(tmp <= 0){
+    cout<<"Unable to open output file: "<<"gzero.stationary"<<"."<<endl;
+    return(-1);
+  }
+  fsize = newgzi->size();
+  cout<<"File size: "<<fsize<<endl;
+  cout<<(double)newgzi->getDoubleText(1)<<endl;
 
   return(1);
 }

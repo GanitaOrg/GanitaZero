@@ -98,6 +98,7 @@ public:
   int updateStationarySeq(double *domMap, uint64_t addV, uint64_t subV);
   int updateStationarySeq2(double *domMap, uint64_t addV, uint64_t subV);
   int computeDomMap(double *domMap, uint64_t *ss);
+  int binSeq1(void);
 };
 
 #endif

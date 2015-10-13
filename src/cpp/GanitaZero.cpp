@@ -312,6 +312,7 @@ int GanitaZero::s1(char *input_seq, char *out_seq)
 {
   init(input_seq);
   gSym.buildStationarySeq3(20000);
+  gSym.binSeq1();
   close();
   return(1);
 }
