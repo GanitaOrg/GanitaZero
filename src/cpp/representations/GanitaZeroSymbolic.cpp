@@ -1155,6 +1155,7 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
     cout<<"("<<ii<<","<<domD[ii]<<") ";
   }
   cout<<endl;
+  my_hist->byteKMeans(4, 5);
   newgzi->close();
 
   return(1);
