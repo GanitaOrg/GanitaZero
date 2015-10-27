@@ -1123,6 +1123,7 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
   cd = (uint64_t *) malloc(256 * sizeof(uint64_t));
   my_hist->computeCD(cd);
   my_hist->dumpHist();
+  my_hist->byteKMeans(4, 5);
   for(ii=0; ii<256; ii++){
     domD[ii] = ii; 
   }
@@ -1131,8 +1132,8 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
   for(ii=0; ii<wr + wr/2; ii++){
     //fprintf(stdout, "%02X:", gzi->getByte(ii));
     newgzi->writeDoubleText( (double) (gzi->getByte(ii)) ); 
-    cout<<"("<<(int)gzi->getByte(ii)<<",";
-    cout<<domD[gzi->getByte(ii)]<<")\n";
+    //cout<<"("<<(int)gzi->getByte(ii)<<",";
+    //cout<<domD[gzi->getByte(ii)]<<")\n";
   }
   for(ii=1; ii<nw-1; ii++){
     cout<<"Processing block: "<<ii<<".\n"; fflush(stdout);
@@ -1145,8 +1146,8 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
     computeDomMap(domD, cd);
     for(jj=0; jj<wr; jj++){
        newgzi->writeDoubleText(domD[gzi->getByte(ii*wr + wr2 + jj)]);
-       cout<<"("<<(int)gzi->getByte(ii*wr + wr2 + jj)<<",";
-       cout<<domD[gzi->getByte(ii*wr + wr2 + jj)]<<")\n";
+       //cout<<"("<<(int)gzi->getByte(ii*wr + wr2 + jj)<<",";
+       //cout<<domD[gzi->getByte(ii*wr + wr2 + jj)]<<")\n";
     }
   }
   cout<<"Done 1"<<endl;
@@ -1155,7 +1156,6 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
     cout<<"("<<ii<<","<<domD[ii]<<") ";
   }
   cout<<endl;
-  my_hist->byteKMeans(4, 5);
   newgzi->close();
 
   return(1);
