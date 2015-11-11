@@ -310,9 +310,13 @@ uint64_t GanitaZero::findTopFreq(void)
 
 int GanitaZero::s1(char *input_seq, char *out_seq)
 {
+  int32_t nmeans;
+  double *kmeans;
+  nmeans = 4;
+  kmeans = (double *) malloc((nmeans + 1)*sizeof(double));
   init(input_seq);
-  gSym.buildStationarySeq3(20000);
-  gSym.binSeq1();
+  gSym.buildStationarySeq3(20000, nmeans, kmeans);
+  gSym.binSeq1(nmeans, kmeans);
   close();
   return(1);
 }

@@ -94,11 +94,11 @@ public:
   int slideChanges(uint64_t bn, GanitaGraphList *mylist);
   int computeAutoCorr2(uint64_t bn, GanitaGraphList *mylist);
   int buildStationarySeq(uint64_t ws);
-  int buildStationarySeq3(uint64_t ws);
+  int buildStationarySeq3(uint64_t ws, int32_t nn, double *kmeans);
   int updateStationarySeq(double *domMap, uint64_t addV, uint64_t subV);
   int updateStationarySeq2(double *domMap, uint64_t addV, uint64_t subV);
   int computeDomMap(double *domMap, uint64_t *ss);
-  int binSeq1(void);
+  int binSeq1(int32_t nmeans, double *kmeans);
 };
 
 #endif

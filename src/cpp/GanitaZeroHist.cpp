@@ -1055,7 +1055,7 @@ int32_t GanitaZeroHist::byteKMeansIter(uint64_t len, double *mm)
   return(jj);
 }
 
-int32_t GanitaZeroHist::byteKMeans(uint64_t len, uint64_t iter)
+int32_t GanitaZeroHist::byteKMeans(uint64_t len, double *kmeans, uint64_t iter)
 {
   if(len == 0){
     fprintf(stderr, "k-means length set to 0.\n");
@@ -1063,8 +1063,8 @@ int32_t GanitaZeroHist::byteKMeans(uint64_t len, uint64_t iter)
   }
   uint64_t ii;
   int32_t ss;
-  double *kmeans;
-  kmeans = (double *) malloc((len + 1)*sizeof(double));
+  //double *kmeans;
+  //kmeans = (double *) malloc((len + 1)*sizeof(double));
   if(kmeans == NULL){
     fprintf(stderr, "Unable to allocate area to store k-means.\n");
     return(-2);

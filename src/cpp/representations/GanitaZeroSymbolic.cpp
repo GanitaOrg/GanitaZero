@@ -1094,12 +1094,14 @@ int GanitaZeroSymbolic::buildStationarySeq(uint64_t ws)
 
 // This method will be used to build a stationary sequence from 
 // a given input stochastic sequence. 
-int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
+int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws, int32_t nn, double *kmeans)
 {
   uint64_t fsize, ii, wr;
   uint64_t wr2, nw, jj;
   double *domD;
   uint64_t *cd;
+  //double *kmeans;
+  //kmeans = (double *) malloc(5*sizeof(double));
   int tmp;
   GanitaBuffer *newgzi;
   newgzi = new GanitaBuffer();
@@ -1123,7 +1125,7 @@ int GanitaZeroSymbolic::buildStationarySeq3(uint64_t ws)
   cd = (uint64_t *) malloc(256 * sizeof(uint64_t));
   my_hist->computeCD(cd);
   my_hist->dumpHist();
-  my_hist->byteKMeans(4, 5);
+  my_hist->byteKMeans(nn, kmeans, 5);
   for(ii=0; ii<256; ii++){
     domD[ii] = ii; 
   }
@@ -1367,10 +1369,12 @@ int GanitaZeroSymbolic::computeDomMap(double *domMap, uint64_t *ss)
   return(1);
 }
 
-int GanitaZeroSymbolic::binSeq1(void)
+int GanitaZeroSymbolic::binSeq1(int32_t nmeans, double *kmeans)
 {
   int tmp;
-  uint64_t fsize;
+  uint64_t fsize, ii;
+  int32_t jj, mm;
+  double vv, dd;
   cout<<"Start binarizing séquence …\n";
   GanitaBuffer *newgzi;
   newgzi = new GanitaBuffer();
@@ -1381,8 +1385,19 @@ int GanitaZeroSymbolic::binSeq1(void)
   }
   fsize = newgzi->size();
   cout<<"File size: "<<fsize<<endl;
-  cout<<(double)newgzi->getDoubleText(1)<<endl;
-
+  fsize /= 8;
+  for(ii=0; ii<fsize; ii++){
+    vv = newgzi->getDoubleText(ii);
+    dd = fabs(kmeans[0]-vv);
+    mm = 0;
+    for(jj=1; jj<nmeans; jj++){
+      if(fabs(kmeans[jj]-vv)<dd){
+        dd = fabs(kmeans[jj]-vv);
+        mm = jj;
+      }
+    }
+    cout<<"("<<(double)vv<<","<<mm<<")";
+  }
   return(1);
 }
 

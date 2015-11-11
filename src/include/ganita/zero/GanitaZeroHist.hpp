@@ -98,7 +98,7 @@ public:
   uint64_t returnValue(uint64_t xx);
   int computeCD(uint64_t *cd);
   int32_t byteKMeansIter(uint64_t len, double *mm);
-  int32_t byteKMeans(uint64_t len, uint64_t iter);
+  int32_t byteKMeans(uint64_t len, double *kmeans, uint64_t iter);
 };
 
 // unneeded
