@@ -2,7 +2,8 @@ Project: GanitaZero
 Group: Ganita
 Author: T. Adams, Columbia University grad student
 
-Dependency:
+Dependencies:
+libbsd, boost 1.55 or later.
 Requires GanitaGraph which is sold separately. 
 Or, you may obtain it for free: 
 git clone git@cloud.ganita.org:ganita/ganitagraph.git
