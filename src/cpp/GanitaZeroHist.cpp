@@ -580,12 +580,13 @@ int GanitaZeroHist::bestPatLen2(void)
       //fprintf(stdout, "Reached zero counts @ %d.\n", max_ii);
       return(max_ii);
     }
-    //tmp = (1 + ((double) ii)/100.0) * 
-    //  (stat[ii-1]/stat[ii]) - (stat[ii]/stat[ii+1]);
-    tmp = (ii + 10) * (stat[2*(ii-1)] - stat[2*ii]);
+    tmp = (1 + ((double) ii)/100.0) * 
+      (stat[2*(ii-1)]/stat[2*ii]) - (stat[2*ii]/stat[2*(ii+1)]);
+    //tmp = (ii + 10) * (stat[2*(ii-1)] - stat[2*ii]);
     if(tmp > max){
       max = tmp;
       max_ii = ii - 1;
+      cout<<"Pattern Length: "<<max_ii<<" score: "<<max<<endl;
     }
   }
   if(max_ii < 4){
@@ -597,7 +598,7 @@ int GanitaZeroHist::bestPatLen2(void)
       max_ii++;
     }
   }
-  //cout<<"Pattern Length: "<<max_ii<<endl;
+  cout<<"Pattern Length: "<<max_ii<<endl;
   
   return(max_ii);
 }
