@@ -8,7 +8,7 @@ project(GanitaZero CXX C)
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
 set(GanitaZero_VERSION_MINOR "27")
-set(GanitaZero_VERSION_PATCH "2")
+set(GanitaZero_VERSION_PATCH "4")
 
 cmake_minimum_required(VERSION 2.8)
 
