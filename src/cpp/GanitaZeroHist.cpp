@@ -282,6 +282,44 @@ int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input)
 
 // This computes the conditional histograms for 
 // all patterns of length less than condition_num. 
+// This stores the values for multiple histograms 
+// at the same time in hist. 
+int GanitaZeroHist::computeCondHistAll(GanitaBuffer *input, int wbits)
+{
+  uint64_t cond_bits;
+  uint64_t ii;
+  int jj;
+  uint64_t count1, count2;
+
+  //cout<<"Number of bytes: "<<input->size()<<endl;
+  //cout<<input->size()<<" ";
+
+  count1 = 0;
+  count2 = 0;
+  cond_bits = 0;
+  for(jj=0; jj<wbits*condition_num; jj++){
+    cond_bits = (cond_bits << 1) | (input->getBit(condition_num - 1 - jj));
+    hist[cond_bits + count2]++;
+    count1++;
+    count2 += (longone << count1);
+    //fprintf(stdout, "iValues: %04X, %01X %02X %d\n", cond_bits,pbit,input->getByte(b1),condition_num);
+  }
+  for(ii=wbits*condition_num; ii<8*(input->size()-1); ii+=wbits){
+    count1 = 0;
+    count2 = 0;
+    cond_bits = (cond_bits >> 1) | ((input->getBit(ii)) << (condition_num - 1));
+    for(jj=0; jj<wbits*condition_num; jj++){
+      hist[(cond_bits >> (condition_num - 1 - jj)) + count2]++;
+      count1++;
+      count2 += (longone << count1);
+    }
+  }
+
+  return 1;
+}
+
+// This computes the conditional histograms for 
+// all patterns of length less than condition_num. 
 int GanitaZeroHist::computeCondHistNested(GanitaBuffer *input)
 {
   uint64_t cond_bits[condition_num];

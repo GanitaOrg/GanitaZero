@@ -67,6 +67,7 @@ public:
   int computeCondHist1(GanitaBuffer *input);
   int computeCondHist2(GanitaBuffer *input);
   int computeCondHistAll(GanitaBuffer *input);
+  int computeCondHistAll(GanitaBuffer *input, int wbits);
   int computeCondHistNested(GanitaBuffer *input);
   double computeCondEntAll(void);
   double computeCondEntAll2(void);
