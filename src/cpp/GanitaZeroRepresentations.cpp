@@ -1,6 +1,7 @@
 #include "ganita/zero/GanitaZeroRepresentations.hpp"
 
 #include "representations/GanitaZeroAdic.cpp"
+#include "representations/GanitaZeroNeural.cpp"
 #include "representations/GanitaZeroSymbolic.cpp"
 #include "representations/GanitaZeroTower.cpp"
 #include "representations/GanitaZeroMap.cpp"

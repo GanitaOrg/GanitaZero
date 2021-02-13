@@ -3,10 +3,9 @@ Group: Ganita
 Author: T. Adams, Columbia University grad student
 
 Dependencies:
-libbsd, boost 1.55 or later.
+libbsd; on Ubuntu, try sudo apt-get install libbsd-dev.
 Requires GanitaGraph which is sold separately. 
-Or, you may obtain it for free: 
-git clone git@cloud.ganita.org:ganita/ganitagraph.git
+Or, you may obtain it for free in gitlab.
 
 Compile:
 cd to root directory containing this README.md file. 
@@ -17,11 +16,9 @@ make
 sudo make install
 
 Executables:
-gzero
+gzero, gztgf
 
 Library:
 libGanitaZero.a
 
-For further information:
-http://cloud.ganita.org:8083 
-or email tma2131@columbia.edu. 
+For further information, email tma2131@columbia.edu. 
