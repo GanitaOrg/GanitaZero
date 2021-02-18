@@ -13,6 +13,6 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  tgf.createTGF(5);
+  tgf.createTGF(10);
 }
 

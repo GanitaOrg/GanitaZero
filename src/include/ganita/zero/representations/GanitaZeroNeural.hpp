@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <tuple>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -23,6 +24,9 @@ private:
   char edge_delim;
   uint64_t weight_denom;
   std::vector<int> actseq;
+  std::vector<tuple<double, double>> node_output;
+  std::vector<tuple<double, double, double, double>> node_input;
+  std::vector<tuple<double, double, double, double>> tgf_weights;
 public:
   GanitaZeroNeural(void);
   uint64_t addLayer(void);
@@ -39,6 +43,7 @@ public:
   static const double tgf_generator_bkpts[4][6];
   static const double tgf_generator_fun[4][4][2];
   double callGenerator(int fn, double input);
+  double callGeneratorSlope(int fn, double input);
   int generateRandActSeq(uint64_t len);
   int dumpActSeq(void);
   double composeTGF(double input);
@@ -48,5 +53,8 @@ public:
   int dumpWeights(void);
   int feedForwardTGF(double input);
   int writeNetwork(void);
+  int copyInternalTGF(double input);
+  int feedForwardInternalTGF(double input);
+  int backPropTGF(double xx, double yy);
 };
 
