@@ -220,7 +220,6 @@ int GanitaZeroNeural::extendLayer(GanitaZeroTile *mytile)
 int GanitaZeroNeural::createTGF(uint64_t numlayers)
 {
   uint64_t ii;
-  double myran;
 
   num_layers = numlayers;
 
@@ -255,15 +254,40 @@ int GanitaZeroNeural::createTGF(uint64_t numlayers)
   cout<<composeTGF(0.30)<<endl;
   setBinaryWeights(); dumpWeights();
   copyInternalTGF(.50);
-  for(ii=0; ii<1000; ii++){
+
+  //writeNetwork();
+
+  return(1);
+}
+
+int GanitaZeroNeural::sgdTGF(uint64_t num)
+{
+  uint64_t ii;
+  double myran;
+
+  for(ii=0; ii<num; ii++){
     myran = ((double) arc4random_uniform(100000))/100000.0;
     cout<<"ii="<<ii<<"|";
-    backPropTGF(myran, callGenerator(0,myran));
+    //backPropTGF(myran, callGenerator(0,myran));
+    backPropTGF(myran, myran*myran);
     feedForwardInternalTGF(myran);
-    backPropTGF(myran, callGenerator(0,myran));
+    //backPropTGF(myran, callGenerator(0,myran));
+    backPropTGF(myran, myran*myran);
     feedForwardInternalTGF(myran);
   }
-  //writeNetwork();
+  
+  return(1);
+}
+
+int GanitaZeroNeural::outputTestTGF(uint64_t num)
+{
+  uint64_t ii;
+  double myran;
+
+  for(ii=0; ii<num; ii++){
+    myran = ((double) arc4random_uniform(100000))/100000.0;
+    cout<<myran<<", "<<feedForwardInternalTGF(myran)<<endl;
+  }
 
   return(1);
 }
@@ -279,6 +303,10 @@ const double GanitaZeroNeural::tgf_generator_bkpts[][6] =
 // Slopes of piecewise linear generator functions for 
 // the Thompson Group F that will be used as activation 
 // functions for a deep neural network. 
+// First two arrays are for generators a and b.
+// Second two arrays are for inverses a^{-1}, b^{-1}. 
+// For each pair of numbers, the first is the slope and 
+// the second is the y-intercept. 
 const double GanitaZeroNeural::tgf_generator_fun[4][4][2] = {
   {{2,0},{1,.25}, {.50,.50},{-1,-1}}, 
   {{1,0},{2,-.50},{1,.125}, {.50,.50}},
@@ -586,7 +614,7 @@ int GanitaZeroNeural::copyInternalTGF(double input)
   return(1);
 }
 
-int GanitaZeroNeural::feedForwardInternalTGF(double input)
+double GanitaZeroNeural::feedForwardInternalTGF(double input)
 {
   uint64_t ii;
   double ww1,ww2, ww3, ww4;
@@ -631,10 +659,10 @@ int GanitaZeroNeural::feedForwardInternalTGF(double input)
   ww1 = get<0>(tgf_weights.at(ii));
   ww2 = get<1>(tgf_weights.at(ii));
   get<0>(node_output.at(ii+1)) = ww1*ss1 + ww2*ss2;
-  cout<<"output "<<ww1*ss1+ww2*ss2<<endl;
+  //cout<<"output "<<ww1*ss1+ww2*ss2<<endl;
   //cout<<"Weights 2 "<<ww1<<","<<get<0>(tgf_weights.at(tgf_weights.size()-1))<<endl;
 
-  return(1);
+  return(ww1*ss1 + ww2*ss2);
 }
 
 int GanitaZeroNeural::writeNetwork(void)
@@ -665,16 +693,21 @@ int GanitaZeroNeural::writeNetwork(void)
   return(1);
 }
 
+// This is the first algorithm for implementing back propagation 
+// on the TGF-based neural network. 
+// The cost function used is C = 0.5*(out1 - yy)^2. 
+// A standard update of weights has been tried using gradient descent. 
+// Also tried taking the inverse of TGF activation slopes in computation of gradients.
+// Since the functions are homeomorphisms, then TGF slopes are positive and do not vanish. 
 int GanitaZeroNeural::backPropTGF(double xx, double yy)
 {
   double out1, out2;
-  double ww1, ww2, ww3, ww4;
-  GanitaEdge ed;
-  double eta, diff, tw;
-  double pc1, pc2, pc3, pc4;
-  double qc1, qc2, qc3, qc4;
-  double qw1, qw2, qw3, qw4;
-  eta = 5.0;
+  double ww1, ww2, ww3, ww4;  // weights
+  double eta, diff, tw;       // step size, error, sum of two weights
+  double pc1, pc2, pc3, pc4;  // store previous layers partial derivative of cost w/r output
+  double qc1, qc2, qc3, qc4;  // partial derivative of cost w/r to output from nodes in layer
+  double qw1, qw2, qw3, qw4;  // partial derivative of cost w/r to weights for nodes in layer
+  eta = 5.0;                  // step size
   uint64_t ii;
 
   feedForwardInternalTGF(xx);
@@ -716,12 +749,16 @@ int GanitaZeroNeural::backPropTGF(double xx, double yy)
     out2 = get<1>(node_output.at(node_output.size()-ii-1));
     ww3 = get<2>(tgf_weights.at(tgf_weights.size()-ii));
     ww4 = get<3>(tgf_weights.at(tgf_weights.size()-ii));
-    qc3 = (pc2 + pc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*ww3;
-    qc4 = (pc2 + pc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*ww4;
+    //qc3 = (pc2 + pc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*ww3;
+    //qc4 = (pc2 + pc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*ww4;
+    qc3 = (pc2 + pc4)*ww3/callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2);
+    qc4 = (pc2 + pc4)*ww4/callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2);
     
     qw1 = (qc1 + qc3)*out1; qw2 = (qc1 + qc3)*out2; 
-    qw3 = (qc2 + qc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*out1;
-    qw4 = (qc2 + qc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*out2;
+    //qw3 = (qc2 + qc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*out1;
+    //qw4 = (qc2 + qc4)*callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2)*out2;
+    qw3 = (qc2 + qc4)*out1/callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2);
+    qw4 = (qc2 + qc4)*out2/callGeneratorSlope(actseq[tgf_weights.size()-ii],ww3*out1 + ww4*out2);
     ww1 -= eta*qw1; ww2 -= eta*qw2; ww3 -= eta*qw3; ww4 -= eta*qw4;
     // normalize weights to be a convex combination
     if(ww1 <= 0){

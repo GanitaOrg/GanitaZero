@@ -1127,7 +1127,7 @@ int32_t GanitaZeroHist::byteKMeans(uint64_t len, double *kmeans, uint64_t iter)
   }
   // Print k-means.
   cout<<"Final k-means ("<<ss<<"):"<<endl;
-  for(ii=0; ii<ss; ii++){
+  for(ii=0; ii<(uint64_t) ss; ii++){
     cout<<"Cluster "<<ii<<": center "<<kmeans[ii]<<endl;
   }
   return(ss);

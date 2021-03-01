@@ -308,7 +308,7 @@ uint64_t GanitaZero::findTopFreq(void)
   return(gSym.findTopFreq());
 }
 
-int GanitaZero::s1(char *input_seq, char *out_seq)
+int GanitaZero::s1(char *input_seq)
 {
   int32_t nmeans;
   double *kmeans;

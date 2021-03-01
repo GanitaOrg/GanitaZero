@@ -14,6 +14,6 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  gzero.s1(argv[1], argv[2]);
+  gzero.s1(argv[1]);
 }
 

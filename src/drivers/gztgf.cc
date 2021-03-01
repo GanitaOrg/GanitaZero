@@ -14,5 +14,7 @@ int main(int argc, char *argv[])
   }
 
   tgf.createTGF(10);
+  tgf.sgdTGF(1000);
+  tgf.outputTestTGF(10);
 }
 

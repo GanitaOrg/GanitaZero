@@ -54,7 +54,9 @@ public:
   int feedForwardTGF(double input);
   int writeNetwork(void);
   int copyInternalTGF(double input);
-  int feedForwardInternalTGF(double input);
+  double feedForwardInternalTGF(double input);
   int backPropTGF(double xx, double yy);
+  int sgdTGF(uint64_t num);
+  int outputTestTGF(uint64_t num);
 };
 
