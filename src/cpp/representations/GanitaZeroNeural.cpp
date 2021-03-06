@@ -249,10 +249,10 @@ int GanitaZeroNeural::createTGF(uint64_t numlayers)
   //dumpLayer(layer.size()-1);
   std::cout << tgf_generator_bkpts[0][1] << std::endl;
   std::cout << callGenerator(2,.3) << std::endl;
-  generateRandActSeq(num_layers+2);
+  generateOrdActSeq(num_layers+2);
   dumpActSeq();
   cout<<composeTGF(0.30)<<endl;
-  setBinaryWeights(); dumpWeights();
+  setBinaryWeightsId(); dumpWeights();
   copyInternalTGF(.50);
 
   //writeNetwork();
@@ -388,6 +388,21 @@ int GanitaZeroNeural::generateRandActSeq(uint64_t len)
   return(1);
 }
 
+int GanitaZeroNeural::generateOrdActSeq(uint64_t len)
+{
+  uint64_t ii;
+
+  if(len < 1){
+    return(-1);
+  }
+
+  for(ii=0; ii<len; ii++){
+    actseq.push_back(3 - (ii % 4));
+  }
+
+  return(1);
+}
+
 int GanitaZeroNeural::dumpActSeq(void)
 {
   uint64_t ii;
@@ -432,7 +447,7 @@ uint64_t GanitaZeroNeural::convertFromWeight(double ww)
   return((uint64_t) (weight_denom*ww));
 }
 
-int GanitaZeroNeural::setBinaryWeights(void)
+int GanitaZeroNeural::setBinaryWeightsRand1(void)
 {
   uint32_t myran, ii;
   
@@ -471,6 +486,24 @@ int GanitaZeroNeural::setBinaryWeights(void)
   else{
     layer[layer.size()-1]->returnNode(1)->setEdgeValue(0, weight_denom);
   }
+
+  return(1);
+}
+
+int GanitaZeroNeural::setBinaryWeightsId(void)
+{
+  uint32_t ii;
+  
+  if(layer.size() < 3){
+    return(-1);
+  }
+  layer[0]->returnNode(0)->setEdgeValue(0, weight_denom);
+  layer[0]->returnNode(0)->setEdgeValue(1, weight_denom);
+  for(ii=1; ii<layer.size()-1; ii++){
+    layer[ii]->returnNode(0)->setEdgeValue(0, weight_denom);
+    layer[ii]->returnNode(1)->setEdgeValue(1, weight_denom);
+  }
+  layer[layer.size()-1]->returnNode(0)->setEdgeValue(0, weight_denom);
 
   return(1);
 }

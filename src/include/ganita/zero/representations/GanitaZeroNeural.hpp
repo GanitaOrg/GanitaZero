@@ -45,11 +45,13 @@ public:
   double callGenerator(int fn, double input);
   double callGeneratorSlope(int fn, double input);
   int generateRandActSeq(uint64_t len);
+  int generateOrdActSeq(uint64_t len);
   int dumpActSeq(void);
   double composeTGF(double input);
   double convertToWeight(uint64_t val);
   uint64_t convertFromWeight(double ww);
-  int setBinaryWeights(void);
+  int setBinaryWeightsRand1(void);
+  int setBinaryWeightsId(void);
   int dumpWeights(void);
   int feedForwardTGF(double input);
   int writeNetwork(void);

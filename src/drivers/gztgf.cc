@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  tgf.createTGF(10);
-  tgf.sgdTGF(1000);
+  tgf.createTGF(20);
+  tgf.sgdTGF(10000);
   tgf.outputTestTGF(10);
 }
 
