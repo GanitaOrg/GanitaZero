@@ -10,7 +10,7 @@
 
 class GanitaZeroNeural
 {
-private:
+protected:
   std::string name;
   std::vector<std::string> type;
   std::vector<std::string> keys;
@@ -23,10 +23,6 @@ private:
   char node_delim;
   char edge_delim;
   uint64_t weight_denom;
-  std::vector<int> actseq;
-  std::vector<tuple<double, double>> node_output;
-  std::vector<tuple<double, double, double, double>> node_input;
-  std::vector<tuple<double, double, double, double>> tgf_weights;
 public:
   GanitaZeroNeural(void);
   uint64_t addLayer(void);
@@ -39,26 +35,5 @@ public:
   uint64_t returnNumLayers(void);
   int buildBase(void);
   int extendLayer(GanitaZeroTile *mytile);
-  int createTGF(uint64_t numlayers);
-  static const double tgf_generator_bkpts[4][6];
-  static const double tgf_generator_fun[4][4][2];
-  double callGenerator(int fn, double input);
-  double callGeneratorSlope(int fn, double input);
-  int generateRandActSeq(uint64_t len);
-  int generateOrdActSeq(uint64_t len);
-  int dumpActSeq(void);
-  double composeTGF(double input);
-  double convertToWeight(uint64_t val);
-  uint64_t convertFromWeight(double ww);
-  int setBinaryWeightsRand1(void);
-  int setBinaryWeightsId(void);
-  int dumpWeights(void);
-  int feedForwardTGF(double input);
-  int writeNetwork(void);
-  int copyInternalTGF(double input);
-  double feedForwardInternalTGF(double input);
-  int backPropTGF(double xx, double yy);
-  int sgdTGF(uint64_t num);
-  int outputTestTGF(uint64_t num);
 };
 

@@ -8,3 +8,4 @@
 #include "representations/GanitaZeroBinary.cpp"
 #include "representations/GanitaZeroSub.cpp"
 #include "representations/GanitaZeroHMM.cpp"
+#include "representations/GanitaZeroTGF.cpp"
