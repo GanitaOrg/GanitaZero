@@ -7,3 +7,4 @@
 #include "ganita/zero/representations/GanitaZeroSub.hpp"
 #include "ganita/zero/representations/GanitaZeroHMM.hpp"
 #include "ganita/zero/representations/GanitaZeroTGF.hpp"
+#include "ganita/zero/representations/GanitaZeroGossip.hpp"

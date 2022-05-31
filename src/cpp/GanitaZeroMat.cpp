@@ -185,3 +185,35 @@ int GanitaZeroMat::setUnit(unsigned long ii)
   return(1);
 }
 
+int GanitaZeroMat::read(std::ifstream &gzm_file)
+{
+  string line;
+  vector<double> mm;
+  double ff;
+  uint64_t nrows, ncols;
+  uint64_t ii, jj;
+
+  nrows = 0; ncols = 0;
+  if(!gzm_file.is_open()){
+    cout<<"Matrix file unopened."<<endl;
+    return(-1);
+  }
+  while(std::getline(gzm_file,line)){
+    nrows++;
+    //std::cout<<"Read another line."<<endl;
+    istringstream fin(line);
+    while(fin>>ff){ //loop till end of line
+      mm.push_back(ff);
+    }
+  }
+  ncols = mm.size()/nrows;
+  init(ncols,nrows);
+  for(ii=0; ii<nrows; ii++){
+    for(jj=0; jj<ncols; jj++){
+      gzmat[jj][ii] = mm[ii*ncols+jj];
+    }
+  }
+
+  return 1;
+}
+

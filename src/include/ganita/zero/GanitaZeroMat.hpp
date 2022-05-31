@@ -10,6 +10,9 @@
 #include <cstdio>
 #include <bitset>
 #include <cmath>
+#include <string>
+#include <iostream>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #ifndef __APPLE__
@@ -39,6 +42,7 @@ public:
   int setEx1(void);
   int init(unsigned long nn, unsigned long mm);
   int setUnit(unsigned long ii);
+  int read(std::ifstream &gzt_file);
 };
 
 #endif

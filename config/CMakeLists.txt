@@ -7,7 +7,7 @@ project(GanitaZero CXX C)
 
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
-set(GanitaZero_VERSION_MINOR "31")
+set(GanitaZero_VERSION_MINOR "33")
 set(GanitaZero_VERSION_PATCH "0")
 
 cmake_minimum_required(VERSION 2.8)
@@ -21,7 +21,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CC")
   set( CMAKE_STATIC_LINKER_FLAGS  "-lbsd" )
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(warnings "-Wall -Wextra")
-  set(cmake_cxx_extra "-std=c++0x")
+#  set(cmake_cxx_extra "-std=c++0x")
   set( CMAKE_SHARED_LINKER_FLAGS  "-lbsd" )
   set( CMAKE_STATIC_LINKER_FLAGS  "-lbsd" )
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -66,27 +66,33 @@ endif()
 
 # configure_file(config.h.in config.h)
 
-include_directories(/usr/local/include ../src/include)
+include_directories(/usr/local/include ../src/include /home/terry/projects/src/linear-algebra/eigen)
 link_directories (/usr/local/lib)
 
 add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp ../src/cpp/GanitaZeroHist.cpp ../src/cpp/GanitaZeroBlock.cpp ../src/cpp/GanitaZeroUtil.cpp ../src/cpp/GanitaZeroMat.cpp ../src/cpp/GanitaZeroTile.cpp)
 
-target_include_directories (GanitaZero PUBLIC /usr/local/include ../src/include ../src/cpp)
+target_include_directories (GanitaZero PUBLIC /usr/local/include ../src/include ../src/cpp /home/terry/projects/src/linear-algebra/eigen)
 
 add_executable(gzero ../src/drivers/gzero.cc)
 add_executable(gztgf ../src/drivers/gztgf.cc)
+add_executable(gzgossip ../src/drivers/gzgossip.cc)
+add_executable(gzeigen ../src/drivers/gzeigen.cc)
 add_executable(gp ../src/drivers/gPredict.cc)
 add_executable(gzr ../src/drivers/gZeroRep.cc)
 add_test(gztest gzero ../sample/Chacon3.gztran)
 
 target_link_libraries (gzero GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
 target_link_libraries (gztgf GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
+target_link_libraries (gzgossip GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
+target_link_libraries (gzeigen GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
 target_link_libraries (gp GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
 target_link_libraries (gzr GanitaZero GanitaGraph m ${CMAKE_SHARED_LINKER_FLAGS})
 
 install(TARGETS GanitaZero DESTINATION lib)
 install(TARGETS gzero DESTINATION bin)
 install(TARGETS gztgf DESTINATION bin)
+install(TARGETS gzgossip DESTINATION bin)
+install(TARGETS gzeigen DESTINATION bin)
 install(TARGETS gp DESTINATION bin)
 install(TARGETS gzr DESTINATION bin)
 FILE(GLOB files "../src/include/ganita/zero/*.hpp")
