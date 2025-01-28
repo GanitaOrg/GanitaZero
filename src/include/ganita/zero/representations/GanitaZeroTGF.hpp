@@ -38,6 +38,8 @@ public:
   int newCopyInternalTGF(GanitaZeroTGF *copy);
   double feedForwardInternalTGF(double input);
   int backPropTGF(double xx, double yy);
+  double returnArc4RandUniform(void);
+  uint32_t returnArc4RandUniform(uint32_t up_bound);
   int sgdTGF(uint64_t num);
   int sgdTGF2(uint64_t num, GanitaZeroTGF target);
   int sgdTGF3(uint64_t num, int gnum);

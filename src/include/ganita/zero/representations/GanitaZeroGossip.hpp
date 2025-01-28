@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iterator>
 #include <set>
+#include <random>
 #include <boost/shared_ptr.hpp>
 #include "ganita/graph/GanitaGraphFile.hpp"
 
@@ -18,6 +19,8 @@ private:
   uint64_t rounds;
 public:
   GanitaZeroGossip(void);
+  double returnArc4RandUniform(void);
+  uint32_t returnArc4RandUniform(uint32_t up_bound);
   int run(uint64_t num, uint64_t trials);
   int run3(uint64_t num, uint64_t trials, uint64_t nbrs);
   int runEV(uint64_t num, uint64_t trials);

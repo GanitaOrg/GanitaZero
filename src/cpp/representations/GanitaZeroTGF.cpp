@@ -47,13 +47,39 @@ int GanitaZeroTGF::createTGF(uint64_t numlayers)
   return(1);
 }
 
+// Return random number between 0 and 1.
+double GanitaZeroTGF::returnArc4RandUniform(void)
+{
+  double myran;
+
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(0.0, 1.0);
+
+  myran = dis(gen);
+  return(myran);
+}
+
+// Return random integer between 0 and up_bound.
+uint32_t GanitaZeroTGF::returnArc4RandUniform(uint32_t up_bound)
+{
+  uint32_t myint;
+  std::random_device r;
+  std::default_random_engine e1(r());
+  std::uniform_int_distribution<int> uniform_dist(0, up_bound-1);
+  myint = uniform_dist(e1);
+
+  return(myint);
+}
+
 int GanitaZeroTGF::sgdTGF(uint64_t num)
 {
   uint64_t ii;
   double myran;
 
   for(ii=0; ii<num; ii++){
-    myran = ((double) arc4random_uniform(100000))/100000.0;
+    //myran = ((double) arc4random_uniform(100000))/100000.0;
+    myran = returnArc4RandUniform();
     cout<<"ii="<<ii<<"|";
     //backPropTGF(myran, callGenerator(0,myran));
     backPropTGF(myran, myran*myran);
@@ -72,7 +98,8 @@ int GanitaZeroTGF::sgdTGF2(uint64_t num, GanitaZeroTGF target)
   double myran;
 
   for(ii=0; ii<num; ii++){
-    myran = ((double) arc4random_uniform(100000))/100000.0;
+    //myran = ((double) arc4random_uniform(100000))/100000.0;
+    myran = returnArc4RandUniform();
     cout<<"ii="<<ii<<"|";
     //backPropTGF(myran, callGenerator(0,myran));
     backPropTGF(myran, target.feedForwardInternalTGF(myran));
@@ -91,7 +118,8 @@ int GanitaZeroTGF::sgdTGF3(uint64_t num, int gnum)
   double myran;
 
   for(ii=0; ii<num; ii++){
-    myran = ((double) arc4random_uniform(100000))/100000.0;
+    //myran = ((double) arc4random_uniform(100000))/100000.0;
+    myran = returnArc4RandUniform();
     cout<<"ii="<<ii<<"|";
     backPropTGF(myran, callGenerator(gnum,myran));
     feedForwardInternalTGF(myran);
@@ -108,7 +136,8 @@ int GanitaZeroTGF::outputTestRandTGF(uint64_t num)
   double myran;
 
   for(ii=0; ii<num; ii++){
-    myran = ((double) arc4random_uniform(100000))/100000.0;
+    //myran = ((double) arc4random_uniform(100000))/100000.0;
+    myran = returnArc4RandUniform();
     cout<<myran<<", "<<feedForwardInternalTGF(myran)<<endl;
   }
 
@@ -210,11 +239,13 @@ int GanitaZeroTGF::generateRandActSeq(uint64_t len)
     return(-1);
   }
 
-  myran = arc4random_uniform(4);
+  //myran = arc4random_uniform(4);
+  myran = returnArc4RandUniform(4);
   actseq.push_back(myran);
   for(ii=1; ii<len; ii++){
     skip = (myran + 2) % 4;
-    myran = arc4random_uniform(3);
+    //myran = arc4random_uniform(3);
+    myran = returnArc4RandUniform(3);
     if(skip <= myran){
       myran++;
     }
@@ -300,14 +331,16 @@ int GanitaZeroTGF::setBinaryWeightsRand1(void)
     //}
 
   for(ii=1; ii<num_layers-1; ii++){
-    myran = arc4random_uniform(2);
+    //myran = arc4random_uniform(2);
+    myran = returnArc4RandUniform(2);
     if(myran == 1){
       layer[ii]->returnNode(0)->setEdgeValue(0, weight_denom);
     }
     else{
       layer[ii]->returnNode(1)->setEdgeValue(0, weight_denom);
     }
-    myran = arc4random_uniform(2);
+    //myran = arc4random_uniform(2);
+    myran = returnArc4RandUniform(2);
     if(myran == 1){
       layer[ii]->returnNode(0)->setEdgeValue(1, weight_denom);
     }
@@ -315,7 +348,8 @@ int GanitaZeroTGF::setBinaryWeightsRand1(void)
       layer[ii]->returnNode(1)->setEdgeValue(1, weight_denom);
     }
   }
-  myran = arc4random_uniform(2);
+  //myran = arc4random_uniform(2);
+  myran = returnArc4RandUniform(2);
   if(myran == 1){
     layer[num_layers-1]->returnNode(0)->setEdgeValue(0, weight_denom);
   }
@@ -521,6 +555,7 @@ int GanitaZeroTGF::newCopyInternalTGF(GanitaZeroTGF *copy)
   for(ii=0; ii<node_output.size(); ii++){
     yy1 = get<0>(node_output.at(ii));
     yy1 = get<1>(node_output.at(ii));
+    yy2 = 0;
     copy->node_output.push_back(tuple<double,double>(yy1,yy2));
   }
   for(ii=0; ii<actseq.size(); ii++){

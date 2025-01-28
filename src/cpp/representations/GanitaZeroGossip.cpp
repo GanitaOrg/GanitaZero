@@ -5,6 +5,31 @@ GanitaZeroGossip::GanitaZeroGossip(void)
   rounds = 0;
 }
 
+// Return random number between 0 and 1.
+double GanitaZeroGossip::returnArc4RandUniform(void)
+{
+  double myran;
+
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(0.0, 1.0);
+
+  myran = dis(gen);
+  return(myran);
+}
+
+// Return random integer between 0 and up_bound.
+uint32_t GanitaZeroGossip::returnArc4RandUniform(uint32_t up_bound)
+{
+  uint32_t myint;
+  std::random_device r;
+  std::default_random_engine e1(r());
+  std::uniform_int_distribution<int> uniform_dist(0, up_bound-1);
+  myint = uniform_dist(e1);
+
+  return(myint);
+}
+
 int GanitaZeroGossip::run(uint64_t num, uint64_t trials)
 {
   uint64_t ii, jj;
@@ -29,7 +54,8 @@ int GanitaZeroGossip::run(uint64_t num, uint64_t trials)
       //cout<<"Round-"<<rounds<<":";
       for(ii=0; ii<num; ii++){
 	if(member_copy[ii]==1){
-	  myran = (uint64_t) arc4random_uniform(num-1);
+	  //myran = (uint64_t) arc4random_uniform(num-1);
+	  myran = (uint64_t) returnArc4RandUniform(num-1);
 	  if(myran >= ii){
 	    myran++;
 	  }
@@ -95,7 +121,8 @@ int GanitaZeroGossip::run3(uint64_t num, uint64_t trials, uint64_t nbrs)
 	  myran.clear();
 	  myran.insert(ii);
 	  while(myran.size() <= nbrs){
-	    myran.insert((uint64_t) arc4random_uniform(num));
+	    //myran.insert((uint64_t) arc4random_uniform(num));
+	    myran.insert((uint64_t) returnArc4RandUniform(num));
 	  }
 	  for (itr = myran.begin(); itr != myran.end(); itr++){
 	    if(member[*itr]==0){
@@ -156,7 +183,8 @@ int GanitaZeroGossip::runEV(uint64_t num, uint64_t trials)
       //cout<<"Round-"<<rounds<<":";
       for(ii=0; ii<num; ii++){
 	if(member_copy[ii]==1){
-	  myran = (uint64_t) arc4random_uniform(num-1);
+	  //myran = (uint64_t) arc4random_uniform(num-1);
+	  myran = (uint64_t) returnArc4RandUniform(num-1);
 	  if(myran >= ii){
 	    myran++;
 	  }
@@ -216,7 +244,8 @@ int GanitaZeroGossip::runAll(uint64_t num)
     rounds++;
     cout<<"Round-"<<rounds<<":";
     for(ii=0; ii<num; ii++){
-      myran = (uint64_t) arc4random_uniform(num);
+      //myran = (uint64_t) arc4random_uniform(num);
+      myran = (uint64_t) returnArc4RandUniform(num);
       if(myran >= ii){
 	myran++;
       }

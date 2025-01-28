@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <random>
+#include <chrono>
+#include <cstdint>
 #include <boost/shared_ptr.hpp>
 #include "ganita/zero/GanitaZeroMat.hpp"
 

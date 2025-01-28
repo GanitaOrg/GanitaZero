@@ -84,7 +84,18 @@ unsigned long GanitaZeroHMM::generateHMM_1(unsigned long len)
 
 uint64_t GanitaZeroHMM::returnArc4Rand(char *myran, uint64_t len)
 {
-  arc4random_buf((char *)myran, (size_t) len);
+  // obtain a seed from the timer
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  myclock::duration d = myclock::now() - beginning;
+  unsigned seed1 = d.count();
+  std::independent_bits_engine<std::mt19937,8,std::uint8_t> generator (seed1);
+  //std::cout << "Your seed produced: " << generator() << std::endl;
+  for(uint64_t ii=0; ii<len; ii++){
+    myran[ii] = generator();
+  }
+  //arc4random_buf((char *)myran, (size_t) len);
+
   return(len);
 }
 
@@ -94,7 +105,11 @@ double GanitaZeroHMM::returnArc4RandUniform(void)
   uint32_t myint, up_bound;
   double myran;
   up_bound = 0x1 << 31;
-  myint = arc4random_uniform(up_bound);
+  std::random_device r;
+  std::default_random_engine e1(r());
+  std::uniform_int_distribution<int> uniform_dist(0, up_bound);
+  myint = uniform_dist(e1);
+  //myint = arc4random_uniform(up_bound);
   myran = ((double) myint) / ((double) up_bound);
   return(myran);
 }

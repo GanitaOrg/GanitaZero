@@ -836,7 +836,18 @@ double GanitaZeroHist::returnPoisson(double lambda, uint64_t k)
 
 uint64_t GanitaZeroHist::returnArc4Rand(char *myran, uint64_t len)
 {
-  arc4random_buf((char *)myran, (size_t) len);
+  // obtain a seed from the timer
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  myclock::duration d = myclock::now() - beginning;
+  unsigned seed1 = d.count();
+  std::independent_bits_engine<std::mt19937,8,std::uint8_t> generator (seed1);
+  //std::cout << "Your seed produced: " << generator() << std::endl;
+  for(uint64_t ii=0; ii<len; ii++){
+    myran[ii] = generator();
+  }
+  //arc4random_buf((char *)myran, (size_t) len);
+
   return(len);
 }
 

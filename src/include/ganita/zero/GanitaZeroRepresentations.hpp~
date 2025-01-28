@@ -9,4 +9,3 @@
 #include "ganita/zero/representations/GanitaZeroTGF.hpp"
 #include "ganita/zero/representations/GanitaZeroGossip.hpp"
 #include "ganita/zero/representations/GanitaZeroPascalNS.hpp"
-#include "ganita/zero/representations/GanitaZeroFair.hpp"

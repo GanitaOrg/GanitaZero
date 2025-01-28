@@ -21,6 +21,9 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstdio>
+#include <random>
+#include <chrono>
+#include <cstdint>
 #include <bitset>
 #include <cmath>
 #include <boost/shared_ptr.hpp>

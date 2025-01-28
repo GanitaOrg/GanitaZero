@@ -10,3 +10,5 @@
 #include "representations/GanitaZeroHMM.cpp"
 #include "representations/GanitaZeroTGF.cpp"
 #include "representations/GanitaZeroGossip.cpp"
+#include "representations/GanitaZeroPascalNS.cpp"
+#include "representations/GanitaZeroFair.cpp"
