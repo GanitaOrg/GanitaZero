@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
 //#include "ganita/zero/representations/GanitaZeroSymbolic.hpp"
 

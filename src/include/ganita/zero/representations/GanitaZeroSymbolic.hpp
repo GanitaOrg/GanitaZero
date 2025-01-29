@@ -7,7 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-#include <boost/shared_ptr.hpp>
+#include <algorithm>
+//#include <boost/shared_ptr.hpp>
 
 #ifndef ALPHABET_ALLOC_SIZE
 #define ALPHABET_ALLOC_SIZE 256

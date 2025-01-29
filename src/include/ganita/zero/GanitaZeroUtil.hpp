@@ -1,7 +1,8 @@
 #ifndef _GANITAZEROUTIL_
 #define _GANITAZEROUTIL_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+//#include <boost/shared_ptr.hpp>
 #include "ganita/zero/GanitaZeroBlock.hpp"
 
 namespace gzu

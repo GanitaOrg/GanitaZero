@@ -10,7 +10,7 @@
 #include <random>
 #include <chrono>
 #include <cstdint>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include "ganita/zero/GanitaZeroMat.hpp"
 
 #ifndef __APPLE__

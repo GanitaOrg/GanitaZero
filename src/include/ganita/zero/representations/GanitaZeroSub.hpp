@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
 // Maximum number of stages for substitution dynamical system. 
 #ifndef MAX_NUM_SUB_STAGES

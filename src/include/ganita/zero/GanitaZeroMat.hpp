@@ -13,7 +13,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
 #ifndef __APPLE__
 #include <bsd/stdlib.h>

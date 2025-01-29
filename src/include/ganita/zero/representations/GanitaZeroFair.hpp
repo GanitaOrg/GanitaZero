@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
 class GanitaZeroFair
 {

@@ -7,7 +7,7 @@
 #include <iterator>
 #include <set>
 #include <random>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include "ganita/graph/GanitaGraphFile.hpp"
 
 class GanitaZeroGossip

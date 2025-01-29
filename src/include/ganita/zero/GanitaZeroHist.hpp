@@ -26,7 +26,8 @@
 #include <cstdint>
 #include <bitset>
 #include <cmath>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+//#include <boost/shared_ptr.hpp>
 
 #ifndef __APPLE__
 #include <bsd/stdlib.h>
