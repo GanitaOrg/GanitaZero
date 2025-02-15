@@ -27,4 +27,6 @@ int main(int argc, char *argv[])
   }
   gzfair.printMat();
   gzfair.checkMat();
+  cout<<"Proportional matrix squared"<<endl;
+  gzfair.squareProp();
 }

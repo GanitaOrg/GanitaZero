@@ -29,6 +29,30 @@ int GanitaZeroFair::init(unsigned long dd)
   return(dim);
 }
 
+int GanitaZeroFair::checkSquareWeak1(unsigned long xx, unsigned long yy)
+{
+  int count;
+  unsigned long kk, ii, jj;
+
+  for(ii=1; ii<yy; ii++){
+    kk = (unsigned long) floor((((double) ii*dim)/((double) yy)) + 1); 
+    if(verbose) cout<<"kk="<<kk<<" ";
+    count = 0;
+    for(jj=1; jj<=yy; jj++){
+      if(gzfm.get(xx,jj)<= (double) kk){
+        count++;
+      }
+    }
+    if(count < (int) ii){
+      // Not proportional
+      if(verbose) cout<<"count="<<count<<" "<<ii<<" ";
+      return(count - ii);
+    }
+  }
+
+  return(1);
+}
+
 int GanitaZeroFair::checkSquare1(unsigned long xx, unsigned long yy)
 {
   int count;
@@ -93,7 +117,7 @@ int GanitaZeroFair::setSquare(unsigned long xx, unsigned long yy)
       if(verbose) cout<<"setSquare3 "<<ii<<","<<xx<<endl;
       if(checkSquare2(xx,yy)>0){
 	if(verbose) cout<<"setSquare2 "<<ii<<","<<yy<<endl;
-	if(checkSquare1(xx,yy)>0){
+	if(checkSquareWeak1(xx,yy)>0){
 	  return(1);
 	  if(verbose) cout<<"setSquare1 "<<ii<<endl;
 	}
@@ -226,7 +250,7 @@ int GanitaZeroFair::checkMat(void)
     // ii = days
     for(int jj=1; jj<ii; jj++){
       // jj = occurences
-      kk = (int) ceil(((double) dim*jj)/((double) ii));
+      kk = (int) floor((((double) dim*jj)/((double) ii))+1);
       // kk = positions
       for(int mm=0; mm<dd; mm++){
 	counter = 0;
@@ -245,6 +269,85 @@ int GanitaZeroFair::checkMat(void)
   if(bb==0){
     cout<<"PROPORTIONAL SEQUENCE!"<<endl;
   }
+
+  return(1);
+}
+
+int GanitaZeroFair::checkMat2(void)
+{
+  int counter, kk, bb;
+  int dd;
+
+  bb = 0; dd = (int) dim2;
+  for(int ii=3; ii<=dd; ii++){
+    // ii = days
+    for(int jj=1; jj<ii-1; jj++){
+      // jj = occurences
+      kk = (int) floor((((double) dd*(jj+1))/((double) ii))+1);
+      // kk = positions
+      for(int mm=0; mm<dd; mm++){
+        counter = 0;
+        for(int nn=0; nn<ii; nn++){
+          if(gzfm2.get(mm,nn)<=kk){
+            counter++;
+          }
+        }
+        if(counter<jj){
+          printf("Not fair: %d, %d, %d, %d\n", mm, kk, ii, jj);
+          bb++;
+        }
+      }
+    }
+  }
+  if(bb==0){
+    cout<<"SQUARE PROPORTIONAL SEQUENCE!"<<endl;
+  }
+
+  return(1);
+}
+
+int GanitaZeroFair::squareProp(void)
+{
+  int ival, jval;
+  unsigned long mval;
+  unsigned long ii, jj;
+  unsigned long kk, mm;
+
+  //cout<<"Start algorithm "<<endl;
+  dim2 = dim*dim; 
+  gzfm2.init(dim2, dim2);
+
+  //cout<<"Find squared matrix "<<dim*dim<<endl;
+  for(ii=0; ii<dim; ii++){
+    for(jj=0; jj<dim; jj++){
+      gzfm2.set(ii*dim,jj*dim,gzfm.get(ii+1,jj+1));
+     }
+  }
+
+  for(kk=0; kk<dim; kk++){
+  for(mm=0; mm<dim; mm++){
+    for(ii=0; ii<dim; ii++){
+      for(jj=0; jj<dim; jj++){
+        mval = (unsigned long) gzfm.get(mm+1,ii+1);
+        ival = (int) gzfm.get(kk+1,jj+1)-1;
+        jval = (int) gzfm.get(mval,jj+1);
+        gzfm2.set(dim*kk+mm,ii*dim+jj,dim*ival+jval);
+      }
+    }
+  }
+  }
+
+  //unsigned long dd;
+  //dd = dim*dim;
+  cout<<"Dimension of squared matrix "<<dim2<<endl;
+  for(ii=0; ii<dim2; ii++){
+    for(jj=0; jj<dim2; jj++){
+      cout<<std::setw(2)<<gzfm2.get(ii,jj)<<",";
+    }
+    cout<<endl;
+  }
+
+  checkMat2();
 
   return(1);
 }
