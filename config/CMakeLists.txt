@@ -10,6 +10,12 @@ set(GanitaZero_VERSION_MAJOR "0")
 set(GanitaZero_VERSION_MINOR "36")
 set(GanitaZero_VERSION_PATCH "0")
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+## set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_MACOSX_RPATH ON)
+
 cmake_minimum_required(VERSION 2.8)
 
 enable_testing()
@@ -66,8 +72,8 @@ endif()
 
 # configure_file(config.h.in config.h)
 
-include_directories(/usr/local/include ../src/include /home/terry/projects/src/linear-algebra/eigen)
-link_directories (/usr/local/lib)
+include_directories(/usr/local/include ../src/include /Users/terry/projects/src/eigen-3.4.1)
+link_directories (/usr/local/lib /Users/terry/projects/src/ganita/GanitaZero/build)
 
 add_library(GanitaZero SHARED ../src/cpp/GanitaZeroSchema.cpp ../src/cpp/GanitaZeroRepresentations.cpp ../src/cpp/GanitaZero.cpp ../src/cpp/GanitaZeroVersion.cpp ../src/cpp/GanitaZeroHist.cpp ../src/cpp/GanitaZeroBlock.cpp ../src/cpp/GanitaZeroUtil.cpp ../src/cpp/GanitaZeroMat.cpp ../src/cpp/GanitaZeroTile.cpp)
 

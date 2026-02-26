@@ -12,9 +12,9 @@ class GanitaZeroTGF : public GanitaZeroNeural
 private:
   std::string name;
   std::vector<int> actseq;
-  std::vector<tuple<double, double>> node_output;
-  std::vector<tuple<double, double, double, double>> node_input;
-  std::vector<tuple<double, double, double, double>> tgf_weights;
+  std::vector<std::tuple<double, double> > node_output;
+  std::vector<tuple<double, double, double, double> > node_input;
+  std::vector<tuple<double, double, double, double> > tgf_weights;
 public:
   GanitaZeroTGF(void);
   int createTGF(uint64_t numlayers);

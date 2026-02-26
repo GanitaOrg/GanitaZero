@@ -21,12 +21,15 @@ int main(int argc, char *argv[])
     num = 8;
   }
   gzfair.init(num);
-  rval = gzfair.backTrackSolve();
-  if(rval < 1){
-    cout<<"No proportional sequence for n = "<<num<<endl;
-  }
+  //rval = gzfair.backTrackSolve();
+  //if(rval < 1){
+  //cout<<"No proportional sequence for n = "<<num<<endl;
+  //}
+  //gzfair.printMat();
+  //gzfair.checkMat();
+  //cout<<"Proportional matrix squared"<<endl;
+  //gzfair.squareProp();
+  gzfair.addMachineSeq();
   gzfair.printMat();
-  gzfair.checkMat();
-  cout<<"Proportional matrix squared"<<endl;
-  gzfair.squareProp();
+  gzfair.checkMat2();
 }

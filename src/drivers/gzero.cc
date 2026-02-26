@@ -5,10 +5,12 @@
 int main(int argc, char *argv[])
 {
   GanitaZero gzero(1);
-  GanitaZeroSub chacon;
+  //GanitaZeroSub chacon;
   //int hist_len;
   GanitaZeroVersion version;
-  //GanitaZeroMat gzm(3,3);
+  GanitaZeroMat gzm(7,7);
+  GanitaZeroMat gzprod(7,7);
+  GanitaZeroMat gzmean(7,7);
   //GanitaZeroHMM gzhmm;
   //double max;
   //int max_ii, ii;
@@ -36,15 +38,49 @@ int main(int argc, char *argv[])
   //gzero.computeCondEntAll(25);
 
   //gzero.tileSpace(25);
-  gzero.build1(argv[1], 25, 4);
+  //gzero.build1(argv[1], 25, 4);
 
+  for(int ii=0; ii<7; ii++){
+   for(int jj=0; jj<7; jj++){
+     gzm.set(ii,jj,0);
+     //gzmean.set(ii,jj,0);
+   }
+  }
+  gzm.set(0,2,1);
+  gzm.set(1,0,.6666667);
+  gzm.set(1,3,.3333333);
+  gzm.set(2,1,.6666667);
+  gzm.set(2,4,.3333333);
+  gzm.set(3,2,.6666667);
+  gzm.set(3,5,.3333333);
+  gzm.set(4,3,.6666667);
+  gzm.set(4,6,.3333333);
+  gzm.set(5,4,1);
+  gzm.set(6,5,1);
+  for(int ii=0; ii<7; ii++){
+   for(int jj=0; jj<7; jj++){
+     gzprod.set(ii,jj,gzm.get(ii,jj));
+     gzmean.set(ii,jj,gzm.get(ii,jj));
+   }
+  }
   //gzm.setEx1();
   //gzm.dumpMat();
-  //for(int ii=0; ii<10; ii++){
-    //gzm.square();
-  //}
-  //cout<<"-----------"<<endl;
-  //gzm.dumpMat();
+  for(int ii=0; ii<9999; ii++){
+     gzm.leftMultiply(gzprod);
+     for(int jj=0; jj<7; jj++){
+       for(int kk=0; kk<7; kk++){
+         gzmean.set(jj,kk,gzmean.get(jj,kk)+gzprod.get(jj,kk));
+       }
+     }
+  }
+  for(int jj=0; jj<7; jj++){
+    for(int kk=0; kk<7; kk++){
+      gzmean.set(jj,kk,gzmean.get(jj,kk)/10000.00);
+    }
+  }
+  cout<<"Number of iterations = 9999"<<endl;
+  cout<<"-----------"<<endl;
+  gzmean.dumpMat();
   cout<<"-----------"<<endl;
   //gzhmm.initOut(argv[2]);
   //gzhmm.generateHMM_1(1000000);
@@ -52,8 +88,8 @@ int main(int argc, char *argv[])
   //gzm.close();
   //cout<<"Base64 encoding: "<<gzero.returnB64Encode()<<endl;
   //gzero.close();
-  chacon.initOut(argv[2]);
-  chacon.generateChacon3(100000000);
-  chacon.close();
+  //chacon.initOut(argv[2]);
+  //chacon.generateChacon3(100000000);
+  //chacon.close();
 }
 
