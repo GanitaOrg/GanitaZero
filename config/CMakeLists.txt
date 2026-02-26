@@ -7,7 +7,7 @@ project(GanitaZero CXX C)
 
 ## Version
 set(GanitaZero_VERSION_MAJOR "0")
-set(GanitaZero_VERSION_MINOR "36")
+set(GanitaZero_VERSION_MINOR "37")
 set(GanitaZero_VERSION_PATCH "0")
 
 set(CMAKE_CXX_STANDARD 11)
