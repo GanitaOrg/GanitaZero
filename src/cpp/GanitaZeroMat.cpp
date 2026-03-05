@@ -185,6 +185,17 @@ int GanitaZeroMat::setUnit(unsigned long ii)
   return(1);
 }
 
+int GanitaZeroMat::setZero(void)
+{
+  unsigned long jj, kk;
+  for(jj=0; jj<ncols; jj++){
+    for(kk=0; kk<nrows; kk++){
+      gzmat[jj][kk] = 0;
+    }
+  }
+  return(1);
+}
+
 int GanitaZeroMat::read(std::ifstream &gzm_file)
 {
   string line;

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   if(num < 2){
     num = 8;
   }
-  gzfair.init(num);
+  gzfair.init2(num);
   //rval = gzfair.backTrackSolve();
   //if(rval < 1){
   //cout<<"No proportional sequence for n = "<<num<<endl;
@@ -29,7 +29,10 @@ int main(int argc, char *argv[])
   //gzfair.checkMat();
   //cout<<"Proportional matrix squared"<<endl;
   //gzfair.squareProp();
-  gzfair.addMachineSeq();
+  gzfair.topBalanced();
   gzfair.printMat();
-  gzfair.checkMat2();
+  gzfair.anyBalanced();
+  gzfair.printMat();
+  gzfair.checkMat3();
 }
+

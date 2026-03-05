@@ -42,6 +42,7 @@ public:
   int setEx1(void);
   int init(unsigned long nn, unsigned long mm);
   int setUnit(unsigned long ii);
+  int setZero(void);
   int read(std::ifstream &gzt_file);
 };
 

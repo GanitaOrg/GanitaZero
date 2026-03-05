@@ -15,6 +15,8 @@ int GanitaZeroFair::init(unsigned long dd)
   dim = dd;
   dimension = dim;
 
+  //gzfm( "player num", "day" );
+
   gzfm.init(dim+1,dim+1);
   for(ii=0; ii<=dim; ii++){ gzfm.set(0,ii,0); gzfm.set(ii,0,0);}
   for(ii=1; ii<=dim; ii++){
@@ -24,6 +26,26 @@ int GanitaZeroFair::init(unsigned long dd)
   for(ii=1; ii<=dim; ii++){
     for(jj=3; jj<=dim; jj++){
       gzfm.set(ii,jj,(double) dim);
+    }
+  }
+  return(dim);
+}
+
+//Initialize matrix for finding proportional sequences
+int GanitaZeroFair::init2(unsigned long dd)
+{
+  unsigned long ii, jj;
+
+  dim = dd;
+  dimension = dim;
+
+  //gzfm( "player num", "day" );
+
+  gzfm.init(dim+1,dim+1);
+  for(ii=0; ii<=dim; ii++){gzfm.set(0,ii,0); gzfm.set(ii,0,0);}
+  for(ii=1; ii<=dim; ii++){
+    for(jj=1; jj<=dim; jj++){
+      gzfm.set(ii,jj,0);
     }
   }
   return(dim);
@@ -253,9 +275,9 @@ int GanitaZeroFair::backTrackSolve(void)
 int GanitaZeroFair::topBalanced(void)
 {
   unsigned long pos1, pos2;
-  unsigned long keep;
   pos1 = 1; pos2 = 2;
-  int val, dd;
+  int ii, jj, dd;
+  int kk1, kk2, tt;
   double tval;
 
   dd = (int) dim + 1;
@@ -268,65 +290,180 @@ int GanitaZeroFair::topBalanced(void)
   }
   if(verbose) cout<<"Start at "<<gzfm.get(pos1,pos2)<<endl;
 
-  keep = 1;
-  while(keep){
-    //keep++;
-    val = setSquare(pos1,pos2);
-    if(val>0){
-      //std::cout<<val<<std::endl;
-      pos1++;
-      if(pos1 > dim){
-	pos1 = 1;
-	pos2++;
-	if(verbose) cout<<"New position "<<pos1<<","<<pos2<<endl;
-	if(pos2 > dim){
-	  //Reached end
-	  return 2;
-	}
+  for(int ii=1; ii<dd; ii++){
+    gzfm.set(1,ii,(double) ii);
+  }
+
+  kk1 = dim; tt = 0;
+  for(ii=2; ii<dd; ii++){
+    //
+    if(tt == 0){
+      pos1 = 1;
+    }
+    kk2 = (int) ceil( ((double) dim)/ii );
+    if(kk2 == kk1){
+      kk2--;
+      tt = 1;
+    }
+    else{ tt=0; }
+    jj=1;
+    pos2 = kk2 + 1;
+    while(jj<=kk2){
+      tval=gzfm.get(pos1,pos2);
+      gzfm.set(ii,jj,tval);
+      pos2++; jj++;
+      if(pos2 > kk1){
+	pos2 = kk2 + 1;
+	pos1++;
+      }
+      if(pos1 >= ii){
+	break;
       }
     }
-    else{
-      // Backtrack
-      // Obtain current value and reset to max=dim
-      tval=gzfm.get(pos1,pos2);
-      tval = (double) dim;
-      gzfm.set(pos1,pos2,tval);
-      // Start backtracking
-      pos1--;
-      if(verbose) cout<<"Backtracking pos1="<<pos1<<"tval="<<tval<<endl;
-      if(pos1 <= 0){
-	pos1 = dim;
-	pos2--;
-	//std::cout<<"New positions "<<pos1<<", "<<pos2<<std::endl;
-	if(pos2 <= 1){
-	  // Unable to solve
-	  return(-1);
-	}
-      }
-      tval = gzfm.get(pos1,pos2);
-      tval -= 1;
-      while(tval < 1.0){
-	tval = (double) dim;
-	gzfm.set(pos1,pos2,tval);
-	pos1--;
-	if(pos1 <= 0){
-	  pos1 = dim;
-	  pos2--;
-	  if(pos2 <= 1){
-	    // Unable to solve
-	    return(-1);
-	  }
-	}
-	tval = gzfm.get(pos1,pos2);
-	tval -= 1;
-      }
-      gzfm.set(pos1,pos2,tval);
+    if(tt == 0){
+      kk1 = kk2;
     }
   }
 
   return(1);   
 }
+
+int GanitaZeroFair::fill2(int rr, int cc)
+{
+  int tval;
+  int ii, jj, kk;
+  
+  gzfm2.init(dim+1,1);
+  for(ii=1; ii<=rr; ii++){
+    for(jj=1; jj<=cc; jj++){
+      tval = (int) gzfm.get(ii,jj);
+      if(tval != 0){
+	gzfm2.set(tval,0,gzfm2.get(tval,0)+1);
+      }
+    }
+  }
+
+  ii=1; jj=1;
+  kk=1;
+  while(ii<=rr){
+    while((int) gzfm.get(ii,jj) >= 1){
+      jj++;
+      if(jj>cc){jj=1; ii++;}
+      //if(ii>rr){ break; }
+    }
+    while(gzfm2.get(kk,0)>=2){
+      kk++;
+      if(kk>dim){ kk=-1; break; }
+    }
+    if(kk>0){
+      gzfm.set(ii,jj,kk);
+      cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
+      kk++;
+      if(jj>cc){jj=1; ii++;} 
+    }
+    else{ break; }
+  }
+
+  for(int ii=1; ii<=dim; ii++){
+    cout<<gzfm2.get(ii,0)<<":";
+  }
+  cout<<endl;
+  
+  return(1);
+}
+
+int GanitaZeroFair::twoBalanced(void)
+{
+  int kk;
+  for(int ii=3; ii<dim; ii++){
+    kk = (int) ceil(2*dim/ii);
+    fillAny(ii,kk,2);
+  }
     
+  return(1);
+}
+
+int GanitaZeroFair::anyBalanced(void)
+{
+  int kk;
+
+  gzfm2.init(dim+1,1);
+  // for(int ii=1; ii<=dim; ii++){
+  //   gzfm.set(1,ii,(double) ii);
+  // }
+
+  for(int jj=2; 2*jj<dim; jj++){
+    for(int ii=jj+1; ii<=dim; ii++){
+      //kk = (int) floor((((double) (jj+1)*dim)/((double) ii))+1);
+      kk = (int) ceil(((double) (jj+1)*dim)/ii);
+      fillAny(ii,kk,jj);
+    }
+  }
+  for(int jj=(int) floor(dim/2)+1; jj<dim; jj++){
+    for(int ii=jj; ii<=dim; ii++){
+      //kk = (int) floor((((double) (jj+1)*dim)/((double) ii))+1);
+      kk = (int) ceil(((double) (jj+1)*dim)/ii);
+     fillAny(ii,kk,jj);
+    }
+  }
+  fillAny(dim,dim,dim);
+  
+  return(1);
+}
+
+int GanitaZeroFair::fillAny(int rr, int cc, int nn)
+{
+  int tval;
+  int ii, jj, kk;
+  
+  gzfm2.setZero();
+  for(ii=1; ii<=rr; ii++){
+    for(jj=1; jj<=cc; jj++){
+      tval = (int) gzfm.get(ii,jj);
+      if(tval != 0){
+	gzfm2.set(tval,0,gzfm2.get(tval,0)+1);
+      }
+    }
+  }
+
+  //ii=1; jj=1;
+  kk=1;
+  while(kk <= dim){
+    while((int) gzfm2.get(kk,0)>=nn){
+      kk++;
+      if(kk>dim){ break; }
+    }
+    if(kk<=dim){
+      ii=1; jj=1;
+      while((int) gzfm.get(ii,jj) >= 1){
+	if((int) gzfm.get(ii,jj) == kk){
+	  ii++; jj=1;
+	}
+	else{
+	  jj++;
+	  if(jj>cc){jj=1; ii++;}
+	}
+	if(ii>dim){ii=0; kk++; break;}
+      }
+      if(ii>0){
+	gzfm.set(ii,jj,kk);
+	cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
+	kk++;
+      }
+      else{ ii=1; }
+      //if(jj>cc){jj=1; ii++;} 
+    }
+    else{ break; }
+  }
+
+  for(int ii=1; ii<=dim; ii++){
+    cout<<gzfm2.get(ii,0)<<":";
+  }
+  cout<<endl;
+  
+  return(1);
+}
+
 int GanitaZeroFair::printMat(void)
 {
   int dd;
@@ -394,9 +531,44 @@ int GanitaZeroFair::checkMat2(void)
           }
         }
         if(counter<jj){
-          printf("Not fair: %d, %d, %d, %d\n", mm, kk, ii, jj);
+          printf("Not fair: day=%d, rank=%d, %d, %d\n", mm, kk, ii, jj);
           bb++;
         }
+      }
+    }
+  }
+  if(bb==0){
+    cout<<"PROP2 PROPORTIONAL SEQUENCE!"<<endl;
+  }
+
+  return(1);
+}
+
+// This goes with the anyBalanced subroutine.
+int GanitaZeroFair::checkMat3(void)
+{
+  int kk, bb;
+  int mm, nn;
+  int dd;
+
+  bb = 0; dd = (int) dim;
+  for(int ii=2; ii<=dd; ii++){
+    // ii = days
+    for(int jj=1; jj<ii-1; jj++){
+      // jj = occurences
+      kk = (int) floor((((double) dd*(jj+1))/((double) ii))+1);
+      // kk = positions
+      gzfm2.setZero();
+      for(mm=1; mm<=ii; mm++){
+        for(nn=1; nn<=kk; nn++){
+          gzfm2.set((int) gzfm.get(mm,nn),0,gzfm2.get(mm,nn)+1);
+	}
+      }
+      for(mm=1; mm<=dim; mm++){
+	if(gzfm2.get(mm,0)<jj){
+	  printf("Not fair: days=%d, rank=%d, jj=%d, agent=%d\n",ii,kk,jj,mm);
+	  bb=1;
+	}
       }
     }
   }
@@ -456,7 +628,7 @@ int GanitaZeroFair::squareProp(void)
 int GanitaZeroFair::addMachineSeq(void)
 {
   //unsigned long pos1, pos2;
-  unsigned long result, ii, jj;
+  unsigned long result, ii;
   unsigned long pp, qq, rr;
   unsigned long val;
   //pos1 = 1; pos2 = 2;
@@ -520,14 +692,15 @@ int GanitaZeroFair::addMachineSeq(void)
 int GanitaZeroFair::fieldMult(void)
 {
   //unsigned long pos1, pos2;
-  unsigned long ii, jj;
+  unsigned long ii;
   //unsigned long pp, qq, rr;
   unsigned long val;
   //pos1 = 1; pos2 = 2;
-  unsigned int dd;
+  //unsigned int dd;
   //double tval;
 
-  dd = 0; val = 0;
+  //dd = 0;
+  val = 0;
   
   cout<<"Dimension "<<dim<<"|| Initial Matrix"<<endl;
   // for(int ii=0; ii<dd; ii++){
