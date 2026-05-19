@@ -184,7 +184,7 @@ int GanitaZeroFair::setSquare(unsigned long xx, unsigned long yy, double max)
     gzfm.set(xx,yy,(double) ii);
     if(checkSquare3(xx,yy)>0){
       if(checkSquare2(xx,yy)>0){
-	if(checkSquare1(xx,yy)>0){
+	if(checkSquareWeak1(xx,yy)>0){
 	  return(1);
 	}
       }
@@ -357,17 +357,17 @@ int GanitaZeroFair::fill2(int rr, int cc)
     }
     if(kk>0){
       gzfm.set(ii,jj,kk);
-      cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
+      //cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
       kk++;
       if(jj>cc){jj=1; ii++;} 
     }
     else{ break; }
   }
 
-  for(int ii=1; ii<=dim; ii++){
-    cout<<gzfm2.get(ii,0)<<":";
-  }
-  cout<<endl;
+  //  for(int ii=1; ii<=dim; ii++){
+  //  cout<<gzfm2.get(ii,0)<<":";
+  //}
+  //cout<<endl;
   
   return(1);
 }
@@ -388,9 +388,9 @@ int GanitaZeroFair::anyBalanced(void)
   int kk;
 
   gzfm2.init(dim+1,1);
-  // for(int ii=1; ii<=dim; ii++){
-  //   gzfm.set(1,ii,(double) ii);
-  // }
+  for(int ii=1; ii<=dim; ii++){
+    gzfm.set(1,ii,(double) ii);
+  }
 
   for(int jj=2; 2*jj<dim; jj++){
     for(int ii=jj+1; ii<=dim; ii++){
@@ -447,7 +447,7 @@ int GanitaZeroFair::fillAny(int rr, int cc, int nn)
       }
       if(ii>0){
 	gzfm.set(ii,jj,kk);
-	cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
+	//cout<<ii<<"|"<<jj<<"|"<<kk<<endl;
 	kk++;
       }
       else{ ii=1; }
@@ -456,10 +456,10 @@ int GanitaZeroFair::fillAny(int rr, int cc, int nn)
     else{ break; }
   }
 
-  for(int ii=1; ii<=dim; ii++){
-    cout<<gzfm2.get(ii,0)<<":";
-  }
-  cout<<endl;
+  // for(int ii=1; ii<=dim; ii++){
+  //   cout<<gzfm2.get(ii,0)<<":";
+  // }
+  // cout<<endl;
   
   return(1);
 }
@@ -488,7 +488,8 @@ int GanitaZeroFair::checkMat(void)
     // ii = days
     for(int jj=1; jj<ii; jj++){
       // jj = occurences
-      kk = (int) floor((((double) dim*jj)/((double) ii))+1);
+      //kk = (int) floor((((double) dim*jj)/((double) ii))+1);
+      kk = (int) ceil((((double) dim*jj)/((double) ii)));
       // kk = positions
       for(int mm=1; mm<=dim; mm++){
 	counter = 0;
@@ -554,7 +555,7 @@ int GanitaZeroFair::checkMat3(void)
   bb = 0; dd = (int) dim;
   for(int ii=2; ii<=dd; ii++){
     // ii = days
-    for(int jj=1; jj<ii-1; jj++){
+    for(int jj=1; jj<ii; jj++){
       // jj = occurences
       kk = (int) floor((((double) dd*(jj+1))/((double) ii))+1);
       // kk = positions
@@ -577,6 +578,45 @@ int GanitaZeroFair::checkMat3(void)
   }
 
   return(1);
+}
+
+bool GanitaZeroFair::isLatinSquare(void) {
+  //int n = square.size();
+    
+    // Check if the grid is empty or not perfectly square
+    if (dim == 0) return false;
+    // for (const auto& row : square) {
+    //     if (row.size() != n) return false;
+    // }
+
+    // Tracking arrays for rows and columns
+    // seenInRow[i][k] means number k+1 has been seen in row i
+    std::vector<std::vector<bool>> seenInRow(dim, std::vector<bool>(dim, false));
+    std::vector<std::vector<bool>> seenInCols(dim, std::vector<bool>(dim, false));
+
+    for (int r = 0; r < dim; ++r) {
+      for (int c = 0; c < dim; ++c) {
+	int val = gzfm.get(r+1,c+1);
+	
+	// Value must be strictly between 1 and N
+	if (val < 1 || val > dim) {
+	  return false; 
+	}
+	
+	int index = val - 1; // 0-based index for our boolean tracker
+	
+	// If the number has already been seen in this row or column, it's not a Latin square
+	if (seenInRow[r][index] || seenInCols[c][index]) {
+	  return false;
+	}
+	
+	// Mark as seen
+	seenInRow[r][index] = true;
+	seenInCols[c][index] = true;
+      }
+    }
+
+    return true;
 }
 
 int GanitaZeroFair::squareProp(void)
@@ -672,6 +712,71 @@ int GanitaZeroFair::addMachineSeq(void)
       rr >>= 1;
     }
     val = result;
+  }
+    
+  for(int ii=0; ii<dim; ii++) {
+    cout<<gzfm.get(1,ii+1)<<"|";
+  }
+  cout<<endl;
+
+  // Set the order for all other agents
+  for(int ii=2; ii<dim+1; ii++){
+    for(int jj=1; jj<dim+1; jj++){
+      gzfm.set(ii,jj,gzfm.get(ii-1,(jj % dim) + 1));
+    }
+  }
+
+  return(1);
+}
+
+int GanitaZeroFair::vanDerCorput(void)
+{
+  //unsigned long pos1, pos2;
+  unsigned long result, ii;
+  unsigned long pp, qq, rr;
+  unsigned long val;
+  //pos1 = 1; pos2 = 2;
+  unsigned int dd;
+  //unsigned int vdc[] = {64,32,96,16,80,48,112,8,72,40};
+
+  dd = 0;
+  pp = 1;
+  while (pp < dim+1) {
+    //if ( (pp << 1) >= dim) break;
+    pp <<= 1;
+    dd++;
+  }
+  pp >>= 1;
+  qq = 0; val = 0;
+
+  dim -= 1;
+  cout<<"Dimension "<<dim<<"|| Initial Matrix"<<endl;
+  // for(int ii=0; ii<dd; ii++){
+  //   for(int jj=0; jj<dd; jj++){
+  //     cout<<gzfm.get(ii,jj)<<",";
+  //   }
+  //   cout<<endl;
+  // }
+  //if(verbose) cout<<"Start at "<<gzfm.get(pos1,pos2)<<endl;
+
+  cout<<pp<<endl;
+  ii = 1;
+  while(ii < pp){
+    qq += 1; rr = qq;
+    result = 0;
+    for (int jj = 0; jj < dd-1; ++jj) {
+      // Left shift the result to make space for the next bit
+      result <<= 1;
+      // Extract the least significant bit of 'rr' and add it to the result
+      // The expression `rr & 1` gets the rightmost bit
+      // The `|` operator sets that bit in the result
+      result |= (rr & 1);
+      // Right shift 'rr' by 1 to process the next bit in the next iteration
+      rr >>= 1;
+    }
+    val = result;
+    cout<<val<<":";
+    gzfm.set(1,ii,val); ii++;
   }
     
   for(int ii=0; ii<dim; ii++) {

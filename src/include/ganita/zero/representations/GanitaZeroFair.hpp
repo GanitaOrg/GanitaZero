@@ -39,6 +39,8 @@ public:
   int checkMat3(void);
   int squareProp(void);
   int addMachineSeq(void);
+  int vanDerCorput(void);
   int fieldMult(void);
+  bool isLatinSquare(void);
 };
 

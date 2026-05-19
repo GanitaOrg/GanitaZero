@@ -20,19 +20,26 @@ int main(int argc, char *argv[])
   if(num < 2){
     num = 8;
   }
+  //gzfair.init(num);
   gzfair.init2(num);
-  //rval = gzfair.backTrackSolve();
-  //if(rval < 1){
-  //cout<<"No proportional sequence for n = "<<num<<endl;
-  //}
-  //gzfair.printMat();
-  //gzfair.checkMat();
+  // rval = gzfair.backTrackSolve();
+  // if(rval < 1){
+  // cout<<"No proportional sequence for n = "<<num<<endl;
+  // }
+  // gzfair.printMat();
+  // gzfair.checkMat2();
   //cout<<"Proportional matrix squared"<<endl;
   //gzfair.squareProp();
-  gzfair.topBalanced();
+  gzfair.vanDerCorput();
+  //gzfair.topBalanced();
+  //gzfair.printMat();
+  //gzfair.anyBalanced();
   gzfair.printMat();
-  gzfair.anyBalanced();
-  gzfair.printMat();
-  gzfair.checkMat3();
+  if(gzfair.isLatinSquare()){
+    gzfair.checkMat2();
+  }
+  else{
+    cout<<"Not a Latin Square!"<<endl;
+  }
 }
 
